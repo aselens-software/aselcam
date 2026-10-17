@@ -1,0 +1,10 @@
+# AselCam Desktop Dependencies
+PyQt6>=6.5.0
+numpy>=1.24.0
+
+# Cross-platform Virtual Camera Driver (Windows / macOS)
+pyvirtualcam>=0.11.0; sys_platform == 'win32' or sys_platform == 'darwin'
+
+# Optional AI Portrait Bokeh / Neural Background Segmentation
+mediapipe>=0.10.0; python_version < "3.13"
+opencv-python-headless>=4.8.0

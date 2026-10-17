@@ -1,0 +1,264 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		AA01000129B7F10000000001 /* AselCamApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA02000129B7F10000000001 /* AselCamApp.swift */; };
+		AA01000229B7F10000000002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA02000229B7F10000000002 /* ContentView.swift */; };
+		AA01000329B7F10000000003 /* AselCamViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA02000329B7F10000000003 /* AselCamViewModel.swift */; };
+		AA01000429B7F10000000004 /* Protocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA02000429B7F10000000004 /* Protocol.swift */; };
+		AA01000529B7F10000000005 /* StreamServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA02000529B7F10000000005 /* StreamServer.swift */; };
+		AA01000629B7F10000000006 /* CommandServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA02000629B7F10000000006 /* CommandServer.swift */; };
+		AA01000729B7F10000000007 /* CameraManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA02000729B7F10000000007 /* CameraManager.swift */; };
+		AA01000829B7F10000000008 /* H264Encoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA02000829B7F10000000008 /* H264Encoder.swift */; };
+		AA01000929B7F10000000009 /* AudioCaptureManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA02000929B7F10000000009 /* AudioCaptureManager.swift */; };
+		AA01000A29B7F1000000000A /* ScreenMirrorManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA02000A29B7F1000000000A /* ScreenMirrorManager.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		AA00000129B7F10000000000 /* AselCam.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AselCam.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		AA02000129B7F10000000001 /* AselCamApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AselCamApp.swift; sourceTree = "<group>"; };
+		AA02000229B7F10000000002 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		AA02000329B7F10000000003 /* AselCamViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ViewModel/AselCamViewModel.swift"; sourceTree = "<group>"; };
+		AA02000429B7F10000000004 /* Protocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Network/Protocol.swift"; sourceTree = "<group>"; };
+		AA02000529B7F10000000005 /* StreamServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Network/StreamServer.swift"; sourceTree = "<group>"; };
+		AA02000629B7F10000000006 /* CommandServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Network/CommandServer.swift"; sourceTree = "<group>"; };
+		AA02000729B7F10000000007 /* CameraManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Camera/CameraManager.swift"; sourceTree = "<group>"; };
+		AA02000829B7F10000000008 /* H264Encoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Encoder/H264Encoder.swift"; sourceTree = "<group>"; };
+		AA02000929B7F10000000009 /* AudioCaptureManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Audio/AudioCaptureManager.swift"; sourceTree = "<group>"; };
+		AA02000A29B7F1000000000A /* ScreenMirrorManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Screen/ScreenMirrorManager.swift"; sourceTree = "<group>"; };
+		AA02000B29B7F1000000000B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		AA03000129B7F10000000001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		AA04000129B7F10000000001 = {
+			isa = PBXGroup;
+			children = (
+				AA04000229B7F10000000002 /* AselCam */,
+				AA04000329B7F10000000003 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		AA04000229B7F10000000002 /* AselCam */ = {
+			isa = PBXGroup;
+			children = (
+				AA02000129B7F10000000001 /* AselCamApp.swift */,
+				AA02000229B7F10000000002 /* ContentView.swift */,
+				AA02000329B7F10000000003 /* AselCamViewModel.swift */,
+				AA02000429B7F10000000004 /* Protocol.swift */,
+				AA02000529B7F10000000005 /* StreamServer.swift */,
+				AA02000629B7F10000000006 /* CommandServer.swift */,
+				AA02000729B7F10000000007 /* CameraManager.swift */,
+				AA02000829B7F10000000008 /* H264Encoder.swift */,
+				AA02000929B7F10000000009 /* AudioCaptureManager.swift */,
+				AA02000A29B7F1000000000A /* ScreenMirrorManager.swift */,
+				AA02000B29B7F1000000000B /* Info.plist */,
+			);
+			path = AselCam;
+			sourceTree = "<group>";
+		};
+		AA04000329B7F10000000003 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				AA00000129B7F10000000000 /* AselCam.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		AA05000129B7F10000000001 /* AselCam */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AA06000129B7F10000000001 /* Build configuration list for PBXNativeTarget "AselCam" */;
+			buildPhases = (
+				AA07000129B7F10000000001 /* Sources */,
+				AA03000129B7F10000000001 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = AselCam;
+			productName = AselCam;
+			productReference = AA00000129B7F10000000000 /* AselCam.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		AA08000129B7F10000000001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1500;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					AA05000129B7F10000000001 = {
+						CreatedOnToolsVersion = 15.0;
+					};
+				};
+			};
+			buildConfigurationList = AA06000229B7F10000000001 /* Build configuration list for PBXProject "AselCam" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = AA04000129B7F10000000001;
+			productRefGroup = AA04000329B7F10000000003 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				AA05000129B7F10000000001 /* AselCam */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		AA07000129B7F10000000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA01000129B7F10000000001 /* AselCamApp.swift in Sources */,
+				AA01000229B7F10000000002 /* ContentView.swift in Sources */,
+				AA01000329B7F10000000003 /* AselCamViewModel.swift in Sources */,
+				AA01000429B7F10000000004 /* Protocol.swift in Sources */,
+				AA01000529B7F10000000005 /* StreamServer.swift in Sources */,
+				AA01000629B7F10000000006 /* CommandServer.swift in Sources */,
+				AA01000729B7F10000000007 /* CameraManager.swift in Sources */,
+				AA01000829B7F10000000008 /* H264Encoder.swift in Sources */,
+				AA01000929B7F10000000009 /* AudioCaptureManager.swift in Sources */,
+				AA01000A29B7F1000000000A /* ScreenMirrorManager.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		AA09000129B7F10000000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		AA09000229B7F10000000001 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_OPTIMIZATION_LEVEL = s;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		AA09000329B7F10000000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = AselCam/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.2;
+				PRODUCT_BUNDLE_IDENTIFIER = com.aselcam.ios;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		AA09000429B7F10000000001 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = AselCam/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.2;
+				PRODUCT_BUNDLE_IDENTIFIER = com.aselcam.ios;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		AA06000129B7F10000000001 /* Build configuration list for PBXNativeTarget "AselCam" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AA09000329B7F10000000001 /* Debug */,
+				AA09000429B7F10000000001 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AA06000229B7F10000000001 /* Build configuration list for PBXProject "AselCam" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AA09000129B7F10000000001 /* Debug */,
+				AA09000229B7F10000000001 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = AA08000129B7F10000000001 /* Project object */;
+}

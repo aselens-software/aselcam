@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=AselCam
+Comment=Ultra High-Performance Linux Native Webcam & Microphone
+Comment[tr]=Yüksek Performanslı Linux Sanal Kamera ve Mikrofon
+Exec=/home/perfo/Projeler/aselcam/run_desktop.sh
+Icon=camera-web
+Terminal=false
+Type=Application
+StartupWMClass=AselCam
+Categories=AudioVideo;Video;Recorder;
+Keywords=webcam;droidcam;camera;microphone;pipewire;v4l2;aselcam;

@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">AselCam</string>
+    <string name="channel_name">AselCam Akış Servisi</string>
+    <string name="channel_desc">Kamera ve mikrofon canlı akışı bildirim kanalı</string>
+    <string name="service_running">AselCam aktif olarak yayın yapıyor</string>
+    <string name="stop_service">Durdur</string>
+</resources>
