@@ -17,6 +17,7 @@
 		AA01000829B7F10000000008 /* H264Encoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA02000829B7F10000000008 /* H264Encoder.swift */; };
 		AA01000929B7F10000000009 /* AudioCaptureManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA02000929B7F10000000009 /* AudioCaptureManager.swift */; };
 		AA01000A29B7F1000000000A /* ScreenMirrorManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA02000A29B7F1000000000A /* ScreenMirrorManager.swift */; };
+		AA01000B29B7F1000000000B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AA02000C29B7F1000000000C /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,6 +33,7 @@
 		AA02000929B7F10000000009 /* AudioCaptureManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Audio/AudioCaptureManager.swift"; sourceTree = "<group>"; };
 		AA02000A29B7F1000000000A /* ScreenMirrorManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Screen/ScreenMirrorManager.swift"; sourceTree = "<group>"; };
 		AA02000B29B7F1000000000B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		AA02000C29B7F1000000000C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -67,6 +69,7 @@
 				AA02000929B7F10000000009 /* AudioCaptureManager.swift */,
 				AA02000A29B7F1000000000A /* ScreenMirrorManager.swift */,
 				AA02000B29B7F1000000000B /* Info.plist */,
+				AA02000C29B7F1000000000C /* Assets.xcassets */,
 			);
 			path = AselCam;
 			sourceTree = "<group>";
@@ -88,6 +91,7 @@
 			buildPhases = (
 				AA07000129B7F10000000001 /* Sources */,
 				AA03000129B7F10000000001 /* Frameworks */,
+				AA07000229B7F10000000002 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -99,6 +103,17 @@
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
+
+/* Begin PBXResourcesBuildPhase section */
+		AA07000229B7F10000000002 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA01000B29B7F1000000000B /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXProject section */
 		AA08000129B7F10000000001 /* Project object */ = {

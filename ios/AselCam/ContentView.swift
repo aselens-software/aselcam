@@ -154,6 +154,12 @@ public struct ContentView: View {
     private var headerView: some View {
         HStack {
             HStack(spacing: 8) {
+                Image("AppLogo")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 24, height: 24)
+                    .clipShape(RoundedRectangle(cornerRadius: 6))
+
                 Circle()
                     .fill(viewModel.clientCount > 0 ? Color.green : Color.orange)
                     .frame(width: 8, height: 8)

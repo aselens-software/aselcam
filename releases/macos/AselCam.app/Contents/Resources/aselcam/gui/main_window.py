@@ -11,7 +11,7 @@ from PyQt6.QtWidgets import (
     QFrame, QSplitter, QScrollArea, QFileDialog
 )
 from PyQt6.QtCore import Qt, QTimer, pyqtSignal, pyqtSlot, QPoint
-from PyQt6.QtGui import QIcon, QFont, QColor
+from PyQt6.QtGui import QIcon, QFont, QColor, QPixmap
 
 from .video_widget import VideoWidget
 from .style import DARK_STYLE
@@ -42,13 +42,20 @@ class CustomTitleBar(QWidget):
         layout.setSpacing(12)
 
         # 1. Brand Anchor & Master Status
-        self.icon_badge = QLabel("◈")
+        self.icon_badge = QLabel()
         self.icon_badge.setFixedSize(28, 28)
         self.icon_badge.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.icon_badge.setStyleSheet(
-            "background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #3b82f6, stop:1 #1d4ed8); "
-            "color: #ffffff; border-radius: 7px; font-weight: bold; font-size: 14px;"
-        )
+        logo_icon_path = os.path.join(os.path.dirname(__file__), "..", "assets", "aselcam_icon_64.png")
+        if os.path.exists(logo_icon_path):
+            pix = QPixmap(logo_icon_path).scaled(26, 26, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
+            self.icon_badge.setPixmap(pix)
+            self.icon_badge.setStyleSheet("background: transparent; border: none;")
+        else:
+            self.icon_badge.setText("◈")
+            self.icon_badge.setStyleSheet(
+                "background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #3b82f6, stop:1 #1d4ed8); "
+                "color: #ffffff; border-radius: 7px; font-weight: bold; font-size: 14px;"
+            )
         layout.addWidget(self.icon_badge)
 
         self.title_label = QLabel("AselCam")
@@ -215,6 +222,9 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("AselCam")
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint | Qt.WindowType.Window)
         self.setObjectName("main_window")
+        logo_icon_path = os.path.join(os.path.dirname(__file__), "..", "assets", "aselcam_icon_256.png")
+        if os.path.exists(logo_icon_path):
+            self.setWindowIcon(QIcon(logo_icon_path))
         self.resize(1340, 840)
         self.setMinimumSize(1000, 680)
         self.setStyleSheet(DARK_STYLE)
@@ -609,10 +619,17 @@ class MainWindow(QMainWindow):
         insp_header = QHBoxLayout()
         insp_header.setSpacing(8)
 
-        insp_icon = QLabel("◈")
+        insp_icon = QLabel()
         insp_icon.setFixedSize(30, 30)
         insp_icon.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        insp_icon.setStyleSheet("background-color: #262a35; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 6px; font-size: 14px; color: #4d8eff;")
+        insp_logo_path = os.path.join(os.path.dirname(__file__), "..", "assets", "aselcam_icon_64.png")
+        if os.path.exists(insp_logo_path):
+            pix = QPixmap(insp_logo_path).scaled(26, 26, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
+            insp_icon.setPixmap(pix)
+            insp_icon.setStyleSheet("background: transparent; border: none;")
+        else:
+            insp_icon.setText("◈")
+            insp_icon.setStyleSheet("background-color: #262a35; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 6px; font-size: 14px; color: #4d8eff;")
         insp_header.addWidget(insp_icon)
 
         insp_titles = QVBoxLayout()

@@ -8,6 +8,7 @@ echo sLinkFile = oWS.SpecialFolders("Desktop") ^& "\AselCam.lnk" >> %SCRIPT%
 echo Set oLink = oWS.CreateShortcut(sLinkFile) >> %SCRIPT%
 echo oLink.TargetPath = "%APP_PATH%" >> %SCRIPT%
 echo oLink.WorkingDirectory = "%~dp0" >> %SCRIPT%
+echo oLink.IconLocation = "%~dp0AselCam.ico,0" >> %SCRIPT%
 echo oLink.Description = "AselCam Virtual Camera Studio" >> %SCRIPT%
 echo oLink.Save >> %SCRIPT%
 cscript /nologo %SCRIPT%

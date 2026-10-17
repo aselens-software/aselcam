@@ -18,6 +18,8 @@
     <string>????</string>
     <key>CFBundleExecutable</key>
     <string>AselCam</string>
+    <key>CFBundleIconFile</key>
+    <string>AselCam.icns</string>
     <key>LSMinimumSystemVersion</key>
     <string>11.0</string>
     <key>NSHighResolutionCapable</key>

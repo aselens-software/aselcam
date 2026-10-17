@@ -4,6 +4,7 @@ import signal
 import ctypes
 from PyQt6.QtWidgets import QApplication
 from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QIcon
 
 from aselcam.gui.main_window import MainWindow
 
@@ -42,6 +43,10 @@ def main():
     app.setApplicationDisplayName("AselCam")
     app.setDesktopFileName("aselcam.desktop")
     app.setOrganizationName("Asel")
+
+    icon_path = os.path.join(os.path.dirname(__file__), "assets", "aselcam_icon_256.png")
+    if os.path.exists(icon_path):
+        app.setWindowIcon(QIcon(icon_path))
 
     # Ensure C-locale numeric conventions for neural network inference (ONNX) and OpenMP
     try:
