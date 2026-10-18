@@ -23,9 +23,11 @@ class VideoWidget(QWidget):
         self._screen_mirroring = False
         self._horz_logo: Optional[QPixmap] = None
 
-        logo_path = os.path.join(os.path.dirname(__file__), "..", "assets", "aselcam_logo_horz_128.png")
+        logo_path = os.path.join(os.path.dirname(__file__), "..", "assets", "aselcam_logo-horz-white.svg")
         if not os.path.exists(logo_path):
-            logo_path = os.path.join(os.path.dirname(__file__), "..", "..", "docs", "aselcam_logo-horz.svg")
+            logo_path = os.path.join(os.path.dirname(__file__), "..", "..", "docs", "aselcam_logo-horz-white.svg")
+        if not os.path.exists(logo_path):
+            logo_path = os.path.join(os.path.dirname(__file__), "..", "assets", "aselcam_logo_horz_128.png")
         if os.path.exists(logo_path):
             self._horz_logo = QPixmap(logo_path)
 
@@ -103,24 +105,37 @@ class VideoWidget(QWidget):
                 painter.setBrush(QBrush(QColor("#0f172a")))
                 painter.drawRoundedRect(card_rect, 12.0, 12.0)
 
+                # Draw Horizontal White Logo
+                if self._horz_logo and not self._horz_logo.isNull():
+                    scaled_logo = self._horz_logo.scaled(
+                        220, 52,
+                        Qt.AspectRatioMode.KeepAspectRatio,
+                        Qt.TransformationMode.SmoothTransformation
+                    )
+                    lw = scaled_logo.width()
+                    lh = scaled_logo.height()
+                    lx = (w - lw) / 2.0
+                    ly = float(h // 2 - 92)
+                    painter.drawPixmap(int(lx), int(ly), scaled_logo)
+
                 painter.setPen(QColor("#38bdf8"))
                 font = QFont("Space Grotesk", 15, QFont.Weight.Bold)
                 painter.setFont(font)
-                painter.drawText(QRectF(0, h // 2 - 42, w, 32), Qt.AlignmentFlag.AlignCenter, "Performans Modu Aktif")
+                painter.drawText(QRectF(0, h // 2 - 28, w, 28), Qt.AlignmentFlag.AlignCenter, _t("perf_mode_title"))
 
                 painter.setPen(QColor("#94a3b8"))
-                font.setPointSize(11)
+                font.setPointSize(10)
                 font.setBold(False)
                 painter.setFont(font)
                 painter.drawText(
-                    QRectF(0, h // 2 - 4, w, 45),
+                    QRectF(0, h // 2 + 6, w, 45),
                     Qt.AlignmentFlag.AlignCenter,
-                    "Önizleme kapatıldı. GPU ve ekran gücünden tasarruf ediliyor.\nSanal kamera ve mikrofon tam performansla yayına devam ediyor."
+                    _t("perf_mode_sub")
                 )
 
                 # Status pill badge
-                pill_w, pill_h = 240.0, 28.0
-                pill_rect = QRectF((w - pill_w) / 2.0, float(h // 2 + 50), pill_w, pill_h)
+                pill_w, pill_h = 260.0, 28.0
+                pill_rect = QRectF((w - pill_w) / 2.0, float(h // 2 + 58), pill_w, pill_h)
                 painter.setPen(QPen(QColor(16, 185, 129, 90), 1))
                 painter.setBrush(QColor(16, 185, 129, 30))
                 painter.drawRoundedRect(pill_rect, 14.0, 14.0)

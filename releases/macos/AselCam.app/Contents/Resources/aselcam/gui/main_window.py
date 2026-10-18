@@ -8,7 +8,7 @@ from PyQt6.QtWidgets import (
     QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QGridLayout,
     QPushButton, QLabel, QLineEdit, QComboBox, QSlider, QCheckBox,
     QTabWidget, QGroupBox, QProgressBar, QStatusBar, QMessageBox,
-    QFrame, QSplitter, QScrollArea, QFileDialog
+    QFrame, QSplitter, QScrollArea, QFileDialog, QSystemTrayIcon, QMenu
 )
 from PyQt6.QtCore import Qt, QTimer, pyqtSignal, pyqtSlot, QPoint
 from PyQt6.QtGui import QIcon, QFont, QColor, QPixmap
@@ -23,6 +23,52 @@ from ..core.filters import VideoFilters
 from ..core.controller import PhoneController
 from ..core.receiver import StreamReceiver
 from ..core.i18n import _t, tr, I18nManager, SUPPORTED_LANGUAGES
+
+class ValueBadgeEdit(QLineEdit):
+    """
+    Precision editable readout badge that displays current slider value,
+    and allows user to click, type a number with keyboard, and press Enter to adjust slider.
+    """
+    userValueChanged = pyqtSignal(float)
+
+    def __init__(self, text: str = "", is_float: bool = False, min_val: float = -100.0, max_val: float = 100.0, suffix: str = "", parent=None):
+        super().__init__(text, parent)
+        self.setObjectName("lbl_value_badge")
+        self.is_float = is_float
+        self.min_val = min_val
+        self.max_val = max_val
+        self.suffix = suffix
+        self.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.setFixedWidth(64 if suffix else 52)
+        self.setFixedHeight(22)
+        self.returnPressed.connect(self._on_committed)
+        self.editingFinished.connect(self._on_committed)
+
+    def setText(self, text: str):
+        if self.hasFocus():
+            return
+        super().setText(text)
+
+    def set_value(self, val: float):
+        if self.hasFocus():
+            return
+        if self.is_float:
+            self.setText(f"{val:.1f}{self.suffix}")
+        else:
+            self.setText(f"{int(round(val))}{self.suffix}")
+
+    def _on_committed(self):
+        raw = self.text().strip()
+        if self.suffix:
+            raw = raw.replace(self.suffix.strip(), "").replace(self.suffix, "")
+        raw = raw.replace("+", "").replace("%", "").replace("x", "").replace("X", "").strip()
+        try:
+            val = float(raw)
+            val = max(self.min_val, min(self.max_val, val))
+            self.userValueChanged.emit(val)
+            self.set_value(val)
+        except ValueError:
+            pass
 
 class CustomTitleBar(QWidget):
     """
@@ -63,17 +109,12 @@ class CustomTitleBar(QWidget):
         self.title_label.setStyleSheet("color: #dfe2f1; font-weight: 700; letter-spacing: -0.02em; background: transparent;")
         layout.addWidget(self.title_label)
 
-        self.badge_version = QLabel("v1.2")
+        self.badge_version = QLabel("v1.4.7")
         self.badge_version.setStyleSheet(
-            "background-color: rgba(255, 255, 255, 0.05); color: #8c909f; border: 1px solid rgba(255, 255, 255, 0.08); "
-            "border-radius: 4px; padding: 1px 5px; font-size: 9px; font-weight: 500; font-family: 'JetBrains Mono', monospace;"
+            "background: transparent; color: #94a3b8; border: none; "
+            "padding: 0px 4px; font-size: 10px; font-weight: 600; font-family: 'JetBrains Mono', monospace;"
         )
         layout.addWidget(self.badge_version)
-
-        # Studio Nav Tabs
-        self.lbl_nav_studio = QLabel("Stüdyo")
-        self.lbl_nav_studio.setStyleSheet("color: #adc6ff; font-weight: 700; font-size: 12px; margin-left: 12px; border-bottom: 2px solid #4d8eff; padding-bottom: 2px;")
-        layout.addWidget(self.lbl_nav_studio)
 
         layout.addStretch()
 
@@ -84,7 +125,7 @@ class CustomTitleBar(QWidget):
         pill_l.setContentsMargins(0, 0, 0, 0)
         pill_l.setSpacing(10)
 
-        self.lbl_device_info = QLabel("CİHAZ: —")
+        self.lbl_device_info = QLabel(f"{_t('label_device')} —")
         self.lbl_device_info.setStyleSheet("color: #94a3b8; font-weight: 600; font-size: 10px; font-family: 'JetBrains Mono', monospace;")
         pill_l.addWidget(self.lbl_device_info)
 
@@ -92,7 +133,7 @@ class CustomTitleBar(QWidget):
         sep1.setStyleSheet("color: rgba(255, 255, 255, 0.12); font-size: 10px;")
         pill_l.addWidget(sep1)
 
-        self.lbl_battery = QLabel("PİL: —%")
+        self.lbl_battery = QLabel(f"{_t('label_battery')} —%")
         self.lbl_battery.setStyleSheet("color: #4edea3; font-weight: 600; font-size: 10px; font-family: 'JetBrains Mono', monospace;")
         pill_l.addWidget(self.lbl_battery)
 
@@ -100,7 +141,7 @@ class CustomTitleBar(QWidget):
         sep2.setStyleSheet("color: rgba(255, 255, 255, 0.12); font-size: 10px;")
         pill_l.addWidget(sep2)
 
-        self.lbl_ping = QLabel("PING: — ms")
+        self.lbl_ping = QLabel(f"{_t('label_ping')} — ms")
         self.lbl_ping.setStyleSheet("color: #4cd7f6; font-weight: 600; font-size: 10px; font-family: 'JetBrains Mono', monospace;")
         pill_l.addWidget(self.lbl_ping)
 
@@ -108,21 +149,20 @@ class CustomTitleBar(QWidget):
         sep3.setStyleSheet("color: rgba(255, 255, 255, 0.12); font-size: 10px;")
         pill_l.addWidget(sep3)
 
-        self.status_badge = QLabel("● ÇEVRİMDIŞI")
+        self.status_badge = QLabel(_t("status_offline"))
         self.status_badge.setObjectName("status_badge")
         self.status_badge.setStyleSheet(
-            "background: rgba(239, 68, 68, 0.15); "
-            "color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); border-radius: 6px; padding: 2px 8px; font-weight: bold; font-size: 9px;"
+            "background: transparent; color: #f87171; border: none; padding: 2px 4px; font-weight: bold; font-size: 10px;"
         )
         pill_l.addWidget(self.status_badge)
 
         layout.addWidget(self.telemetry_pill)
         layout.addSpacing(8)
 
-        # 4. Language Selector Dropdown
+        # 4. Language Selector Dropdown with Flags
         self.combo_lang = QComboBox()
         self.combo_lang.setObjectName("combo_lang")
-        self.combo_lang.setFixedWidth(86)
+        self.combo_lang.setFixedWidth(96)
         self.combo_lang.setFixedHeight(26)
         self.combo_lang.setStyleSheet(
             "QComboBox { background-color: rgba(255, 255, 255, 0.06); color: #cbd5e1; border: 1px solid rgba(255, 255, 255, 0.12); "
@@ -131,11 +171,9 @@ class CustomTitleBar(QWidget):
             "QComboBox QAbstractItemView { background: #131722; color: #e2e8f0; selection-background-color: #2563eb; "
             "border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 6px; outline: none; padding: 4px; }"
         )
-        self.combo_lang.addItem("🌐 EN", "en")
-        self.combo_lang.addItem("🌐 TR", "tr")
-        self.combo_lang.addItem("🌐 DE", "de")
-        self.combo_lang.addItem("🌐 FR", "fr")
-        self.combo_lang.addItem("🌐 ES", "es")
+        for code, lang_name in SUPPORTED_LANGUAGES.items():
+            flag = lang_name.split()[0]
+            self.combo_lang.addItem(f"{flag} {code.upper()}", code)
 
         curr_lang = I18nManager.get_instance().current_language
         for idx in range(self.combo_lang.count()):
@@ -222,9 +260,14 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("AselCam")
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint | Qt.WindowType.Window)
         self.setObjectName("main_window")
-        logo_icon_path = os.path.join(os.path.dirname(__file__), "..", "assets", "aselcam_icon_256.png")
-        if os.path.exists(logo_icon_path):
-            self.setWindowIcon(QIcon(logo_icon_path))
+        win_icon = QIcon()
+        assets_dir = os.path.join(os.path.dirname(__file__), "..", "assets")
+        for sz in (16, 24, 32, 48, 64, 128, 256, 512):
+            fn = os.path.join(assets_dir, f"aselcam_icon_{sz}.png")
+            if os.path.exists(fn):
+                win_icon.addFile(fn)
+        if not win_icon.isNull():
+            self.setWindowIcon(win_icon)
         self.resize(1340, 840)
         self.setMinimumSize(1000, 680)
         self.setStyleSheet(DARK_STYLE)
@@ -274,15 +317,88 @@ class MainWindow(QMainWindow):
         self._mic_gain_timer.timeout.connect(self._send_debounced_mic_gain)
         self._pending_mic_gain = 1.0
 
+        self._force_quit = False
+        self._last_fps = 0.0
+        self._last_bitrate_kbps = 0.0
+        self._last_ping = -1.0
+        self._last_loss = 0.0
+        self._remote_torch_on = False
+        self._remote_phone_preview_on = True
+        self._remote_blackout_on = False
+        self.is_screen_mirror_active = False
+        self._loaded_cameras = []
+        self._last_device_model = "—"
+        self._last_battery_level = "—"
+
         self._setup_ui()
         self._setup_signals()
         self._init_drivers()
+        self._init_system_tray()
         self.retranslate_ui()
 
         # Telemetry poll timer
         self.telemetry_timer = QTimer(self)
         self.telemetry_timer.timeout.connect(self._poll_telemetry)
         self.telemetry_timer.start(2000)
+
+    def _init_system_tray(self):
+        """Initializes system tray icon and background persistence menu."""
+        self.tray_icon = QSystemTrayIcon(self)
+        logo_icon_path = os.path.join(os.path.dirname(__file__), "..", "assets", "aselcam_icon_64.png")
+        if os.path.exists(logo_icon_path):
+            self.tray_icon.setIcon(QIcon(logo_icon_path))
+        else:
+            self.tray_icon.setIcon(self.windowIcon())
+        self.tray_icon.setToolTip("AselCam Studio")
+
+        self.tray_menu = QMenu()
+        self.tray_action_show = self.tray_menu.addAction(_t("tray_show"))
+        self.tray_action_show.triggered.connect(self._toggle_window_from_tray)
+        self.tray_menu.addSeparator()
+        self.tray_action_quit = self.tray_menu.addAction(_t("tray_quit"))
+        self.tray_action_quit.triggered.connect(self._quit_application)
+
+        self.tray_icon.setContextMenu(self.tray_menu)
+        self.tray_icon.activated.connect(self._on_tray_activated)
+        self.tray_icon.show()
+
+    def _on_tray_activated(self, reason):
+        if reason in (QSystemTrayIcon.ActivationReason.Trigger, QSystemTrayIcon.ActivationReason.DoubleClick):
+            self._toggle_window_from_tray()
+
+    def _toggle_window_from_tray(self):
+        if self.isVisible():
+            self.hide()
+        else:
+            self.show()
+            self.activateWindow()
+            self.raise_()
+
+    def _quit_application(self):
+        self._force_quit = True
+        self.close()
+
+    def _toggle_hub_panel(self):
+        """Toggles the visibility of Hub #1 inspector pane."""
+        if hasattr(self, "right_container"):
+            is_visible = self.right_container.isVisible()
+            self.right_container.setVisible(not is_visible)
+            if hasattr(self, "btn_toggle_hub"):
+                self.btn_toggle_hub.setText("◧ Hub #1" if is_visible else "■ Hub #1")
+
+    def _update_status_bar_stats(self):
+        """Formats and displays live streaming stats in footer bar including delay and packet loss."""
+        delay_str = f"{self._last_ping:.0f} ms" if self._last_ping >= 0 else "—"
+        loss_str = f"{self._last_loss:.1f}%"
+        self.status_bar.showMessage(
+            _t("stream_active_status").format(
+                fps=f"{self._last_fps:.1f}",
+                bitrate=f"{self._last_bitrate_kbps / 1000.0:.2f}",
+                delay=delay_str,
+                loss=loss_str,
+                dev=self.v4l2_sink.device_path
+            )
+        )
 
     def _load_saved_filters(self):
         saved = self.config.get("filters", {})
@@ -503,12 +619,12 @@ class MainWindow(QMainWindow):
         strip_layout.addStretch()
 
         # Driver ready status
-        self.lbl_v4l2_indicator = QLabel("● Sürücü Hazır")
+        self.lbl_v4l2_indicator = QLabel(_t("driver_status_ready"))
         self.lbl_v4l2_indicator.setStyleSheet("color: #4edea3; font-weight: 600; font-size: 11px; font-family: 'JetBrains Mono', monospace;")
         strip_layout.addWidget(self.lbl_v4l2_indicator)
 
         # Master Connect Button (matches Stitch HTML line 262: Bağlan)
-        self.btn_master_connect = QPushButton("Bağlan")
+        self.btn_master_connect = QPushButton(_t("conn_btn_start"))
         self.btn_master_connect.setObjectName("btn_primary")
         self.btn_master_connect.setMinimumHeight(32)
         self.btn_master_connect.clicked.connect(self._toggle_master_connect)
@@ -585,8 +701,9 @@ class MainWindow(QMainWindow):
         self.slider_mic_gain.valueChanged.connect(self._on_mic_gain_changed)
         audio_l.addWidget(self.slider_mic_gain)
 
-        self.lbl_mic_gain = QLabel(f"{self.slider_mic_gain.value()}%")
+        self.lbl_mic_gain = ValueBadgeEdit(f"{self.slider_mic_gain.value()}%", min_val=0, max_val=200, suffix="%")
         self.lbl_mic_gain.setObjectName("lbl_value_badge")
+        self.lbl_mic_gain.userValueChanged.connect(lambda v: self.slider_mic_gain.setValue(int(round(v))))
         audio_l.addWidget(self.lbl_mic_gain)
 
         # Audio VU Level Meter
@@ -596,6 +713,12 @@ class MainWindow(QMainWindow):
         self.audio_vu.setTextVisible(False)
         self.audio_vu.setFixedWidth(60)
         audio_l.addWidget(self.audio_vu)
+
+        self.btn_toggle_hub = QPushButton("◧ Hub #1")
+        self.btn_toggle_hub.setObjectName("btn_toggle_hub")
+        self.btn_toggle_hub.setToolTip("Hub #1 Panelini Aç / Kapat")
+        self.btn_toggle_hub.clicked.connect(self._toggle_hub_panel)
+        vbar.addWidget(self.btn_toggle_hub)
 
         vbar.addWidget(audio_inset)
         left_layout.addWidget(dock_frame)
@@ -609,7 +732,7 @@ class MainWindow(QMainWindow):
         splitter.addWidget(left_container)
 
         # Right Container: Control Panels Tabs (Inspector Pane from Stitch)
-        right_container = QWidget()
+        self.right_container = right_container = QWidget()
         right_container.setObjectName("inspector_shell")
         right_layout = QVBoxLayout(right_container)
         right_layout.setContentsMargins(12, 12, 12, 12)
@@ -637,17 +760,28 @@ class MainWindow(QMainWindow):
         self.lbl_h_main = QLabel("Stüdyo Masası")
         self.lbl_h_main.setFont(QFont("Space Grotesk", 12, QFont.Weight.Bold))
         self.lbl_h_main.setStyleSheet("color: #dfe2f1; font-weight: 700;")
-        lbl_h_sub = QLabel("Sürücü Hazır")
-        lbl_h_sub.setStyleSheet("color: #4edea3; font-size: 10px; font-weight: 600; font-family: 'JetBrains Mono', monospace;")
+        self.lbl_h_sub = QLabel("Sürücü Hazır")
+        self.lbl_h_sub.setStyleSheet("color: #4edea3; font-size: 10px; font-weight: 600; font-family: 'JetBrains Mono', monospace;")
         insp_titles.addWidget(self.lbl_h_main)
-        insp_titles.addWidget(lbl_h_sub)
+        insp_titles.addWidget(self.lbl_h_sub)
         insp_header.addLayout(insp_titles)
 
         insp_header.addStretch()
 
-        lbl_hub_badge = QLabel("HUB #1")
-        lbl_hub_badge.setStyleSheet("background-color: #313540; color: #8c909f; border-radius: 4px; padding: 2px 6px; font-size: 10px; font-weight: 700; font-family: 'JetBrains Mono', monospace;")
-        insp_header.addWidget(lbl_hub_badge)
+        self.lbl_hub_badge = QLabel("HUB #1")
+        self.lbl_hub_badge.setStyleSheet("background-color: #313540; color: #8c909f; border-radius: 4px; padding: 2px 6px; font-size: 10px; font-weight: 700; font-family: 'JetBrains Mono', monospace;")
+        insp_header.addWidget(self.lbl_hub_badge)
+
+        self.btn_collapse_hub = QPushButton("✕")
+        self.btn_collapse_hub.setObjectName("btn_collapse_hub")
+        self.btn_collapse_hub.setFixedSize(24, 24)
+        self.btn_collapse_hub.setToolTip("Paneli Gizle")
+        self.btn_collapse_hub.setStyleSheet(
+            "QPushButton { background: #262a35; color: #94a3b8; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 4px; font-weight: bold; font-size: 11px; } "
+            "QPushButton:hover { background: #313540; color: #ffffff; }"
+        )
+        self.btn_collapse_hub.clicked.connect(self._toggle_hub_panel)
+        insp_header.addWidget(self.btn_collapse_hub)
 
         right_layout.addLayout(insp_header)
 
@@ -690,13 +824,13 @@ class MainWindow(QMainWindow):
         act_layout.addLayout(act_grid)
 
         # AMOLED Blackout (Full Width)
-        self.btn_remote_blackout = QPushButton("Ekranı Karart (AMOLED Tasarruf)")
+        self.btn_remote_blackout = QPushButton(_t("ctrl_blackout_on"))
         self.btn_remote_blackout.setToolTip("Telefon ekranını tamamen siyah yaparak OLED piksellerini kapatır")
         self.btn_remote_blackout.clicked.connect(self._remote_toggle_blackout)
         act_layout.addWidget(self.btn_remote_blackout)
 
-        # Screen Mirroring (Full Width Electric Cyan)
-        self.btn_screen_mirror = QPushButton("📱 Ekranı Yansıt (Telefon Ekranı)")
+        # Screen Mirroring (Full Width Electric Cyan, no emoji)
+        self.btn_screen_mirror = QPushButton(_t("ctrl_screen_mirror_btn"))
         self.btn_screen_mirror.setObjectName("btn_screen_mirror")
         self.btn_screen_mirror.setToolTip("Telefon ekranını canlı olarak aktarır (Kamera ve Ekran arasında geçiş yapar)")
         self.btn_screen_mirror.clicked.connect(self._remote_toggle_screen_mirror)
@@ -704,8 +838,8 @@ class MainWindow(QMainWindow):
 
         # Hidden or secondary dropdown for direct selection
         self.combo_remote_camera = QComboBox()
-        self.combo_remote_camera.addItem("0: Arka Kamera (Varsayılan)", "0")
-        self.combo_remote_camera.addItem("1: Ön Kamera", "1")
+        self.combo_remote_camera.addItem(_t("cam_rear_default"), "0")
+        self.combo_remote_camera.addItem(_t("cam_front_item"), "1")
         self.combo_remote_camera.currentIndexChanged.connect(self._on_remote_camera_selected)
         act_layout.addWidget(self.combo_remote_camera)
 
@@ -719,7 +853,7 @@ class MainWindow(QMainWindow):
         zoom_hdr = QHBoxLayout()
         self.lbl_zoom_title = QLabel("Mevcut Zoom:")
         zoom_hdr.addWidget(self.lbl_zoom_title)
-        self.lbl_zoom = QLabel("1.0x")
+        self.lbl_zoom = ValueBadgeEdit("1.0x", is_float=True, min_val=1.0, max_val=100.0, suffix="x")
         self.lbl_zoom.setObjectName("lbl_value_badge")
         zoom_hdr.addWidget(self.lbl_zoom, 0, Qt.AlignmentFlag.AlignRight)
         zoom_l.addLayout(zoom_hdr)
@@ -728,6 +862,7 @@ class MainWindow(QMainWindow):
         self.slider_zoom.setRange(10, 1000) # 1.0x to 100.0x (S25 Ultra support)
         self.slider_zoom.setValue(10)
         self.slider_zoom.valueChanged.connect(self._remote_zoom_changed)
+        self.lbl_zoom.userValueChanged.connect(lambda v: self.slider_zoom.setValue(int(round(v * 10))))
         zoom_l.addWidget(self.slider_zoom)
 
         # Quick Preset Chips (Supports full phone multi-camera range)
@@ -744,15 +879,15 @@ class MainWindow(QMainWindow):
         remote_layout.addWidget(zoom_box)
 
         # Quick Aspect Ratio / Portrait-Landscape Selector
-        aspect_box = QGroupBox("En-Boy Oranı && Yön (Yatay / Dikey / Kare)")
+        self.aspect_box = aspect_box = QGroupBox(_t("aspect_header"))
         aspect_l = QVBoxLayout(aspect_box)
         self.combo_quick_aspect = QComboBox()
-        self.combo_quick_aspect.addItem("16:9 Yatay (1920x1080)", "1920x1080")
-        self.combo_quick_aspect.addItem("9:16 Dikey (1080x1920)", "1080x1920")
-        self.combo_quick_aspect.addItem("4:3 Yatay (1440x1080)", "1440x1080")
-        self.combo_quick_aspect.addItem("3:4 Dikey (1080x1440)", "1080x1440")
-        self.combo_quick_aspect.addItem("1:1 Kare (1080x1080)", "1080x1080")
-        self.combo_quick_aspect.addItem("9:16 Dikey HD (720x1280)", "720x1280")
+        self.combo_quick_aspect.addItem(f"16:9 {_t('aspect_16_9_landscape')} (1920x1080)", "1920x1080")
+        self.combo_quick_aspect.addItem(f"9:16 {_t('aspect_9_16_portrait')} (1080x1920)", "1080x1920")
+        self.combo_quick_aspect.addItem(f"4:3 {_t('aspect_4_3_landscape')} (1440x1080)", "1440x1080")
+        self.combo_quick_aspect.addItem(f"3:4 {_t('aspect_3_4_portrait')} (1080x1440)", "1080x1440")
+        self.combo_quick_aspect.addItem(f"1:1 {_t('aspect_1_1_square')} (1080x1080)", "1080x1080")
+        self.combo_quick_aspect.addItem(f"9:16 {_t('aspect_9_16_portrait')} HD (720x1280)", "720x1280")
         self.combo_quick_aspect.currentIndexChanged.connect(self._on_quick_aspect_selected)
         aspect_l.addWidget(self.combo_quick_aspect)
         remote_layout.addWidget(aspect_box)
@@ -835,8 +970,9 @@ class MainWindow(QMainWindow):
         frad_row = QHBoxLayout()
         self.lbl_frad = QLabel("Kişi Algılama Hassasiyeti:")
         frad_row.addWidget(self.lbl_frad)
-        self.lbl_focus_radius = QLabel(f"{self.filters.focus_radius}%")
+        self.lbl_focus_radius = ValueBadgeEdit(f"{self.filters.focus_radius}%", min_val=20, max_val=90, suffix="%")
         self.lbl_focus_radius.setObjectName("lbl_value_badge")
+        self.lbl_focus_radius.userValueChanged.connect(lambda v: self.slider_focus_radius.setValue(int(round(v))))
         frad_row.addWidget(self.lbl_focus_radius, 0, Qt.AlignmentFlag.AlignRight)
         focus_l.addLayout(frad_row)
 
@@ -850,8 +986,9 @@ class MainWindow(QMainWindow):
         fblur_row = QHBoxLayout()
         self.lbl_fblur = QLabel("Bulanıklık Seviyesi:")
         fblur_row.addWidget(self.lbl_fblur)
-        self.lbl_focus_blur = QLabel(str(self.filters.focus_blur))
+        self.lbl_focus_blur = ValueBadgeEdit(str(self.filters.focus_blur), min_val=5, max_val=35)
         self.lbl_focus_blur.setObjectName("lbl_value_badge")
+        self.lbl_focus_blur.userValueChanged.connect(lambda v: self.slider_focus_blur.setValue(int(round(v))))
         fblur_row.addWidget(self.lbl_focus_blur, 0, Qt.AlignmentFlag.AlignRight)
         focus_l.addLayout(fblur_row)
 
@@ -881,8 +1018,9 @@ class MainWindow(QMainWindow):
         exp_row = QHBoxLayout()
         self.lbl_exp = QLabel("Pozlama (Exposure):")
         exp_row.addWidget(self.lbl_exp)
-        self.lbl_exposure = QLabel(f"{self.filters.exposure:+.1f} EV")
+        self.lbl_exposure = ValueBadgeEdit(f"{self.filters.exposure:+.1f} EV", is_float=True, min_val=-2.0, max_val=2.0, suffix=" EV")
         self.lbl_exposure.setObjectName("lbl_value_badge")
+        self.lbl_exposure.userValueChanged.connect(lambda v: self.slider_exposure.setValue(int(round(v * 10))))
         exp_row.addWidget(self.lbl_exposure, 0, Qt.AlignmentFlag.AlignRight)
         tone_layout.addLayout(exp_row)
 
@@ -896,8 +1034,9 @@ class MainWindow(QMainWindow):
         high_row = QHBoxLayout()
         self.lbl_high = QLabel("Açık Tonlar (Highlights):")
         high_row.addWidget(self.lbl_high)
-        self.lbl_highlights = QLabel(str(self.filters.highlights))
+        self.lbl_highlights = ValueBadgeEdit(str(self.filters.highlights), min_val=-100, max_val=100)
         self.lbl_highlights.setObjectName("lbl_value_badge")
+        self.lbl_highlights.userValueChanged.connect(lambda v: self.slider_highlights.setValue(int(round(v))))
         high_row.addWidget(self.lbl_highlights, 0, Qt.AlignmentFlag.AlignRight)
         tone_layout.addLayout(high_row)
 
@@ -911,8 +1050,9 @@ class MainWindow(QMainWindow):
         shadow_row = QHBoxLayout()
         self.lbl_shadow = QLabel("Gölgeler (Shadows):")
         shadow_row.addWidget(self.lbl_shadow)
-        self.lbl_shadows = QLabel(str(self.filters.shadows))
+        self.lbl_shadows = ValueBadgeEdit(str(self.filters.shadows), min_val=-100, max_val=100)
         self.lbl_shadows.setObjectName("lbl_value_badge")
+        self.lbl_shadows.userValueChanged.connect(lambda v: self.slider_shadows.setValue(int(round(v))))
         shadow_row.addWidget(self.lbl_shadows, 0, Qt.AlignmentFlag.AlignRight)
         tone_layout.addLayout(shadow_row)
 
@@ -926,8 +1066,9 @@ class MainWindow(QMainWindow):
         whites_row = QHBoxLayout()
         self.lbl_whites_title = QLabel("Beyazlar (Whites):")
         whites_row.addWidget(self.lbl_whites_title)
-        self.lbl_whites = QLabel(str(self.filters.whites))
+        self.lbl_whites = ValueBadgeEdit(str(self.filters.whites), min_val=-100, max_val=100)
         self.lbl_whites.setObjectName("lbl_value_badge")
+        self.lbl_whites.userValueChanged.connect(lambda v: self.slider_whites.setValue(int(round(v))))
         whites_row.addWidget(self.lbl_whites, 0, Qt.AlignmentFlag.AlignRight)
         tone_layout.addLayout(whites_row)
 
@@ -941,8 +1082,9 @@ class MainWindow(QMainWindow):
         blacks_row = QHBoxLayout()
         self.lbl_blacks_title = QLabel("Siyahlar (Blacks):")
         blacks_row.addWidget(self.lbl_blacks_title)
-        self.lbl_blacks = QLabel(str(self.filters.blacks))
+        self.lbl_blacks = ValueBadgeEdit(str(self.filters.blacks), min_val=-100, max_val=100)
         self.lbl_blacks.setObjectName("lbl_value_badge")
+        self.lbl_blacks.userValueChanged.connect(lambda v: self.slider_blacks.setValue(int(round(v))))
         blacks_row.addWidget(self.lbl_blacks, 0, Qt.AlignmentFlag.AlignRight)
         tone_layout.addLayout(blacks_row)
 
@@ -956,8 +1098,9 @@ class MainWindow(QMainWindow):
         contrast_row = QHBoxLayout()
         self.lbl_contrast_title = QLabel("Karşıtlık (Kontrast):")
         contrast_row.addWidget(self.lbl_contrast_title)
-        self.lbl_contrast = QLabel(str(self.filters.contrast))
+        self.lbl_contrast = ValueBadgeEdit(str(self.filters.contrast), min_val=-100, max_val=100)
         self.lbl_contrast.setObjectName("lbl_value_badge")
+        self.lbl_contrast.userValueChanged.connect(lambda v: self.slider_contrast.setValue(int(round(v))))
         contrast_row.addWidget(self.lbl_contrast, 0, Qt.AlignmentFlag.AlignRight)
         tone_layout.addLayout(contrast_row)
 
@@ -971,8 +1114,9 @@ class MainWindow(QMainWindow):
         bright_row = QHBoxLayout()
         self.lbl_bright_title = QLabel("Parlaklık:")
         bright_row.addWidget(self.lbl_bright_title)
-        self.lbl_bright = QLabel(str(self.filters.brightness))
+        self.lbl_bright = ValueBadgeEdit(str(self.filters.brightness), min_val=-100, max_val=100)
         self.lbl_bright.setObjectName("lbl_value_badge")
+        self.lbl_bright.userValueChanged.connect(lambda v: self.slider_bright.setValue(int(round(v))))
         bright_row.addWidget(self.lbl_bright, 0, Qt.AlignmentFlag.AlignRight)
         tone_layout.addLayout(bright_row)
 
@@ -993,8 +1137,9 @@ class MainWindow(QMainWindow):
         temp_row = QHBoxLayout()
         self.lbl_temp_title = QLabel("Renk Sıcaklığı (Mavi ↔ Sarı):")
         temp_row.addWidget(self.lbl_temp_title)
-        self.lbl_temp = QLabel("Doğal" if self.filters.temperature == 0 else f"{self.filters.temperature:+d}")
+        self.lbl_temp = ValueBadgeEdit("0" if self.filters.temperature == 0 else f"{self.filters.temperature:+d}", min_val=-100, max_val=100)
         self.lbl_temp.setObjectName("lbl_value_badge")
+        self.lbl_temp.userValueChanged.connect(lambda v: self.slider_temp.setValue(int(round(v))))
         temp_row.addWidget(self.lbl_temp, 0, Qt.AlignmentFlag.AlignRight)
         color_layout.addLayout(temp_row)
 
@@ -1008,8 +1153,9 @@ class MainWindow(QMainWindow):
         tint_row = QHBoxLayout()
         self.lbl_tint_title = QLabel("Renk Tonu (Yeşil ↔ Macenta):")
         tint_row.addWidget(self.lbl_tint_title)
-        self.lbl_tint = QLabel("Doğal" if self.filters.tint == 0 else f"{self.filters.tint:+d}")
+        self.lbl_tint = ValueBadgeEdit("0" if self.filters.tint == 0 else f"{self.filters.tint:+d}", min_val=-100, max_val=100)
         self.lbl_tint.setObjectName("lbl_value_badge")
+        self.lbl_tint.userValueChanged.connect(lambda v: self.slider_tint.setValue(int(round(v))))
         tint_row.addWidget(self.lbl_tint, 0, Qt.AlignmentFlag.AlignRight)
         color_layout.addLayout(tint_row)
 
@@ -1023,8 +1169,9 @@ class MainWindow(QMainWindow):
         vib_row = QHBoxLayout()
         self.lbl_vib_title = QLabel("Canlılık (Vibrance):")
         vib_row.addWidget(self.lbl_vib_title)
-        self.lbl_vibrance = QLabel(str(self.filters.vibrance))
+        self.lbl_vibrance = ValueBadgeEdit(str(self.filters.vibrance), min_val=-100, max_val=100)
         self.lbl_vibrance.setObjectName("lbl_value_badge")
+        self.lbl_vibrance.userValueChanged.connect(lambda v: self.slider_vibrance.setValue(int(round(v))))
         vib_row.addWidget(self.lbl_vibrance, 0, Qt.AlignmentFlag.AlignRight)
         color_layout.addLayout(vib_row)
 
@@ -1038,8 +1185,9 @@ class MainWindow(QMainWindow):
         sat_row = QHBoxLayout()
         self.lbl_sat_title = QLabel("Doygunluk:")
         sat_row.addWidget(self.lbl_sat_title)
-        self.lbl_sat = QLabel(f"{self.filters.saturation}%")
+        self.lbl_sat = ValueBadgeEdit(f"{self.filters.saturation}%", min_val=0, max_val=200, suffix="%")
         self.lbl_sat.setObjectName("lbl_value_badge")
+        self.lbl_sat.userValueChanged.connect(lambda v: self.slider_sat.setValue(int(round(v))))
         sat_row.addWidget(self.lbl_sat, 0, Qt.AlignmentFlag.AlignRight)
         color_layout.addLayout(sat_row)
 
@@ -1077,8 +1225,9 @@ class MainWindow(QMainWindow):
         r_row = QHBoxLayout()
         self.lbl_r = QLabel("Kırmızı Dengesi (R):")
         r_row.addWidget(self.lbl_r)
-        self.lbl_gain_r = QLabel(f"{self.filters.red_gain:+d}")
+        self.lbl_gain_r = ValueBadgeEdit(f"{self.filters.red_gain:+d}", min_val=-50, max_val=50)
         self.lbl_gain_r.setObjectName("lbl_value_badge")
+        self.lbl_gain_r.userValueChanged.connect(lambda v: self.slider_gain_r.setValue(int(round(v))))
         r_row.addWidget(self.lbl_gain_r, 0, Qt.AlignmentFlag.AlignRight)
         rgb_layout.addLayout(r_row)
 
@@ -1092,8 +1241,9 @@ class MainWindow(QMainWindow):
         g_row = QHBoxLayout()
         self.lbl_g = QLabel("Yeşil Dengesi (G):")
         g_row.addWidget(self.lbl_g)
-        self.lbl_gain_g = QLabel(f"{self.filters.green_gain:+d}")
+        self.lbl_gain_g = ValueBadgeEdit(f"{self.filters.green_gain:+d}", min_val=-50, max_val=50)
         self.lbl_gain_g.setObjectName("lbl_value_badge")
+        self.lbl_gain_g.userValueChanged.connect(lambda v: self.slider_gain_g.setValue(int(round(v))))
         g_row.addWidget(self.lbl_gain_g, 0, Qt.AlignmentFlag.AlignRight)
         rgb_layout.addLayout(g_row)
 
@@ -1107,8 +1257,9 @@ class MainWindow(QMainWindow):
         b_row = QHBoxLayout()
         self.lbl_b = QLabel("Mavi Dengesi (B):")
         b_row.addWidget(self.lbl_b)
-        self.lbl_gain_b = QLabel(f"{self.filters.blue_gain:+d}")
+        self.lbl_gain_b = ValueBadgeEdit(f"{self.filters.blue_gain:+d}", min_val=-50, max_val=50)
         self.lbl_gain_b.setObjectName("lbl_value_badge")
+        self.lbl_gain_b.userValueChanged.connect(lambda v: self.slider_gain_b.setValue(int(round(v))))
         b_row.addWidget(self.lbl_gain_b, 0, Qt.AlignmentFlag.AlignRight)
         rgb_layout.addLayout(b_row)
 
@@ -1129,8 +1280,9 @@ class MainWindow(QMainWindow):
         sharp_row = QHBoxLayout()
         self.lbl_sharp_title = QLabel("Gerçek Keskinlik (Laplacian):")
         sharp_row.addWidget(self.lbl_sharp_title)
-        self.lbl_sharp = QLabel("Kapalı" if self.filters.sharpness == 0 else f"{self.filters.sharpness}%")
+        self.lbl_sharp = ValueBadgeEdit("0%" if self.filters.sharpness == 0 else f"{self.filters.sharpness}%", min_val=0, max_val=100, suffix="%")
         self.lbl_sharp.setObjectName("lbl_value_badge")
+        self.lbl_sharp.userValueChanged.connect(lambda v: self.slider_sharp.setValue(int(round(v))))
         sharp_row.addWidget(self.lbl_sharp, 0, Qt.AlignmentFlag.AlignRight)
         detail_layout.addLayout(sharp_row)
 
@@ -1198,26 +1350,29 @@ class MainWindow(QMainWindow):
         settings_layout.setSpacing(8)
 
         # Resolution (16:9, 9:16 Portrait, 4:3, 3:4 Portrait, 1:1 Square)
-        settings_layout.addWidget(QLabel("Çözünürlük & En-Boy Oranı (16:9, 9:16 Dikey, 4:3, 1:1):"))
+        self.lbl_settings_res = QLabel(_t("settings_res_title"))
+        settings_layout.addWidget(self.lbl_settings_res)
         self.combo_res = QComboBox()
-        self.combo_res.addItems([
-            "1920x1080 (1080p FHD - 16:9 Yatay)",
-            "1080x1920 (1080p FHD - 9:16 Dikey)",
-            "1280x720 (720p HD - 16:9 Yatay)",
-            "720x1280 (720p HD - 9:16 Dikey)",
-            "1440x1080 (1080p - 4:3 Yatay)",
-            "1080x1440 (1080p - 3:4 Dikey)",
-            "1080x1080 (1080p - 1:1 Kare)",
-            "720x720 (720p - 1:1 Kare)",
-            "3840x2160 (4K UHD - 16:9 Yatay)",
-            "2560x1440 (2K QHD - 16:9 Yatay)",
-            "960x720 (720p - 4:3 Yatay)",
-            "854x480 (480p SD - 16:9 Yatay)",
-            "640x480 (480p SD - 4:3 Yatay)"
-        ])
+        res_list = [
+            ("1920x1080", f"1920x1080 (1080p FHD - {_t('aspect_16_9_landscape')})"),
+            ("1080x1920", f"1080x1920 (1080p FHD - {_t('aspect_9_16_portrait')})"),
+            ("1280x720", f"1280x720 (720p HD - {_t('aspect_16_9_landscape')})"),
+            ("720x1280", f"720x1280 (720p HD - {_t('aspect_9_16_portrait')})"),
+            ("1440x1080", f"1440x1080 (1080p - {_t('aspect_4_3_landscape')})"),
+            ("1080x1440", f"1080x1440 (1080p - {_t('aspect_3_4_portrait')})"),
+            ("1080x1080", f"1080x1080 (1080p - {_t('aspect_1_1_square')})"),
+            ("720x720", f"720x720 (720p - {_t('aspect_1_1_square')})"),
+            ("3840x2160", f"3840x2160 (4K UHD - {_t('aspect_16_9_landscape')})"),
+            ("2560x1440", f"2560x1440 (2K QHD - {_t('aspect_16_9_landscape')})"),
+            ("960x720", f"960x720 (720p - {_t('aspect_4_3_landscape')})"),
+            ("854x480", f"854x480 (480p SD - {_t('aspect_16_9_landscape')})"),
+            ("640x480", f"640x480 (480p SD - {_t('aspect_4_3_landscape')})"),
+        ]
+        for val, label in res_list:
+            self.combo_res.addItem(label, val)
         saved_res = self.config.get("resolution", "1920x1080").split()[0]
         for i in range(self.combo_res.count()):
-            if self.combo_res.itemText(i).startswith(saved_res):
+            if self.combo_res.itemData(i) == saved_res or self.combo_res.itemText(i).startswith(saved_res):
                 self.combo_res.setCurrentIndex(i)
                 break
         self.combo_quick_aspect.blockSignals(True)
@@ -1229,7 +1384,8 @@ class MainWindow(QMainWindow):
         settings_layout.addWidget(self.combo_res)
 
         # FPS
-        settings_layout.addWidget(QLabel("Kare Hızı (FPS):"))
+        self.lbl_settings_fps = QLabel(_t("settings_fps_title"))
+        settings_layout.addWidget(self.lbl_settings_fps)
         self.combo_fps = QComboBox()
         self.combo_fps.addItems(["60 FPS", "30 FPS", "24 FPS", "15 FPS"])
         saved_fps = f"{self.config.get('fps', 30)} FPS"
@@ -1237,19 +1393,20 @@ class MainWindow(QMainWindow):
         settings_layout.addWidget(self.combo_fps)
 
         # Bitrate
-        settings_layout.addWidget(QLabel("Bitrate (Akış Kalitesi):"))
+        self.lbl_settings_bitrate = QLabel(_t("settings_bitrate_title"))
+        settings_layout.addWidget(self.lbl_settings_bitrate)
         self.combo_bitrate = QComboBox()
         self.combo_bitrate.addItems([
-            "50 Mbps (Maksimum Kalite)",
-            "35 Mbps (4K Ultra)",
-            "25 Mbps (2K / 1080p60 Yüksek)",
-            "20 Mbps (Yüksek Kalite)",
-            "16 Mbps (1080p60 Dengeli)",
-            "12 Mbps (1080p İdeal)",
-            "8 Mbps (Standart)",
-            "6 Mbps (Orta)",
-            "4 Mbps (Düşük Bant Genişliği)",
-            "2 Mbps (Ultra Düşük)"
+            _t("br_50"),
+            _t("br_35"),
+            _t("br_25"),
+            _t("br_20"),
+            _t("br_16"),
+            _t("br_12"),
+            _t("br_8"),
+            _t("br_6"),
+            _t("br_4"),
+            _t("br_2")
         ])
         saved_bitrate_mbps = max(1, int(self.config.get("bitrate", 8000000)) // 1000000)
         matched_br = False
@@ -1263,9 +1420,11 @@ class MainWindow(QMainWindow):
         settings_layout.addWidget(self.combo_bitrate)
 
         # Codec
-        settings_layout.addWidget(QLabel("Video Codec:"))
+        self.lbl_settings_codec = QLabel(_t("settings_codec_title"))
+        settings_layout.addWidget(self.lbl_settings_codec)
         self.combo_codec = QComboBox()
-        self.combo_codec.addItems(["H.264 (Evrensel)", "H.265 / HEVC (Yüksek Sıkıştırma)"])
+        self.combo_codec.addItem(_t("codec_h264_dropdown"), "h264")
+        self.combo_codec.addItem(_t("codec_h265_dropdown"), "hevc")
         if str(self.config.get("codec", "h264")).lower() in ("hevc", "h265"):
             self.combo_codec.setCurrentIndex(1)
         settings_layout.addWidget(self.combo_codec)
@@ -1300,21 +1459,6 @@ class MainWindow(QMainWindow):
         self.btn_apply_settings_cta.clicked.connect(self._apply_stream_settings)
         insp_footer.addWidget(self.btn_apply_settings_cta)
 
-        # Footer Diagnostic Tabs
-        diag_row = QHBoxLayout()
-        diag_row.setContentsMargins(4, 0, 4, 0)
-
-        lbl_diag_drv = QLabel("● Sürücü Durumu: Hazır")
-        lbl_diag_drv.setStyleSheet("color: #4edea3; font-size: 11px; font-weight: 600; font-family: 'JetBrains Mono', monospace;")
-        diag_row.addWidget(lbl_diag_drv)
-
-        diag_row.addStretch()
-
-        lbl_diag_log = QLabel("Günlükler")
-        lbl_diag_log.setStyleSheet("color: #4cd7f6; font-size: 11px; font-weight: 600; font-family: 'JetBrains Mono', monospace;")
-        diag_row.addWidget(lbl_diag_log)
-
-        insp_footer.addLayout(diag_row)
         right_layout.addLayout(insp_footer)
 
         splitter.addWidget(right_container)
@@ -1345,18 +1489,19 @@ class MainWindow(QMainWindow):
 
     def retranslate_ui(self):
         """Refreshes all UI text labels, tooltips, buttons, and placeholders for the active language."""
-        lang = I18nManager.get_instance().current_language
-
         # 1. Custom Title Bar
         if hasattr(self, "title_bar"):
-            self.title_bar.lbl_nav_studio.setText(_t("tab_studio"))
             self.title_bar.btn_min.setToolTip(_t("win_min"))
             self.title_bar.btn_max.setToolTip(_t("win_max"))
             self.title_bar.btn_close.setToolTip(_t("win_close"))
-            if not self.is_connected:
-                self.title_bar.status_badge.setText(_t("status_offline"))
-            else:
-                self.title_bar.status_badge.setText(_t("status_live"))
+            self.title_bar.badge_version.setText(_t("version_tag"))
+            curr_model = getattr(self, "_last_device_model", "—")
+            self.lbl_device_info.setText(f"{_t('label_device')} {curr_model}")
+            curr_batt = getattr(self, "_last_battery_level", "—")
+            self.lbl_battery.setText(f"{_t('label_battery')} {curr_batt}%" if curr_batt != "—" else f"{_t('label_battery')} —%")
+            curr_ping = getattr(self, "_last_ping", -1)
+            self.lbl_ping.setText(f"{_t('label_ping')} {curr_ping:.0f} ms" if curr_ping >= 0 else f"{_t('label_ping')} — ms")
+            self.title_bar.status_badge.setText(_t("status_live") if self.is_connected else _t("status_offline"))
 
         # 2. Connection Strip
         if hasattr(self, "btn_mode_usb"):
@@ -1369,6 +1514,8 @@ class MainWindow(QMainWindow):
             self.btn_refresh_adb.setText(_t("refresh"))
             self.btn_refresh_adb.setToolTip(_t("refresh"))
             self.txt_ip.setPlaceholderText(_t("conn_ip_placeholder"))
+        if hasattr(self, "lbl_v4l2_indicator"):
+            self.lbl_v4l2_indicator.setText(_t("driver_status_ready"))
 
         # 3. Video dock controls
         if hasattr(self, "btn_toggle_preview"):
@@ -1379,63 +1526,70 @@ class MainWindow(QMainWindow):
 
         # 4. Inspector Header & Tabs
         if hasattr(self, "lbl_h_main"):
-            self.lbl_h_main.setText(_t("tab_studio"))
+            self.lbl_h_main.setText(_t("hub_title"))
+        if hasattr(self, "lbl_h_sub"):
+            self.lbl_h_sub.setText(_t("driver_status_ready"))
+        if hasattr(self, "lbl_hub_badge"):
+            self.lbl_hub_badge.setText(_t("hub_badge"))
+        if hasattr(self, "btn_collapse_hub"):
+            self.btn_collapse_hub.setToolTip(_t("hub_collapse"))
+        if hasattr(self, "btn_toggle_hub"):
+            self.btn_toggle_hub.setToolTip(_t("hub_toggle"))
+
         if hasattr(self, "control_tabs"):
-            if lang == "tr":
-                self.control_tabs.setTabText(0, "Mobil Kontrol")
-                self.control_tabs.setTabText(1, "RAW && Renk")
-                self.control_tabs.setTabText(2, "Ayarlar")
-            elif lang == "de":
-                self.control_tabs.setTabText(0, "Mobilsteuerung")
-                self.control_tabs.setTabText(1, "RAW && Farbe")
-                self.control_tabs.setTabText(2, "Einstellungen")
-            elif lang == "fr":
-                self.control_tabs.setTabText(0, "Contrôle Mobile")
-                self.control_tabs.setTabText(1, "RAW && Couleur")
-                self.control_tabs.setTabText(2, "Paramètres")
-            elif lang == "es":
-                self.control_tabs.setTabText(0, "Control Móvil")
-                self.control_tabs.setTabText(1, "RAW && Color")
-                self.control_tabs.setTabText(2, "Ajustes")
-            else:
-                self.control_tabs.setTabText(0, "Mobile Control")
-                self.control_tabs.setTabText(1, "RAW && Color")
-                self.control_tabs.setTabText(2, "Settings")
+            self.control_tabs.setTabText(0, _t("tab_mobile"))
+            self.control_tabs.setTabText(1, _t("tab_raw"))
+            self.control_tabs.setTabText(2, _t("tab_settings"))
 
         # 5. Remote Mobile Tab
         if hasattr(self, "actions_box"):
-            if lang == "tr":
-                self.actions_box.setTitle("Hızlı Telefon Aksiyonları")
-                self.btn_flip_camera.setText("Kamera Değiştir (Ön / Arka)")
-                self.btn_torch.setText("Fener / Flaş Aç")
-                self.btn_remote_preview.setText("Telefon Önizleme Yayını")
-                self.btn_remote_blackout.setText("Ekranı Karart (AMOLED Tasarruf)")
-            else:
-                self.actions_box.setTitle(_t("conn_header"))
-                self.btn_flip_camera.setText(_t("ctrl_switch_cam"))
-                self.btn_torch.setText(_t("ctrl_torch"))
-                self.btn_remote_preview.setText(_t("live_preview"))
-                self.btn_remote_blackout.setText(_t("ctrl_blackout"))
+            self.actions_box.setTitle(_t("ctrl_actions_title"))
+            self.btn_flip_camera.setText(_t("ctrl_switch_cam"))
+            self.btn_torch.setText(_t("ctrl_torch_off") if getattr(self, "_remote_torch_on", False) else _t("ctrl_torch_on"))
+            self.btn_remote_preview.setText(_t("ctrl_phone_preview_on") if not getattr(self, "_remote_phone_preview_on", True) else _t("ctrl_phone_preview_off"))
+            self.btn_remote_blackout.setText(_t("ctrl_wake_screen") if getattr(self, "_remote_blackout_on", False) else _t("ctrl_blackout_on"))
 
         # Screen Mirroring button
         if hasattr(self, "btn_screen_mirror"):
             is_mirror = getattr(self, "is_screen_mirror_active", False)
-            if is_mirror:
-                if lang == "tr":
-                    self.btn_screen_mirror.setText("📱 Kameraya Dön (Ekran Yayını Aktif)")
-                else:
-                    self.btn_screen_mirror.setText("📱 " + _t("conn_stop_mirror"))
+            self.btn_screen_mirror.setText(_t("ctrl_back_to_cam_btn") if is_mirror else _t("ctrl_screen_mirror_btn"))
+
+        # Camera Dropdown
+        if hasattr(self, "combo_remote_camera"):
+            if getattr(self, "_loaded_cameras", None):
+                self._update_camera_list(self._loaded_cameras, self.combo_remote_camera.currentData())
             else:
-                if lang == "tr":
-                    self.btn_screen_mirror.setText("📱 Ekranı Yansıt (Telefon Ekranı)")
-                else:
-                    self.btn_screen_mirror.setText("📱 " + _t("conn_screen_mirror"))
+                curr_idx = self.combo_remote_camera.currentIndex()
+                self.combo_remote_camera.blockSignals(True)
+                self.combo_remote_camera.clear()
+                self.combo_remote_camera.addItem(_t("cam_rear_default"), "0")
+                self.combo_remote_camera.addItem(_t("cam_front_item"), "1")
+                self.combo_remote_camera.setCurrentIndex(curr_idx if curr_idx >= 0 else 0)
+                self.combo_remote_camera.blockSignals(False)
+
+        # Quick Aspect Ratio Selector
+        if hasattr(self, "aspect_box"):
+            self.aspect_box.setTitle(_t("aspect_header"))
+        if hasattr(self, "combo_quick_aspect"):
+            curr_data = self.combo_quick_aspect.currentData()
+            self.combo_quick_aspect.blockSignals(True)
+            self.combo_quick_aspect.clear()
+            self.combo_quick_aspect.addItem(f"16:9 {_t('aspect_16_9_landscape')} (1920x1080)", "1920x1080")
+            self.combo_quick_aspect.addItem(f"9:16 {_t('aspect_9_16_portrait')} (1080x1920)", "1080x1920")
+            self.combo_quick_aspect.addItem(f"4:3 {_t('aspect_4_3_landscape')} (1440x1080)", "1440x1080")
+            self.combo_quick_aspect.addItem(f"3:4 {_t('aspect_3_4_portrait')} (1080x1440)", "1080x1440")
+            self.combo_quick_aspect.addItem(f"1:1 {_t('aspect_1_1_square')} (1080x1080)", "1080x1080")
+            self.combo_quick_aspect.addItem(f"9:16 {_t('aspect_9_16_portrait')} HD (720x1280)", "720x1280")
+            idx = self.combo_quick_aspect.findData(curr_data)
+            if idx >= 0:
+                self.combo_quick_aspect.setCurrentIndex(idx)
+            self.combo_quick_aspect.blockSignals(False)
 
         # Zoom
         if hasattr(self, "zoom_box"):
             self.zoom_box.setTitle(_t("zoom_header"))
             if hasattr(self, "lbl_zoom_title"):
-                self.lbl_zoom_title.setText("Mevcut Zoom:" if lang == "tr" else "Zoom Level:")
+                self.lbl_zoom_title.setText(_t("zoom_title"))
 
         # 6. RAW & Color Tab
         if hasattr(self, "profile_box"):
@@ -1460,7 +1614,7 @@ class MainWindow(QMainWindow):
             self.focus_box.setTitle(_t("focus_header"))
             self.chk_focus_enabled.setText(_t("focus_enable"))
             if hasattr(self, "lbl_fmode"):
-                self.lbl_fmode.setText("Efekt Modu:" if lang == "tr" else "Effect Mode:")
+                self.lbl_fmode.setText(_t("focus_mode"))
             if hasattr(self, "combo_focus_mode"):
                 curr_fmode = self.combo_focus_mode.currentData()
                 self.combo_focus_mode.blockSignals(True)
@@ -1541,6 +1695,88 @@ class MainWindow(QMainWindow):
         if hasattr(self, "btn_reset_filters"):
             self.btn_reset_filters.setText(_t("btn_reset_filters"))
 
+        # 7. Settings Tab
+        if hasattr(self, "lbl_settings_res"):
+            self.lbl_settings_res.setText(_t("settings_res_title"))
+        if hasattr(self, "combo_res"):
+            curr_data = self.combo_res.currentData()
+            self.combo_res.blockSignals(True)
+            self.combo_res.clear()
+            res_list = [
+                ("1920x1080", f"1920x1080 (1080p FHD - {_t('aspect_16_9_landscape')})"),
+                ("1080x1920", f"1080x1920 (1080p FHD - {_t('aspect_9_16_portrait')})"),
+                ("1280x720", f"1280x720 (720p HD - {_t('aspect_16_9_landscape')})"),
+                ("720x1280", f"720x1280 (720p HD - {_t('aspect_9_16_portrait')})"),
+                ("1440x1080", f"1440x1080 (1080p - {_t('aspect_4_3_landscape')})"),
+                ("1080x1440", f"1080x1440 (1080p - {_t('aspect_3_4_portrait')})"),
+                ("1080x1080", f"1080x1080 (1080p - {_t('aspect_1_1_square')})"),
+                ("720x720", f"720x720 (720p - {_t('aspect_1_1_square')})"),
+                ("3840x2160", f"3840x2160 (4K UHD - {_t('aspect_16_9_landscape')})"),
+                ("2560x1440", f"2560x1440 (2K QHD - {_t('aspect_16_9_landscape')})"),
+                ("960x720", f"960x720 (720p - {_t('aspect_4_3_landscape')})"),
+                ("854x480", f"854x480 (480p SD - {_t('aspect_16_9_landscape')})"),
+                ("640x480", f"640x480 (480p SD - {_t('aspect_4_3_landscape')})"),
+            ]
+            for val, label in res_list:
+                self.combo_res.addItem(label, val)
+            idx = self.combo_res.findData(curr_data)
+            if idx >= 0:
+                self.combo_res.setCurrentIndex(idx)
+            self.combo_res.blockSignals(False)
+
+        if hasattr(self, "lbl_settings_fps"):
+            self.lbl_settings_fps.setText(_t("settings_fps_title"))
+        if hasattr(self, "lbl_settings_bitrate"):
+            self.lbl_settings_bitrate.setText(_t("settings_bitrate_title"))
+        if hasattr(self, "combo_bitrate"):
+            curr_idx = self.combo_bitrate.currentIndex()
+            self.combo_bitrate.blockSignals(True)
+            self.combo_bitrate.clear()
+            self.combo_bitrate.addItems([
+                _t("br_50"), _t("br_35"), _t("br_25"), _t("br_20"),
+                _t("br_16"), _t("br_12"), _t("br_8"), _t("br_6"),
+                _t("br_4"), _t("br_2")
+            ])
+            self.combo_bitrate.setCurrentIndex(curr_idx if curr_idx >= 0 else 6)
+            self.combo_bitrate.blockSignals(False)
+
+        if hasattr(self, "lbl_settings_codec"):
+            self.lbl_settings_codec.setText(_t("settings_codec_title"))
+        if hasattr(self, "combo_codec"):
+            curr_idx = self.combo_codec.currentIndex()
+            self.combo_codec.blockSignals(True)
+            self.combo_codec.clear()
+            self.combo_codec.addItem(_t("codec_h264_dropdown"), "h264")
+            self.combo_codec.addItem(_t("codec_h265_dropdown"), "hevc")
+            self.combo_codec.setCurrentIndex(curr_idx if curr_idx >= 0 else 0)
+            self.combo_codec.blockSignals(False)
+
+        if hasattr(self, "combo_adb_devices"):
+            if self.combo_adb_devices.count() == 1 and not self.combo_adb_devices.itemData(0):
+                self.combo_adb_devices.setItemText(0, _t("device_not_found"))
+        if hasattr(self, "combo_v4l2_devs"):
+            if self.combo_v4l2_devs.count() == 1 and "/dev/video10" in self.combo_v4l2_devs.itemData(0):
+                self.combo_v4l2_devs.setItemText(0, _t("v4l2_will_create").format(dev="/dev/video10"))
+
+        if hasattr(self, "btn_apply_settings"):
+            self.btn_apply_settings.setText(_t("settings_btn_apply"))
+        if hasattr(self, "btn_apply_settings_cta"):
+            self.btn_apply_settings_cta.setText(_t("settings_btn_cta"))
+        if hasattr(self, "lbl_v4l2_status"):
+            self.lbl_v4l2_status.setText(_t("vcam_status_ready") if not self.is_connected else _t("vcam_status_active"))
+        if hasattr(self, "lbl_mic_status"):
+            self.lbl_mic_status.setText(_t("mic_status_ready") if not self.is_mic_muted else _t("mic_status_muted"))
+        if hasattr(self, "tray_action_show"):
+            self.tray_action_show.setText(_t("tray_show"))
+        if hasattr(self, "tray_action_quit"):
+            self.tray_action_quit.setText(_t("tray_quit"))
+
+        if hasattr(self, "status_bar"):
+            if self.is_connected and getattr(self, "_last_fps", 0) > 0:
+                self._update_status_bar_stats()
+            elif not self.is_connected:
+                self.status_bar.showMessage(_t("footer_ready"))
+
         # Repaint video widget
         if hasattr(self, "video_widget"):
             self.video_widget.update()
@@ -1567,7 +1803,7 @@ class MainWindow(QMainWindow):
             for d in devices:
                 self.combo_adb_devices.addItem(d["description"], d["serial"])
         else:
-            self.combo_adb_devices.addItem("Cihaz bulunamadı (USB Hata Ayıklamayı açın)", "")
+            self.combo_adb_devices.addItem(_t("device_not_found"), "")
 
     def _refresh_v4l2_devices(self):
         self.combo_v4l2_devs.clear()
@@ -1577,7 +1813,7 @@ class MainWindow(QMainWindow):
             self.combo_v4l2_devs.addItem(label, d["path"])
 
         if self.combo_v4l2_devs.count() == 0:
-            self.combo_v4l2_devs.addItem("/dev/video10 (Oluşturulacak)", "/dev/video10")
+            self.combo_v4l2_devs.addItem(_t("v4l2_will_create").format(dev="/dev/video10"), "/dev/video10")
 
     def _load_v4l2_module(self):
         ok, msg = V4L2Sink.load_loopback_module(10, "AselCam Video")
@@ -1744,12 +1980,11 @@ class MainWindow(QMainWindow):
 
         if recv_ok or ctrl_ok:
             self.is_connected = True
-            self.status_badge.setText("● YAYINDA")
+            self.status_badge.setText(_t("status_live"))
             self.status_badge.setStyleSheet(
-                "background: rgba(16, 185, 129, 0.15); "
-                "color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); border-radius: 6px; padding: 2px 8px; font-weight: bold; font-size: 9px;"
+                "background: transparent; color: #34d399; border: none; padding: 2px 4px; font-weight: bold; font-size: 10px;"
             )
-            self.btn_master_connect.setText("Bağlantıyı Kes")
+            self.btn_master_connect.setText(_t("conn_btn_stop"))
             self.btn_master_connect.setObjectName("btn_danger")
             self.btn_master_connect.style().unpolish(self.btn_master_connect)
             self.btn_master_connect.style().polish(self.btn_master_connect)
@@ -1757,7 +1992,7 @@ class MainWindow(QMainWindow):
                 self.telemetry_conn.setText("USB 3.0 (ADB)" if host == "127.0.0.1" else "Wi-Fi (5GHz)")
             if hasattr(self, "telemetry_encoder"):
                 self.telemetry_encoder.setText(f"{codec.upper()} / FFmpeg")
-            self.status_bar.showMessage(f"{host} ile bağlantı kuruldu. Canlı akış aktif.")
+            self.status_bar.showMessage(f"{host} - {_t('status_live')}")
             self._poll_telemetry()
         else:
             self._disconnect(user_initiated=True)
@@ -1785,23 +2020,25 @@ class MainWindow(QMainWindow):
         # Clear last video frame so PC preview immediately shows 'Bağlantı Yok' screen
         self.video_widget.clear_frame()
 
-        self.status_badge.setText("● ÇEVRİMDIŞI")
+        self.status_badge.setText(_t("status_offline"))
         self.status_badge.setStyleSheet(
-            "background: rgba(239, 68, 68, 0.15); "
-            "color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); border-radius: 6px; padding: 2px 8px; font-weight: bold; font-size: 9px;"
+            "background: transparent; color: #f87171; border: none; padding: 2px 4px; font-weight: bold; font-size: 10px;"
         )
-        self.btn_master_connect.setText("Bağlan")
+        self.btn_master_connect.setText(_t("conn_btn_start"))
         self.btn_master_connect.setObjectName("btn_primary")
         self.btn_master_connect.style().unpolish(self.btn_master_connect)
         self.btn_master_connect.style().polish(self.btn_master_connect)
 
-        self.lbl_device_info.setText("CİHAZ: —")
-        self.lbl_battery.setText("PİL: —%")
-        self.lbl_ping.setText("PING: — ms")
+        self._last_device_model = "—"
+        self._last_battery_level = "—"
+        self._last_ping = -1.0
+        self.lbl_device_info.setText(f"{_t('label_device')} —")
+        self.lbl_battery.setText(f"{_t('label_battery')} —%")
+        self.lbl_ping.setText(f"{_t('label_ping')} — ms")
         if hasattr(self, "telemetry_device"):
-            self.telemetry_device.setText("Beklemede")
+            self.telemetry_device.setText(_t("status_standby"))
         self.audio_vu.setValue(0)
-        self.status_bar.showMessage("Bağlantı kesildi.")
+        self.status_bar.showMessage(_t("footer_ready"))
 
     @pyqtSlot()
     def _handle_disconnect(self):
@@ -1864,7 +2101,9 @@ class MainWindow(QMainWindow):
     @pyqtSlot(float, float)
     def _on_stats_updated(self, fps: float, bitrate_kbps: float):
         self._reconnect_attempts = 0
-        self.status_bar.showMessage(f"Akış Aktif: {fps:.1f} FPS | {bitrate_kbps / 1000.0:.2f} Mbps | v4l2: {self.v4l2_sink.device_path}")
+        self._last_fps = fps
+        self._last_bitrate_kbps = bitrate_kbps
+        self._update_status_bar_stats()
 
     @pyqtSlot(float)
     def _on_audio_level(self, level: float):
@@ -1890,14 +2129,21 @@ class MainWindow(QMainWindow):
             return
         ping = info.get("_ping", -1.0)
         if ping >= 0:
-            self.lbl_ping.setText(f"PING: {ping:.0f} ms")
+            self._last_ping = ping
+            self.lbl_ping.setText(f"{_t('label_ping')} {ping:.0f} ms")
+        loss = info.get("packet_loss", 0.0)
+        self._last_loss = float(loss)
+        if self._last_fps > 0:
+            self._update_status_bar_stats()
 
         model = info.get("device_model")
         if model:
-            self.lbl_device_info.setText(f"CİHAZ: {model}")
+            self._last_device_model = model
+            self.lbl_device_info.setText(f"{_t('label_device')} {model}")
         batt = info.get("battery_level")
         if batt is not None:
-            self.lbl_battery.setText(f"PİL: {batt}%")
+            self._last_battery_level = batt
+            self.lbl_battery.setText(f"{_t('label_battery')} {batt}%")
         self._update_camera_list(info.get("cameras", []), info.get("current_camera"))
 
         # Update dynamic zoom range from device (e.g. S25 Ultra 100x)
@@ -1915,18 +2161,17 @@ class MainWindow(QMainWindow):
 
         # Screen mirroring state synchronization
         is_mirror = bool(info.get("is_screen_mirroring", False))
+        self.is_screen_mirror_active = is_mirror
         self.video_widget.set_screen_mirroring(is_mirror)
         if is_mirror:
-            if "Kameraya Dön" not in self.btn_screen_mirror.text():
-                self.btn_screen_mirror.setText("📷 Kameraya Dön (Ekran Yayında)")
-                self.btn_screen_mirror.setStyleSheet(
-                    "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #0284c7, stop:1 #0369a1); "
-                    "color: white; border-top: 1px solid #38bdf8; border-bottom: 1px solid #0c4a6e; border-radius: 9px; font-weight: 700;"
-                )
+            self.btn_screen_mirror.setText(_t("ctrl_back_to_cam_btn"))
+            self.btn_screen_mirror.setStyleSheet(
+                "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #0284c7, stop:1 #0369a1); "
+                "color: white; border-top: 1px solid #38bdf8; border-bottom: 1px solid #0c4a6e; border-radius: 9px; font-weight: 700;"
+            )
         else:
-            if "Ekranı Yansıt" not in self.btn_screen_mirror.text():
-                self.btn_screen_mirror.setText("📱 Ekranı Yansıt (Telefon Ekranı)")
-                self.btn_screen_mirror.setStyleSheet("")
+            self.btn_screen_mirror.setText(_t("ctrl_screen_mirror_btn"))
+            self.btn_screen_mirror.setStyleSheet("")
 
         # If resolution or codec was changed on the phone UI, sync PC decoder & V4L2 automatically
         dev_w = int(info.get("current_width", 0))
@@ -1952,11 +2197,11 @@ class MainWindow(QMainWindow):
             self.receiver.set_preview_enabled(self.is_preview_enabled)
 
         if self.is_preview_enabled:
-            self.btn_toggle_preview.setText("Önizlemeyi Kapat")
-            self.status_bar.showMessage("Önizleme açıldı.")
+            self.btn_toggle_preview.setText(_t("preview_toggle_off"))
+            self.status_bar.showMessage(_t("live_preview"))
         else:
-            self.btn_toggle_preview.setText("Önizlemeyi Aç")
-            self.status_bar.showMessage("Performans Modu: Önizleme kapatıldı. GPU/CPU tasarrufu sağlanıyor.")
+            self.btn_toggle_preview.setText(_t("preview_toggle_on"))
+            self.status_bar.showMessage(_t("perf_mode_title"))
 
     def _toggle_camera_pause(self):
         self.is_camera_paused = not self.is_camera_paused
@@ -1968,16 +2213,14 @@ class MainWindow(QMainWindow):
             threading.Thread(target=lambda: self.controller.set_camera_enabled(not self.is_camera_paused), daemon=True).start()
 
         if self.is_camera_paused:
-            self.btn_pause_cam.setText("Kamerayı Aç")
+            self.btn_pause_cam.setText(_t("blackout_toggle_off"))
             self.btn_pause_cam.setStyleSheet(
                 "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #dc2626, stop:1 #b91c1c); "
                 "color: white; border-top: 1px solid #f87171; border-bottom: 1px solid #5f1111; border-radius: 9px; font-weight: 700;"
             )
-            self.status_bar.showMessage("Kamera donanımı kapatıldı. Telefon kamera sensörünü ve kodlayıcıyı durdurdu.")
         else:
-            self.btn_pause_cam.setText("Kamerayı Kapat")
+            self.btn_pause_cam.setText(_t("blackout_toggle_on"))
             self.btn_pause_cam.setStyleSheet("")
-            self.status_bar.showMessage("Kamera donanımı açıldı. Yayın devam ediyor.")
 
     def _toggle_mic_mute(self):
         self.is_mic_muted = not self.is_mic_muted
@@ -1986,20 +2229,18 @@ class MainWindow(QMainWindow):
             threading.Thread(target=lambda: self.controller.set_mute(self.is_mic_muted), daemon=True).start()
 
         if self.is_mic_muted:
-            self.btn_mute_mic.setText("Mikrofonu Aç")
+            self.btn_mute_mic.setText(_t("mic_toggle_on"))
             self.btn_mute_mic.setStyleSheet(
                 "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #dc2626, stop:1 #b91c1c); "
                 "color: white; border-top: 1px solid #f87171; border-bottom: 1px solid #5f1111; border-radius: 9px; font-weight: 700;"
             )
-            self.lbl_mic_status.setText("Sanal Mikrofon: Susturuldu")
+            self.lbl_mic_status.setText(_t("mic_status_muted"))
             self.lbl_mic_status.setStyleSheet("color: #ff4757; background: transparent; margin-right: 15px;")
-            self.status_bar.showMessage("Mikrofon donanımı kapatıldı. Telefon ses kaydını durdurdu.")
         else:
-            self.btn_mute_mic.setText("Mikrofonu Kapat")
+            self.btn_mute_mic.setText(_t("mic_toggle_off"))
             self.btn_mute_mic.setStyleSheet("")
-            self.lbl_mic_status.setText("Sanal Mikrofon: AselCam_Mic (Aktif)")
+            self.lbl_mic_status.setText(_t("mic_status_active"))
             self.lbl_mic_status.setStyleSheet("color: #00f5a0; background: transparent; margin-right: 15px;")
-            self.status_bar.showMessage("Mikrofon donanımı açıldı.")
 
     def _on_mic_gain_changed(self, val: int):
         gain = val / 100.0
@@ -2018,13 +2259,7 @@ class MainWindow(QMainWindow):
     def _update_camera_list(self, cameras: list, current_cam_id: str = None):
         if not cameras:
             return
-
-        # Check if list changed
-        existing_ids = [self.combo_remote_camera.itemData(i) for i in range(self.combo_remote_camera.count())]
-        new_ids = [str(c.get("id")) for c in cameras]
-        if existing_ids == new_ids and current_cam_id is None:
-            return
-
+        self._loaded_cameras = cameras
         self.combo_remote_camera.blockSignals(True)
         self.combo_remote_camera.clear()
         selected_idx = 0
@@ -2032,10 +2267,9 @@ class MainWindow(QMainWindow):
 
         for idx, cam in enumerate(cameras):
             cid = str(cam.get("id", idx))
-            name = cam.get("name", f"Kamera {cid}")
             is_back = cam.get("is_back", True)
-            facing = "Arka" if is_back else "Ön"
-            label = f"{cid}: {name} ({facing})"
+            facing = _t("back_cam") if is_back else _t("front_cam")
+            label = f"{cid}: {facing} ({cid})"
             self.combo_remote_camera.addItem(label, cid)
             if cid == target_id:
                 selected_idx = idx
@@ -2049,8 +2283,7 @@ class MainWindow(QMainWindow):
         cam_id = self.combo_remote_camera.itemData(index)
         if cam_id:
             self.config.set("selected_camera", str(cam_id))
-            if self.controller.switch_camera(str(cam_id)):
-                self.status_bar.showMessage(f"Kamera seçildi: {self.combo_remote_camera.itemText(index)}")
+            self.controller.switch_camera(str(cam_id))
 
     def _remote_switch_camera(self):
         count = self.combo_remote_camera.count()
@@ -2058,48 +2291,37 @@ class MainWindow(QMainWindow):
             curr = self.config.get("selected_camera", "0")
             nxt = "1" if curr == "0" else "0"
             self.config.set("selected_camera", nxt)
-            if self.controller.switch_camera(nxt):
-                self.status_bar.showMessage(f"Kamera değiştirildi: {'Ön Kamera' if nxt == '1' else 'Arka Kamera'}")
+            self.controller.switch_camera(nxt)
             return
 
         nxt_idx = (self.combo_remote_camera.currentIndex() + 1) % count
         self.combo_remote_camera.setCurrentIndex(nxt_idx)
 
     def _remote_toggle_torch(self):
-        curr = "Aç" in self.btn_torch.text()
-        if self.controller.set_torch(curr):
-            self.btn_torch.setText("Fener / Flaş Kapat" if curr else "Fener / Flaş Aç")
+        self._remote_torch_on = not getattr(self, "_remote_torch_on", False)
+        if self.controller.set_torch(self._remote_torch_on):
+            self.btn_torch.setText(_t("ctrl_torch_off") if self._remote_torch_on else _t("ctrl_torch_on"))
 
     def _remote_toggle_phone_preview(self):
-        curr = "Kapat" in self.btn_remote_preview.text()
-        new_val = not curr
-        if self.controller.set_preview_enabled(new_val):
-            self.btn_remote_preview.setText("Telefonda Önizlemeyi Aç" if curr else "Telefonda Önizlemeyi Kapat")
-            self.status_bar.showMessage(f"Telefon önizlemesi {'kapatıldı (pil tasarrufu)' if curr else 'açıldı'}")
+        self._remote_phone_preview_on = not getattr(self, "_remote_phone_preview_on", True)
+        if self.controller.set_preview_enabled(self._remote_phone_preview_on):
+            self.btn_remote_preview.setText(_t("ctrl_phone_preview_on") if not self._remote_phone_preview_on else _t("ctrl_phone_preview_off"))
 
     def _remote_toggle_blackout(self):
-        enable = "Karart (" in self.btn_remote_blackout.text()
-        if self.controller.set_blackout(enable):
-            if enable:
-                self.btn_remote_blackout.setText("Ekranı Uyandır (Karartmayı Kapat)")
-                self.status_bar.showMessage("Telefonda AMOLED Ekran Karartma Modu açıldı.")
-            else:
-                self.btn_remote_blackout.setText("Ekranı Karart (AMOLED Tasarruf)")
-                self.status_bar.showMessage("Telefonda AMOLED Ekran Karartma Modu kapatıldı.")
+        self._remote_blackout_on = not getattr(self, "_remote_blackout_on", False)
+        if self.controller.set_blackout(self._remote_blackout_on):
+            self.btn_remote_blackout.setText(_t("ctrl_wake_screen") if self._remote_blackout_on else _t("ctrl_blackout_on"))
 
     def _remote_toggle_screen_mirror(self):
         if not self.is_connected:
-            self.status_bar.showMessage("Cihaza bağlı değil.")
             return
-        curr_is_mirror = "Kameraya Dön" in self.btn_screen_mirror.text()
+        curr_is_mirror = getattr(self, "is_screen_mirror_active", False)
         new_state = not curr_is_mirror
+        self.is_screen_mirror_active = new_state
         def task():
             self.controller.set_screen_mirror(new_state)
         threading.Thread(target=task, daemon=True).start()
-        if new_state:
-            self.status_bar.showMessage("Telefondan ekran yansıtma başlatılıyor...")
-        else:
-            self.status_bar.showMessage("Kameraya dönülüyor...")
+        self.btn_screen_mirror.setText(_t("ctrl_back_to_cam_btn") if new_state else _t("ctrl_screen_mirror_btn"))
 
     def _remote_zoom_changed(self, val: int):
         zoom = val / 10.0
@@ -2436,7 +2658,23 @@ class MainWindow(QMainWindow):
             self.status_bar.showMessage(f"Ayarlar kaydedildi: {w}x{h} @ {fps}fps, {bitrate // 1000000} Mbps.")
 
     def closeEvent(self, event):
-        self._disconnect(user_initiated=True)
-        self.v4l2_sink.close()
-        self.audio_sink.teardown_virtual_mic()
-        event.accept()
+        is_test = "unittest" in sys.argv[0] or "pytest" in sys.argv[0] or any("test" in arg for arg in sys.argv)
+        if not is_test and not getattr(self, "_force_quit", False) and hasattr(self, "tray_icon") and self.tray_icon.isVisible():
+            event.ignore()
+            self.hide()
+            try:
+                self.tray_icon.showMessage(
+                    "AselCam",
+                    _t("tray_bg_notice"),
+                    QSystemTrayIcon.MessageIcon.Information,
+                    2000
+                )
+            except Exception:
+                pass
+        else:
+            self._disconnect(user_initiated=True)
+            self.v4l2_sink.close()
+            self.audio_sink.teardown_virtual_mic()
+            if hasattr(self, "tray_icon"):
+                self.tray_icon.hide()
+            event.accept()

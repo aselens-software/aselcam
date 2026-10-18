@@ -28,17 +28,23 @@ QLabel {
 }
 
 /* Studio Digital Telemetry & Value Readout Badge */
-QLabel#lbl_value_badge {
+QLabel#lbl_value_badge, QLineEdit#lbl_value_badge {
     background-color: #0b0f19;
     color: #38bdf8;
     border: 1px solid rgba(59, 130, 246, 0.35);
     border-radius: 6px;
-    padding: 3px 8px;
+    padding: 2px 6px;
     font-weight: 700;
     font-size: 11px;
     font-family: "JetBrains Mono", "SF Mono", "Fira Code", monospace, "Segoe UI";
     min-width: 48px;
     qproperty-alignment: AlignCenter;
+}
+
+QLineEdit#lbl_value_badge:focus {
+    border: 1px solid #38bdf8;
+    background-color: #050811;
+    color: #ffffff;
 }
 
 /* Studio Telemetry Chip Card */
@@ -80,12 +86,12 @@ QGroupBox {
     background-color: #1c1f2a;
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 12px;
-    margin-top: 18px;
-    margin-bottom: 10px;
+    margin-top: 22px;
+    margin-bottom: 12px;
     font-weight: 700;
     color: #94a3b8;
-    padding-top: 18px;
-    padding-bottom: 12px;
+    padding-top: 22px;
+    padding-bottom: 14px;
     padding-left: 14px;
     padding-right: 14px;
 }
@@ -94,7 +100,7 @@ QGroupBox::title {
     subcontrol-origin: margin;
     subcontrol-position: top left;
     left: 14px;
-    top: 2px;
+    top: 3px;
     padding: 0 8px;
     color: #4cd7f6;
     font-size: 11px;
@@ -350,23 +356,30 @@ QTabBar::tab:selected {
 }
 
 /* ==========================================================================
-   STUDIO SLIDERS
+   STUDIO SLIDERS (Distinct recessed track with visible boundaries)
    ========================================================================== */
 QSlider::groove:horizontal {
-    border: none;
+    border: 1px solid rgba(255, 255, 255, 0.12);
     height: 6px;
-    background: #1c1f2a;
+    background: #0d121d;
     border-radius: 3px;
 }
 
 QSlider::sub-page:horizontal {
-    background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #4d8eff, stop:1 #009eb9);
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #3b82f6, stop:1 #38bdf8);
+    border: 1px solid rgba(56, 189, 248, 0.4);
+    border-radius: 3px;
+}
+
+QSlider::add-page:horizontal {
+    background: #0d121d;
+    border: 1px solid rgba(255, 255, 255, 0.12);
     border-radius: 3px;
 }
 
 QSlider::handle:horizontal {
     background: #ffffff;
-    border: 3px solid #4d8eff;
+    border: 3px solid #38bdf8;
     width: 14px;
     margin-top: -5px;
     margin-bottom: -5px;
@@ -374,12 +387,13 @@ QSlider::handle:horizontal {
 }
 
 QSlider::handle:horizontal:hover {
-    border: 3px solid #adc6ff;
+    border: 3px solid #7dd3fc;
+    background: #f0f9ff;
 }
 
 QSlider::handle:horizontal:pressed {
-    background: #dfe2f1;
-    border: 3px solid #005ac2;
+    background: #bae6fd;
+    border: 3px solid #0284c7;
 }
 
 /* ==========================================================================

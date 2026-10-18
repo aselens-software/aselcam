@@ -60,7 +60,7 @@ Whether connecting over high-speed USB (ADB / Lightning / USB-C) or local Wi-Fi,
 - **🤖 AI Neural Portrait Isolation**: Background blur (bokeh), studio spotlight, and custom virtual background replacement using MediaPipe selfie segmentation.
 - **📱 Real-Time Screen Mirroring**: Instantly cast your mobile phone display to the virtual camera with audio pass-through.
 - **🔋 AMOLED True Blackout**: Turns off phone display pixels entirely while keeping sensor and hardware encoder running at full 60 FPS, eliminating heat and preserving battery.
-- **🌐 5-Language Localization**: Automatic system locale detection with runtime language switching for English, Turkish, German, French, and Spanish.
+- **🌐 8-Language Localization**: Automatic system locale detection with runtime language switching for English, Turkish, German, French, Spanish, Russian, Japanese, and Arabic.
 
 ---
 
@@ -225,14 +225,17 @@ Cast your phone screen directly into video conferences, livestreams, or recordin
 
 ## 🌐 Internationalization (i18n)
 
-AselCam includes automatic operating system language detection with full dictionary translations for:
-- 🇺🇸 **English** (`en`)
+AselCam includes automatic operating system language detection with full dictionary translations for 8 languages:
+- 🇬🇧 **English** (`en`)
 - 🇹🇷 **Türkçe** (`tr`)
 - 🇩🇪 **Deutsch** (`de`)
 - 🇫🇷 **Français** (`fr`)
 - 🇪🇸 **Español** (`es`)
+- 🇷🇺 **Русский** (`ru`)
+- 🇯🇵 **日本語** (`ja`)
+- 🇸🇦 **العربية** (`ar`)
 
-You can override the language anytime via the interactive titlebar dropdown selector (`🌐 EN`, `🌐 TR`, `🌐 DE`, `🌐 FR`, `🌐 ES`). Changes persist across sessions in `config.json`.
+You can override the language anytime via the interactive titlebar dropdown selector (`🇬🇧 EN`, `🇹🇷 TR`, `🇩🇪 DE`, `🇫🇷 FR`, `🇪🇸 ES`, `🇷🇺 RU`, `🇯🇵 JA`, `🇸🇦 AR`). Changes persist across sessions in `config.json`.
 
 ---
 
@@ -310,3 +313,7 @@ All 18 test suites pass with zero regressions.
 ## 📄 License
 
 This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
+
+---
+
+Developed by Aselens Software [https://aselens.com]

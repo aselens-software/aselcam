@@ -43,10 +43,19 @@ def main():
     app.setApplicationDisplayName("AselCam")
     app.setDesktopFileName("aselcam.desktop")
     app.setOrganizationName("Asel")
+    app.setQuitOnLastWindowClosed(False)
 
-    icon_path = os.path.join(os.path.dirname(__file__), "assets", "aselcam_icon_256.png")
-    if os.path.exists(icon_path):
-        app.setWindowIcon(QIcon(icon_path))
+    app_icon = QIcon()
+    assets_dir = os.path.join(os.path.dirname(__file__), "assets")
+    for sz in (16, 24, 32, 48, 64, 128, 256, 512):
+        fn = os.path.join(assets_dir, f"aselcam_icon_{sz}.png")
+        if os.path.exists(fn):
+            app_icon.addFile(fn)
+    ico_fn = os.path.join(assets_dir, "aselcam_icon.ico")
+    if os.path.exists(ico_fn):
+        app_icon.addFile(ico_fn)
+    if not app_icon.isNull():
+        app.setWindowIcon(app_icon)
 
     # Ensure C-locale numeric conventions for neural network inference (ONNX) and OpenMP
     try:

@@ -67,7 +67,14 @@ object MobileI18n {
             "tb_preview" to "Önizleme",
             "tb_flash" to "Flaş",
             "tb_mic" to "Mikrofon",
-            "tb_screen" to "Ekran Yansıt"
+                        "cam_back" to "Arka Kamera",
+            "cam_front" to "Ön Kamera",
+            "aspect_16_9" to "16:9 Yatay",
+            "aspect_9_16" to "9:16 Dikey",
+            "aspect_4_3" to "4:3 Yatay",
+            "aspect_3_4" to "3:4 Dikey",
+            "aspect_1_1" to "1:1 Kare",
+            "tb_screen" to "Ekran Yansıt" 
         ),
         "en" to mapOf(
             "app_title" to "AselCam",
@@ -111,7 +118,14 @@ object MobileI18n {
             "tb_preview" to "Preview",
             "tb_flash" to "Flash",
             "tb_mic" to "Mic",
-            "tb_screen" to "Mirror Screen"
+                        "cam_back" to "Rear Camera",
+            "cam_front" to "Front Camera",
+            "aspect_16_9" to "16:9 Landscape",
+            "aspect_9_16" to "9:16 Portrait",
+            "aspect_4_3" to "4:3 Landscape",
+            "aspect_3_4" to "3:4 Portrait",
+            "aspect_1_1" to "1:1 Square",
+            "tb_screen" to "Mirror Screen" 
         ),
         "de" to mapOf(
             "app_title" to "AselCam",
@@ -155,7 +169,14 @@ object MobileI18n {
             "tb_preview" to "Vorschau",
             "tb_flash" to "Blitz",
             "tb_mic" to "Mikrofon",
-            "tb_screen" to "Spiegeln"
+                        "cam_back" to "Rückkamera",
+            "cam_front" to "Frontkamera",
+            "aspect_16_9" to "16:9 Querformat",
+            "aspect_9_16" to "9:16 Hochformat",
+            "aspect_4_3" to "4:3 Querformat",
+            "aspect_3_4" to "3:4 Hochformat",
+            "aspect_1_1" to "1:1 Quadrat",
+            "tb_screen" to "Spiegeln" 
         ),
         "fr" to mapOf(
             "app_title" to "AselCam",
@@ -199,7 +220,14 @@ object MobileI18n {
             "tb_preview" to "Aperçu",
             "tb_flash" to "Flash",
             "tb_mic" to "Micro",
-            "tb_screen" to "Partage"
+                        "cam_back" to "Caméra arrière",
+            "cam_front" to "Caméra avant",
+            "aspect_16_9" to "16:9 Paysage",
+            "aspect_9_16" to "9:16 Portrait",
+            "aspect_4_3" to "4:3 Paysage",
+            "aspect_3_4" to "3:4 Portrait",
+            "aspect_1_1" to "1:1 Carré",
+            "tb_screen" to "Partage" 
         ),
         "es" to mapOf(
             "app_title" to "AselCam",
@@ -243,7 +271,14 @@ object MobileI18n {
             "tb_preview" to "Vista",
             "tb_flash" to "Flash",
             "tb_mic" to "Mic",
-            "tb_screen" to "Pantalla"
+                        "cam_back" to "Cámara trasera",
+            "cam_front" to "Cámara frontal",
+            "aspect_16_9" to "16:9 Horizontal",
+            "aspect_9_16" to "9:16 Vertical",
+            "aspect_4_3" to "4:3 Horizontal",
+            "aspect_3_4" to "3:4 Vertical",
+            "aspect_1_1" to "1:1 Cuadrado",
+            "tb_screen" to "Pantalla" 
         ),
         "ru" to mapOf(
             "app_title" to "AselCam",
@@ -287,7 +322,14 @@ object MobileI18n {
             "tb_preview" to "Превью",
             "tb_flash" to "Вспышка",
             "tb_mic" to "Микрофон",
-            "tb_screen" to "Экран"
+                        "cam_back" to "Задняя камера",
+            "cam_front" to "Фронтальная камера",
+            "aspect_16_9" to "16:9 Горизонтальный",
+            "aspect_9_16" to "9:16 Вертикальный",
+            "aspect_4_3" to "4:3 Горизонтальный",
+            "aspect_3_4" to "3:4 Вертикальный",
+            "aspect_1_1" to "1:1 Квадратный",
+            "tb_screen" to "Экран" 
         ),
         "ja" to mapOf(
             "app_title" to "AselCam",
@@ -331,7 +373,14 @@ object MobileI18n {
             "tb_preview" to "表示",
             "tb_flash" to "ライト",
             "tb_mic" to "マイク",
-            "tb_screen" to "画面共有"
+                        "cam_back" to "背面カメラ",
+            "cam_front" to "前面カメラ",
+            "aspect_16_9" to "16:9 横向き",
+            "aspect_9_16" to "9:16 縦向き",
+            "aspect_4_3" to "4:3 横向き",
+            "aspect_3_4" to "3:4 縦向き",
+            "aspect_1_1" to "1:1 正方形",
+            "tb_screen" to "画面共有" 
         ),
         "ar" to mapOf(
             "app_title" to "AselCam",
@@ -375,7 +424,14 @@ object MobileI18n {
             "tb_preview" to "معاينة",
             "tb_flash" to "فلاش",
             "tb_mic" to "ميكروفون",
-            "tb_screen" to "الشاشة"
+                        "cam_back" to "الكاميرا الخلفية",
+            "cam_front" to "الكاميرا الأمامية",
+            "aspect_16_9" to "16:9 أفقي",
+            "aspect_9_16" to "9:16 رأسي",
+            "aspect_4_3" to "4:3 أفقي",
+            "aspect_3_4" to "3:4 رأسي",
+            "aspect_1_1" to "1:1 مربع",
+            "tb_screen" to "الشاشة" 
         )
     )
 

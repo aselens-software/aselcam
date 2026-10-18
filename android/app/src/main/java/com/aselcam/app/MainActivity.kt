@@ -357,7 +357,7 @@ fun AselCamApp(
                                             border = BorderStroke(1.dp, ObsidianBorder)
                                         ) {
                                             Text(
-                                                "v1.2",
+                                                "v1.4.7",
                                                 fontFamily = FontFamily.Monospace,
                                                 fontSize = 9.sp,
                                                 fontWeight = FontWeight.SemiBold,
@@ -366,43 +366,10 @@ fun AselCamApp(
                                             )
                                         }
                                     }
-                                    Text(
-                                        "Companion Streamer",
-                                        fontFamily = FontFamily.Monospace,
-                                        fontSize = 10.sp,
-                                        color = TextSecondary
-                                    )
                                 }
                             }
 
-                            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                // Status Pill Badge
-                                Surface(
-                                    color = if (isStreaming) Color(0x22EF4444) else Color(0x224EDEA3),
-                                    shape = RoundedCornerShape(12.dp),
-                                    border = BorderStroke(1.dp, if (isStreaming) Color(0x55EF4444) else Color(0x554EDEA3))
-                                ) {
-                                    Row(
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-                                    ) {
-                                        Box(
-                                            modifier = Modifier
-                                                .size(6.dp)
-                                                .clip(CircleShape)
-                                                .background(if (isStreaming) ErrorRed else MintNeon)
-                                        )
-                                        Spacer(modifier = Modifier.width(5.dp))
-                                        Text(
-                                            text = if (isStreaming) MobileI18n.tr("status_live") else MobileI18n.tr("status_idle"),
-                                            fontSize = 10.sp,
-                                            fontWeight = FontWeight.Bold,
-                                            fontFamily = FontFamily.Monospace,
-                                            color = if (isStreaming) ErrorRed else MintNeon
-                                        )
-                                    }
-                                }
-
+                            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(14.dp)) {
                                 // Language Selector Dropdown
                                 var langMenuExpanded by remember { mutableStateOf(false) }
                                 Box {
@@ -468,7 +435,7 @@ fun AselCamApp(
                                 ) {
                                     Icon(
                                         Icons.Default.DarkMode,
-                                        contentDescription = "Ekranı Karart",
+                                        contentDescription = MobileI18n.tr("blackout_overlay_title"),
                                         tint = TextSecondary,
                                         modifier = Modifier.size(18.dp)
                                     )
@@ -547,7 +514,7 @@ fun AselCamApp(
                                     )
                                     Spacer(modifier = Modifier.width(4.dp))
                                     Text(
-                                        text = if (isStreaming) "CANLI" else "00:00:00",
+                                        text = if (isStreaming) MobileI18n.tr("hud_live") else MobileI18n.tr("hud_idle"),
                                         fontFamily = FontFamily.Monospace,
                                         fontSize = 10.sp,
                                         color = TextSecondary
@@ -1058,7 +1025,7 @@ fun AselCamApp(
                                         modifier = Modifier.clickable { service?.onSwitchCamera(cam.id) }
                                     ) {
                                         Text(
-                                            text = cam.name,
+                                            text = if (cam.isFacingBack) "${MobileI18n.tr("cam_back")} (${cam.id})" else "${MobileI18n.tr("cam_front")} (${cam.id})",
                                             fontSize = 12.sp,
                                             fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
                                             color = if (isSelected) PrimaryLight else TextSecondary,
@@ -1071,11 +1038,11 @@ fun AselCamApp(
                             // 2. Aspect Ratio & Orientation Quick Selector (16:9, 9:16, 4:3, 3:4, 1:1)
                             Text(MobileI18n.tr("aspect_select"), color = TextSecondary, fontSize = 12.sp)
                             val aspectPresets = listOf(
-                                "16:9 Yatay" to "16:9",
-                                "9:16 Dikey" to "9:16",
-                                "4:3 Yatay" to "4:3",
-                                "3:4 Dikey" to "3:4",
-                                "1:1 Kare" to "1:1"
+                                MobileI18n.tr("aspect_16_9") to "16:9",
+                                MobileI18n.tr("aspect_9_16") to "9:16",
+                                MobileI18n.tr("aspect_4_3") to "4:3",
+                                MobileI18n.tr("aspect_3_4") to "3:4",
+                                MobileI18n.tr("aspect_1_1") to "1:1"
                             )
                             val resParts = selectedResolution.split("x")
                             val curW = resParts.getOrNull(0)?.toIntOrNull() ?: 1920

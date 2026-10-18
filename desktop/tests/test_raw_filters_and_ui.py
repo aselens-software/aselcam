@@ -14,6 +14,12 @@ app = QApplication.instance() or QApplication([])
 
 class TestRawFiltersAndUI(unittest.TestCase):
 
+    def setUp(self):
+        I18nManager.get_instance().set_language("tr")
+
+    def tearDown(self):
+        I18nManager.get_instance().set_language("tr")
+
     def test_filter_identity_fast_path(self):
         """Verifies that default VideoFilters is identity and returns the original frame in 0 ms without copying."""
         vf = VideoFilters()
@@ -160,9 +166,9 @@ class TestRawFiltersAndUI(unittest.TestCase):
 
         # Verify that all 3 tabs are protected with QScrollArea to prevent squishing
         self.assertEqual(win.control_tabs.count(), 3)
-        self.assertEqual(win.control_tabs.tabText(0), "Mobil Kontrol")
-        self.assertEqual(win.control_tabs.tabText(1), "RAW && Renk")
-        self.assertEqual(win.control_tabs.tabText(2), "Ayarlar")
+        self.assertEqual(win.control_tabs.tabText(0), _t("tab_mobile"))
+        self.assertEqual(win.control_tabs.tabText(1), _t("tab_raw"))
+        self.assertEqual(win.control_tabs.tabText(2), _t("tab_settings"))
         for i in range(win.control_tabs.count()):
             self.assertIsInstance(win.control_tabs.widget(i), QScrollArea, f"Tab {i} must be a QScrollArea")
 
@@ -251,16 +257,16 @@ class TestRawFiltersAndUI(unittest.TestCase):
         """Verifies Screen Mirror UI button, command dispatch, and telemetry synchronization."""
         win = MainWindow()
         self.assertTrue(hasattr(win, "btn_screen_mirror"))
-        self.assertEqual(win.btn_screen_mirror.text(), "Ekranı Yansıt (Telefon Ekranı)")
+        self.assertEqual(win.btn_screen_mirror.text(), _t("ctrl_screen_mirror_btn"))
 
         # Simulate receiving telemetry that phone started screen mirroring
         win.is_connected = True
         win._on_telemetry_updated({"is_screen_mirroring": True})
-        self.assertIn("Kameraya Dön", win.btn_screen_mirror.text())
+        self.assertEqual(win.btn_screen_mirror.text(), _t("ctrl_back_to_cam_btn"))
 
         # Simulate receiving telemetry that phone returned to camera
         win._on_telemetry_updated({"is_screen_mirroring": False})
-        self.assertIn("Ekranı Yansıt", win.btn_screen_mirror.text())
+        self.assertEqual(win.btn_screen_mirror.text(), _t("ctrl_screen_mirror_btn"))
 
         # Verify controller method signature
         self.assertTrue(hasattr(win.controller, "set_screen_mirror"))
