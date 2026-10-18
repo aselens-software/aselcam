@@ -39,7 +39,8 @@ class ValueBadgeEdit(QLineEdit):
         self.max_val = max_val
         self.suffix = suffix
         self.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.setFixedWidth(64 if suffix else 52)
+        self.setMinimumWidth(64 if suffix else 56)
+        self.setMaximumWidth(84)
         self.setFixedHeight(22)
         self.returnPressed.connect(self._on_committed)
         self.editingFinished.connect(self._on_committed)
@@ -48,6 +49,9 @@ class ValueBadgeEdit(QLineEdit):
         if self.hasFocus():
             return
         super().setText(text)
+        req = self.fontMetrics().horizontalAdvance(text) + 14
+        if req > self.width():
+            self.setMinimumWidth(min(84, max(56, req)))
 
     def set_value(self, val: float):
         if self.hasFocus():
@@ -934,12 +938,21 @@ class MainWindow(QMainWindow):
 
         prof_chips = QHBoxLayout()
         prof_chips.setSpacing(5)
-        p_presets = [("Doğal", "standard"), ("Canlı", "vivid"), ("Sinematik", "cinema"), ("Portre", "portrait"), ("Gece", "lowlight"), ("B&&W", "bw")]
-        for p_label, p_key in p_presets:
-            btn_p = QPushButton(p_label)
+        p_presets = [
+            ("chip_natural", "standard"),
+            ("chip_vivid", "vivid"),
+            ("chip_cinema", "cinema"),
+            ("chip_portrait", "portrait"),
+            ("chip_night", "lowlight"),
+            ("chip_bw", "bw")
+        ]
+        self.prof_chip_buttons = []
+        for i18n_key, p_key in p_presets:
+            btn_p = QPushButton(_t(i18n_key))
             btn_p.setObjectName("btn_preset_chip")
             btn_p.clicked.connect(lambda checked=False, k=p_key: self._apply_profile_by_key(k))
             prof_chips.addWidget(btn_p)
+            self.prof_chip_buttons.append((btn_p, i18n_key))
         prof_layout.addLayout(prof_chips)
         filters_layout.addWidget(profile_box)
 
@@ -1137,7 +1150,7 @@ class MainWindow(QMainWindow):
         temp_row = QHBoxLayout()
         self.lbl_temp_title = QLabel("Renk Sıcaklığı (Mavi ↔ Sarı):")
         temp_row.addWidget(self.lbl_temp_title)
-        self.lbl_temp = ValueBadgeEdit("0" if self.filters.temperature == 0 else f"{self.filters.temperature:+d}", min_val=-100, max_val=100)
+        self.lbl_temp = ValueBadgeEdit(_t("val_natural") if self.filters.temperature == 0 else f"{self.filters.temperature:+d}", min_val=-100, max_val=100)
         self.lbl_temp.setObjectName("lbl_value_badge")
         self.lbl_temp.userValueChanged.connect(lambda v: self.slider_temp.setValue(int(round(v))))
         temp_row.addWidget(self.lbl_temp, 0, Qt.AlignmentFlag.AlignRight)
@@ -1153,7 +1166,7 @@ class MainWindow(QMainWindow):
         tint_row = QHBoxLayout()
         self.lbl_tint_title = QLabel("Renk Tonu (Yeşil ↔ Macenta):")
         tint_row.addWidget(self.lbl_tint_title)
-        self.lbl_tint = ValueBadgeEdit("0" if self.filters.tint == 0 else f"{self.filters.tint:+d}", min_val=-100, max_val=100)
+        self.lbl_tint = ValueBadgeEdit(_t("val_natural") if self.filters.tint == 0 else f"{self.filters.tint:+d}", min_val=-100, max_val=100)
         self.lbl_tint.setObjectName("lbl_value_badge")
         self.lbl_tint.userValueChanged.connect(lambda v: self.slider_tint.setValue(int(round(v))))
         tint_row.addWidget(self.lbl_tint, 0, Qt.AlignmentFlag.AlignRight)
@@ -1280,7 +1293,7 @@ class MainWindow(QMainWindow):
         sharp_row = QHBoxLayout()
         self.lbl_sharp_title = QLabel(_t("laplacian_sharpness"))
         sharp_row.addWidget(self.lbl_sharp_title)
-        self.lbl_sharp = ValueBadgeEdit("0%" if self.filters.sharpness == 0 else f"{self.filters.sharpness}%", min_val=0, max_val=100, suffix="%")
+        self.lbl_sharp = ValueBadgeEdit(_t("val_off") if self.filters.sharpness == 0 else f"{self.filters.sharpness}%", min_val=0, max_val=100, suffix="%")
         self.lbl_sharp.setObjectName("lbl_value_badge")
         self.lbl_sharp.userValueChanged.connect(lambda v: self.slider_sharp.setValue(int(round(v))))
         sharp_row.addWidget(self.lbl_sharp, 0, Qt.AlignmentFlag.AlignRight)
@@ -1714,6 +1727,22 @@ class MainWindow(QMainWindow):
         if hasattr(self, "lbl_mic_icon"):
             self.lbl_mic_icon.setText(_t("audio_label"))
 
+        # Profile Presets Quick Action Chips Retranslation
+        if hasattr(self, "prof_chip_buttons"):
+            for btn_p, i18n_key in self.prof_chip_buttons:
+                btn_p.setText(_t(i18n_key))
+
+        # Dynamic Value Badges (Natural / Off when 0)
+        if hasattr(self, "lbl_temp"):
+            val = self.slider_temp.value() if hasattr(self, "slider_temp") else 0
+            self.lbl_temp.setText(_t("val_natural") if val == 0 else f"{val:+d}")
+        if hasattr(self, "lbl_tint"):
+            val = self.slider_tint.value() if hasattr(self, "slider_tint") else 0
+            self.lbl_tint.setText(_t("val_natural") if val == 0 else f"{val:+d}")
+        if hasattr(self, "lbl_sharp"):
+            val = self.slider_sharp.value() if hasattr(self, "slider_sharp") else 0
+            self.lbl_sharp.setText(_t("val_off") if val == 0 else f"{val}%")
+
         # 7. Settings Tab
         if hasattr(self, "lbl_settings_res"):
             self.lbl_settings_res.setText(_t("settings_res_title"))
@@ -1862,6 +1891,12 @@ class MainWindow(QMainWindow):
             if hasattr(self, "btn_apply_settings_cta"):
                 w = self.btn_apply_settings_cta.fontMetrics().horizontalAdvance(self.btn_apply_settings_cta.text()) + 28
                 self.btn_apply_settings_cta.setMinimumWidth(max(160, w))
+
+            # 3b. Adapt RAW Color Profile Chip Buttons
+            if hasattr(self, "prof_chip_buttons"):
+                for btn_p, _ in self.prof_chip_buttons:
+                    w = btn_p.fontMetrics().horizontalAdvance(btn_p.text()) + 18
+                    btn_p.setMinimumWidth(max(48, w))
 
             # 4. Header & Telemetry Labels
             if hasattr(self, "title_bar") and hasattr(self.title_bar, "status_badge"):
@@ -2612,11 +2647,11 @@ class MainWindow(QMainWindow):
         self.lbl_blacks.setText(f"{blacks:+d}")
         self.lbl_contrast.setText(f"{contrast:+d}")
         self.lbl_bright.setText(f"{brightness:+d}")
-        self.lbl_temp.setText("Doğal" if temperature == 0 else f"{temperature:+d}")
-        self.lbl_tint.setText("Doğal" if tint == 0 else f"{tint:+d}")
+        self.lbl_temp.setText(_t("val_natural") if temperature == 0 else f"{temperature:+d}")
+        self.lbl_tint.setText(_t("val_natural") if tint == 0 else f"{tint:+d}")
         self.lbl_vibrance.setText(f"{vibrance:+d}")
         self.lbl_sat.setText(f"{saturation}%")
-        self.lbl_sharp.setText("Kapalı" if sharpness == 0 else f"{sharpness}%")
+        self.lbl_sharp.setText(_t("val_off") if sharpness == 0 else f"{sharpness}%")
 
         self.lbl_gain_r.setText(f"{red_gain:+d}")
         self.lbl_gain_g.setText(f"{green_gain:+d}")

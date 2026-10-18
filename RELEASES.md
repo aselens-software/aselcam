@@ -8,8 +8,8 @@ All release packages are pre-built, tested, and ready to share or deploy across 
 
 | Platform | Target OS | File Name | Size | SHA256 Checksum |
 | :--- | :--- | :--- | :--- | :--- |
-| **🪟 Windows** | Windows 10 / 11 (64-bit) | [`AselCam-v1.4.7-Windows-x64.zip`](releases/windows/AselCam-v1.4.7-Windows-x64.zip) | **98 MB** | `a1cb66027f069a2a64a6d86516da7101b77a12bb1a92373e5a205610cb811560` |
-| **🍎 macOS** | macOS 11+ (Intel & Apple Silicon) | [`AselCam-v1.4.7-macOS.zip`](releases/macos/AselCam-v1.4.7-macOS.zip) | **1.4 MB** | `07dbcd4beab6f594f6141f9414dc666f94a1992e99099e3026e4a53e72ff575c` |
+| **🪟 Windows** | Windows 10 / 11 (64-bit) | [`AselCam-v1.4.7-Windows-x64.zip`](releases/windows/AselCam-v1.4.7-Windows-x64.zip) | **98 MB** | `a16db7883cc61cbf3f37f92dde01eeb6929866735d85ad346fb05747b56cc088` |
+| **🍎 macOS** | macOS 11+ (Intel & Apple Silicon) | [`AselCam-v1.4.7-macOS.zip`](releases/macos/AselCam-v1.4.7-macOS.zip) | **1.4 MB** | `632238b51407640171ccdc2a32e5f68331ebefab243594b3c953251302ecfbba` |
 | **📱 iOS** | iOS 15.0+ (Sideload / AltStore) | [`AselCam-v1.4.7-iOS.ipa`](releases/ios/AselCam-v1.4.7-iOS.ipa) | **263 KB** | `ce681243acc9770b9c6b547df63dd1d058ba4e95144f7b9904b4a3fa741dc0ea` |
 | **🛠️ iOS** | iOS 15.0+ (Xcode Source Project) | [`AselCam-v1.4.7-iOS-Xcode.zip`](releases/ios/AselCam-v1.4.7-iOS-Xcode.zip) | **283 KB** | `5170f940e88db289d7873fd9ca73c6f52cb50e6cea4ca3631450cb9894103eb2` |
 | **🤖 Android** | Android 8.0 to 15+ | [`AselCam-v1.4.7-Android.apk`](releases/android/AselCam-v1.4.7-Android.apk) | **13 MB** | `eb566cf0c9b231ea8ca67ceee27f9e54309eacd1482a18f4081dfe50da1bbc6b` |
@@ -19,12 +19,15 @@ All release packages are pre-built, tested, and ready to share or deploy across 
 ## 📝 Changelog & Release Notes (17.10.2026 23:45 — 18.10.2026)
 
 ### 🎨 Official Branding & High-Resolution Logo Rendering
-- **Pixel-Perfect Logo Integration**: Replaced vector SVG rasterization inside Qt's `QSvgWidget` / `QPixmap` with direct 1024x300 lossless PNG (`aselcam_logo_horz.png`), completely eliminating gradient rendering distortion and color artifacts in the viewfinder and performance slates.
+- **Authentic Vector-to-PNG Conversion**: Converted `aselcam_logo-horz-white.svg` directly using Linux's native `rsvg-convert` engine to produce ultra-crisp, multi-resolution PNGs (`128px`, `256px`, `440px`, `512px`, `1024px`) with 100% gradient fidelity and zero lens distortion across all desktop platforms.
+- **Pixel-Perfect Logo Integration**: Replaced vector SVG rasterization inside Qt's `QSvgWidget` / `QPixmap` with direct lossless PNGs (`aselcam_logo_horz.png`), completely eliminating gradient rendering distortion and color artifacts in the viewfinder and performance slates.
 - **Full Icon Pack**: Embedded high-resolution icon suites across 16x16, 24x24, 32x32, 48x48, 64x64, 128x128, 256x256, and 512x512 for Desktop (`.ico` / `.png`), macOS (`.icns`), Android (`mipmap`), and iOS (`AppIcon.appiconset`).
 - **Linux Alt Panel (Dock / Taskbar) Icon Fix**: Deployed icons to `~/.local/share/icons/hicolor/{16..512}/apps/aselcam.png`, registered `StartupWMClass=aselcam` in `aselcam.desktop`, and updated GTK icon caches so native Linux desktop docks display the authentic app logo rather than a generic camera placeholder.
 
 ### 🌐 Complete 8-Language Localization (i18n)
 - **8 Supported Languages**: Turkish (TR), English (EN), German (DE), French (FR), Spanish (ES), Russian (RU), Japanese (JA), and Arabic (AR) with interactive national flag selectors.
+- **RAW Color Profile Chips Localized**: Full localization for all color profile preset chips ("Doğal", "Canlı", "Sinematik", "Portre", "Gece", "B&W" / "Natural", "Vivid", "Cinema", "Portrait", "Night", "B&W" / etc.) across all 8 languages, with dynamic auto-sizing to eliminate text clipping.
+- **Default 0 Value Badges Localized**: Renk Sıcaklığı and Renk Tonu default to localized "Doğal" / "Natural" / "Natürlich" / etc., and Gerçek Keskinlik defaults to localized "Kapalı" / "Off" / "Aus" / "Désactivé" / etc., with adaptive badge width expansion.
 - **Dynamic Language Reversion Fix**: Eliminated the critical bug where toggle buttons and telemetry slots reverted to hardcoded Turkish after clicks. Rewrote all event handlers (`_toggle_preview`, `_toggle_camera_pause`, `_toggle_mic_mute`, `_remote_toggle_torch`, `_remote_toggle_blackout`, `_remote_toggle_screen_mirror`, `_on_telemetry_updated`) to track internal boolean states and query dynamic localized strings.
 - **Detay & Geometri (Section 6) Fully Localized**: Translated Laplacian Sharpness, Horizontal Mirror, Vertical Flip, Black & White, Invert Colors, Rotation, and Reset All RAW & Color Settings across all 8 languages.
 - **Audio "SES" Indicator**: Localized the viewfinder audio monitor label (`audio_label`: SES / AUDIO / АУДИО / 音声 / صوت).

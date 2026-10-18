@@ -202,7 +202,15 @@ TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "grayscale": "Siyah && Beyaz",
         "invert_colors": "Renkleri Ters Çevir",
         "rotation": "Döndürme",
-        "btn_reset_all_raw": "Tüm RAW && Renk Ayarlarını Sıfırla"
+        "btn_reset_all_raw": "Tüm RAW && Renk Ayarlarını Sıfırla",
+        "val_natural": "Doğal",
+        "val_off": "Kapalı",
+        "chip_natural": "Doğal",
+        "chip_vivid": "Canlı",
+        "chip_cinema": "Sinematik",
+        "chip_portrait": "Portre",
+        "chip_night": "Gece",
+        "chip_bw": "S&&B"
     },
     "en": {
         "app_title": "AselCam - Ultra Low-Latency Virtual Camera Studio",
@@ -400,7 +408,15 @@ TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "grayscale": "Black && White",
         "invert_colors": "Invert Colors",
         "rotation": "Rotation",
-        "btn_reset_all_raw": "Reset All RAW && Color Settings"
+        "btn_reset_all_raw": "Reset All RAW && Color Settings",
+        "val_natural": "Natural",
+        "val_off": "Off",
+        "chip_natural": "Natural",
+        "chip_vivid": "Vivid",
+        "chip_cinema": "Cinema",
+        "chip_portrait": "Portrait",
+        "chip_night": "Night",
+        "chip_bw": "B&&W"
     },
     "de": {
         "app_title": "AselCam - Ultra Low-Latency Virtual Camera Studio",
@@ -598,7 +614,15 @@ TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "grayscale": "Schwarzweiß",
         "invert_colors": "Farben invertieren",
         "rotation": "Drehung",
-        "btn_reset_all_raw": "Alle RAW- && Farbeinstellungen zurücksetzen"
+        "btn_reset_all_raw": "Alle RAW- && Farbeinstellungen zurücksetzen",
+        "val_natural": "Natürlich",
+        "val_off": "Aus",
+        "chip_natural": "Natürlich",
+        "chip_vivid": "Lebendig",
+        "chip_cinema": "Kino",
+        "chip_portrait": "Porträt",
+        "chip_night": "Nacht",
+        "chip_bw": "S&&W"
     },
     "fr": {
         "app_title": "AselCam - Ultra Low-Latency Virtual Camera Studio",
@@ -796,7 +820,15 @@ TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "grayscale": "Noir && Blanc",
         "invert_colors": "Inverser les couleurs",
         "rotation": "Rotation",
-        "btn_reset_all_raw": "Réinitialiser tous les paramètres RAW && couleur"
+        "btn_reset_all_raw": "Réinitialiser tous les paramètres RAW && couleur",
+        "val_natural": "Naturel",
+        "val_off": "Désactivé",
+        "chip_natural": "Naturel",
+        "chip_vivid": "Vif",
+        "chip_cinema": "Cinéma",
+        "chip_portrait": "Portrait",
+        "chip_night": "Nuit",
+        "chip_bw": "N&&B"
     },
     "es": {
         "app_title": "AselCam - Ultra Low-Latency Virtual Camera Studio",
@@ -994,7 +1026,15 @@ TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "grayscale": "Blanco y Negro",
         "invert_colors": "Invertir colores",
         "rotation": "Rotación",
-        "btn_reset_all_raw": "Restablecer todos los ajustes RAW y de color"
+        "btn_reset_all_raw": "Restablecer todos los ajustes RAW y de color",
+        "val_natural": "Natural",
+        "val_off": "Apagado",
+        "chip_natural": "Natural",
+        "chip_vivid": "Vívido",
+        "chip_cinema": "Cine",
+        "chip_portrait": "Retrato",
+        "chip_night": "Noche",
+        "chip_bw": "B&&N"
     },
     "ru": {
         "app_title": "AselCam - Ultra Low-Latency Virtual Camera Studio",
@@ -1192,7 +1232,15 @@ TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "grayscale": "Черно-белый",
         "invert_colors": "Инвертировать цвета",
         "rotation": "Поворот",
-        "btn_reset_all_raw": "Сбросить все настройки RAW && цвета"
+        "btn_reset_all_raw": "Сбросить все настройки RAW && цвета",
+        "val_natural": "Естественный",
+        "val_off": "Выкл",
+        "chip_natural": "Естественный",
+        "chip_vivid": "Яркий",
+        "chip_cinema": "Кино",
+        "chip_portrait": "Портрет",
+        "chip_night": "Ночь",
+        "chip_bw": "Ч&&Б"
     },
     "ja": {
         "app_title": "AselCam - Ultra Low-Latency Virtual Camera Studio",
@@ -1390,7 +1438,15 @@ TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "grayscale": "モノクロ",
         "invert_colors": "色を反転",
         "rotation": "回転",
-        "btn_reset_all_raw": "すべてのRAW・カラー設定をリセット"
+        "btn_reset_all_raw": "すべてのRAW・カラー設定をリセット",
+        "val_natural": "自然",
+        "val_off": "オフ",
+        "chip_natural": "自然",
+        "chip_vivid": "鮮やか",
+        "chip_cinema": "シネマ",
+        "chip_portrait": "ポートレート",
+        "chip_night": "夜景",
+        "chip_bw": "白黒"
     },
     "ar": {
         "app_title": "AselCam - Ultra Low-Latency Virtual Camera Studio",
@@ -1588,7 +1644,15 @@ TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "grayscale": "أبيض وأسود",
         "invert_colors": "عكس الألوان",
         "rotation": "تدوير",
-        "btn_reset_all_raw": "إعادة ضبط جميع إعدادات RAW والألوان"
+        "btn_reset_all_raw": "إعادة ضبط جميع إعدادات RAW والألوان",
+        "val_natural": "طبيعي",
+        "val_off": "معطل",
+        "chip_natural": "طبيعي",
+        "chip_vivid": "حيوي",
+        'chip_cinema': "سينمائي",
+        "chip_portrait": "بورتريه",
+        "chip_night": "ليلي",
+        "chip_bw": "أ&&س"
     }
 }
 

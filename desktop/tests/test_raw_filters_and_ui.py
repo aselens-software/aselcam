@@ -310,12 +310,24 @@ class TestRawFiltersAndUI(unittest.TestCase):
             self.assertEqual(win.btn_master_connect.text(), "Start Camera")
             self.assertEqual(win.tone_box.title(), "RAW SENSOR & COLOR SCIENCE")
             self.assertEqual(win.control_tabs.tabText(0), "Mobile Control")
+            self.assertEqual(win.lbl_temp.text(), "Natural")
+            self.assertEqual(win.lbl_tint.text(), "Natural")
+            self.assertEqual(win.lbl_sharp.text(), "Off")
+            chip_texts_en = [b.text() for b, _ in win.prof_chip_buttons]
+            self.assertIn("Natural", chip_texts_en)
+            self.assertIn("Vivid", chip_texts_en)
+            self.assertIn("Cinema", chip_texts_en)
 
             # Switch to German
             i18n.set_language("de")
             win.retranslate_ui()
             self.assertEqual(win.btn_master_connect.text(), "Verbinden")
             self.assertEqual(win.control_tabs.tabText(0), "Mobilsteuerung")
+            self.assertEqual(win.lbl_temp.text(), "Natürlich")
+            self.assertEqual(win.lbl_sharp.text(), "Aus")
+            chip_texts_de = [b.text() for b, _ in win.prof_chip_buttons]
+            self.assertIn("Natürlich", chip_texts_de)
+            self.assertIn("Lebendig", chip_texts_de)
 
             # Switch to Turkish
             i18n.set_language("tr")
@@ -323,6 +335,12 @@ class TestRawFiltersAndUI(unittest.TestCase):
             self.assertEqual(win.btn_master_connect.text(), "Bağlan")
             self.assertEqual(win.tone_box.title(), "RAW SENSÖR & RENK BİLİMİ")
             self.assertEqual(win.control_tabs.tabText(0), "Mobil Kontrol")
+            self.assertEqual(win.lbl_temp.text(), "Doğal")
+            self.assertEqual(win.lbl_sharp.text(), "Kapalı")
+            chip_texts_tr = [b.text() for b, _ in win.prof_chip_buttons]
+            self.assertIn("Doğal", chip_texts_tr)
+            self.assertIn("Canlı", chip_texts_tr)
+            self.assertIn("Sinematik", chip_texts_tr)
         finally:
             win.close()
             i18n.set_language(orig_lang)
