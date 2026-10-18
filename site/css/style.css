@@ -1430,6 +1430,46 @@ body {
   color: var(--apple-emerald);
 }
 
+/* Buy Me a Coffee Community Support Banner */
+.bmc-banner-row {
+  margin-top: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  flex-wrap: wrap;
+  padding: 16px 24px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-lg);
+  max-width: 820px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.bmc-banner-text {
+  font-size: 0.92rem;
+  color: var(--text-secondary);
+  font-weight: 400;
+}
+
+.bmc-btn-badge {
+  display: inline-flex;
+  align-items: center;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
+}
+
+.bmc-btn-badge:hover {
+  transform: translateY(-2px) scale(1.02);
+  opacity: 0.96;
+}
+
+.bmc-btn-badge img {
+  display: block;
+  border-radius: 8px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+}
+
 /* ==========================================================================
    10. APPLE SPECIFICATION MATRIX
    ========================================================================== */
@@ -1493,6 +1533,13 @@ body {
   padding-bottom: 36px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   margin-bottom: 44px;
+}
+
+.footer-top-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
 }
 
 .footer-logo {

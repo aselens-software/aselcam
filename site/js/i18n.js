@@ -128,7 +128,8 @@ const I18N_DATA = {
     "privacy_bento_card3_title": "Hesap veya Kayıt Yok",
     "privacy_bento_card3_desc": "Uygulamayı indirin ve hemen kullanın. E-posta, şifre, abonelik veya kullanıcı profili oluşturmanız gerekmez.",
     "privacy_bento_card4_title": "Açık Kaynak & Şeffaf",
-    "privacy_bento_card4_desc": "Tüm kod tabanı GitHub üzerinde herkese açıktır. Ağ soketlerinden kamera işleme mantığına kadar her satırı bağımsız inceleyebilirsiniz."
+    "privacy_bento_card4_desc": "Tüm kod tabanı GitHub üzerinde herkese açıktır. Ağ soketlerinden kamera işleme mantığına kadar her satırı bağımsız inceleyebilirsiniz.",
+    "bmc_support_text": "AselCam tamamen ücretsiz ve açık kaynaklıdır. Geliştirmeyi desteklemek isterseniz:"
   },
   "en": {
     "badge_release": "v1.4.7 Live • macOS, Windows, Linux, iOS & Android",
@@ -255,7 +256,8 @@ const I18N_DATA = {
     "privacy_bento_card3_title": "No Account Required",
     "privacy_bento_card3_desc": "Download and start streaming instantly. No email, passwords, subscriptions, or profile tracking required.",
     "privacy_bento_card4_title": "Open Source & Auditable",
-    "privacy_bento_card4_desc": "The complete codebase is publicly hosted on GitHub. Anyone can independently inspect every socket connection and frame buffer."
+    "privacy_bento_card4_desc": "The complete codebase is publicly hosted on GitHub. Anyone can independently inspect every socket connection and frame buffer.",
+    "bmc_support_text": "AselCam is 100% free and open source. If you would like to support ongoing development:"
   },
   "de": {
     "badge_release": "v1.4.7 Live • macOS, Windows, Linux, iOS & Android",
@@ -382,7 +384,8 @@ const I18N_DATA = {
     "privacy_bento_card3_title": "Kein Konto erforderlich",
     "privacy_bento_card3_desc": "Herunterladen und sofort starten. Keine E-Mail, Passwörter, Abonnements oder Profilerstellung erforderlich.",
     "privacy_bento_card4_title": "Open Source & Prüfbar",
-    "privacy_bento_card4_desc": "Die gesamte Codebasis ist öffentlich auf GitHub verfügbar. Jeder kann alle Netzwerkverbindungen und Frame-Puffer unabhängig überprüfen."
+    "privacy_bento_card4_desc": "Die gesamte Codebasis ist öffentlich auf GitHub verfügbar. Jeder kann alle Netzwerkverbindungen und Frame-Puffer unabhängig überprüfen.",
+    "bmc_support_text": "AselCam ist 100% kostenlos und Open Source. Wenn Sie die Entwicklung unterstützen möchten:"
   },
   "fr": {
     "badge_release": "v1.4.7 Disponible • macOS, Windows, Linux, iOS & Android",
@@ -509,7 +512,8 @@ const I18N_DATA = {
     "privacy_bento_card3_title": "Aucun compte requis",
     "privacy_bento_card3_desc": "Téléchargez et démarrez instantanément. Aucun e-mail, mot de passe, abonnement ou création de profil requis.",
     "privacy_bento_card4_title": "Open Source & Vérifiable",
-    "privacy_bento_card4_desc": "L'intégralité du code source est publique sur GitHub. Chacun peut inspecter de manière indépendante les connexions et la gestion vidéo."
+    "privacy_bento_card4_desc": "L'intégralité du code source est publique sur GitHub. Chacun peut inspecter de manière indépendante les connexions et la gestion vidéo.",
+    "bmc_support_text": "AselCam est 100% gratuit et open source. Si vous souhaitez soutenir le développement :"
   },
   "es": {
     "badge_release": "v1.4.7 Disponible • macOS, Windows, Linux, iOS y Android",
@@ -636,7 +640,8 @@ const I18N_DATA = {
     "privacy_bento_card3_title": "Sin cuenta ni registro",
     "privacy_bento_card3_desc": "Descarga y comienza al instante. Sin correos electrónicos, contraseñas, suscripciones ni perfiles de usuario.",
     "privacy_bento_card4_title": "Código Abierto y Auditable",
-    "privacy_bento_card4_desc": "Todo el código fuente es público en GitHub. Cualquiera puede inspeccionar de forma independiente cada conexión de red y búfer de fotogramas."
+    "privacy_bento_card4_desc": "Todo el código fuente es público en GitHub. Cualquiera puede inspeccionar de forma independiente cada conexión de red y búfer de fotogramas.",
+    "bmc_support_text": "AselCam es 100% gratuito y de código abierto. Si deseas apoyar el desarrollo continuo:"
   },
   "ru": {
     "badge_release": "v1.4.7 Доступно • macOS, Windows, Linux, iOS & Android",
@@ -763,7 +768,8 @@ const I18N_DATA = {
     "privacy_bento_card3_title": "Без аккаунта и регистрации",
     "privacy_bento_card3_desc": "Скачивайте и используйте сразу. Без электронной почты, паролей, подписок и профилей пользователей.",
     "privacy_bento_card4_title": "Открытый исходный код",
-    "privacy_bento_card4_desc": "Весь исходный код опубликован на GitHub. Любой желающий может независимо проверить каждое сетевое соединение и обработку кадров."
+    "privacy_bento_card4_desc": "Весь исходный код опубликован на GitHub. Любой желающий может независимо проверить каждое сетевое соединение и обработку кадров.",
+    "bmc_support_text": "AselCam полностью бесплатен и открыт. Если вы хотите поддержать разработку:"
   },
   "ja": {
     "badge_release": "v1.4.7 リリース • macOS, Windows, Linux, iOS & Android",
@@ -890,7 +896,8 @@ const I18N_DATA = {
     "privacy_bento_card3_title": "アカウント・登録不要",
     "privacy_bento_card3_desc": "ダウンロードしてすぐに使用可能。メールアドレス、パスワード、サブスクリプション、プロフィール登録は一切不要です。",
     "privacy_bento_card4_title": "オープンソース＆検証可能",
-    "privacy_bento_card4_desc": "すべてのソースコードはGitHubで公開されています。ネットワークソケットからカメラ処理ロジックまで、自由に検証できます。"
+    "privacy_bento_card4_desc": "すべてのソースコードはGitHubで公開されています。ネットワークソケットからカメラ処理ロジックまで、自由に検証できます。",
+    "bmc_support_text": "AselCamは完全無料でオープンソースです。開発を応援していただける場合："
   },
   "ar": {
     "badge_release": "الإصدار v1.4.7 متوفر الآن • macOS, Windows, Linux, iOS & Android",
@@ -1017,6 +1024,7 @@ const I18N_DATA = {
     "privacy_bento_card3_title": "لا حاجة لحساب أو تسجيل",
     "privacy_bento_card3_desc": "حمّل وابدأ البث على الفور. لا حاجة لبريد إلكتروني أو كلمات مرور أو اشتراكات أو إنشاء ملف مستخدم.",
     "privacy_bento_card4_title": "مفتوح المصدر وقابل للتدقيق",
-    "privacy_bento_card4_desc": "الكود المصدري بالكامل متاح علنًا على GitHub. يمكن لأي شخص تدقيق كل اتصال شبكي ومخزن إطارات بشكل مستقل."
+    "privacy_bento_card4_desc": "الكود المصدري بالكامل متاح علنًا على GitHub. يمكن لأي شخص تدقيق كل اتصال شبكي ومخزن إطارات بشكل مستقل.",
+    "bmc_support_text": "AselCam مجاني ومفتوح المصدر بنسبة 100%. إذا كنت ترغب في دعم استمرار التطوير:"
   }
 };

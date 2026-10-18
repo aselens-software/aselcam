@@ -12,6 +12,7 @@
 [![Swift](https://img.shields.io/badge/Swift-5.9-orange.svg)](https://swift.org/)
 [![Latency](https://img.shields.io/badge/Latency-%3C%2010ms-success.svg)](#architecture--latency)
 [![Resolution](https://img.shields.io/badge/Resolution-4K%20%7C%201080p%20%7C%20720p%20%40%2060FPS-blueviolet.svg)](#)
+[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-aselens-yellow.svg?style=flat&logo=buy-me-a-coffee)](https://buymeacoffee.com/aselens)
 
 ---
 
@@ -33,6 +34,7 @@
 - [Binary Wire Protocol Specification](#binary-wire-protocol-specification)
 - [Building from Source](#building-from-source)
 - [Testing & Quality Assurance](#testing--quality-assurance)
+- [Support the Project](#-support-the-project)
 - [License](#license)
 
 ---
@@ -307,6 +309,18 @@ PYTHONPATH=desktop python3 -m unittest discover -s desktop/tests -v
 ```
 
 All 18 test suites pass with zero regressions.
+
+---
+
+## ☕ Support the Project
+
+If AselCam makes your meetings, streams, or workflows better, consider supporting ongoing development:
+
+<p align="center">
+  <a href="https://www.buymeacoffee.com/aselens" target="_blank">
+    <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me a Coffee" style="height: 60px !important;width: 217px !important;">
+  </a>
+</p>
 
 ---
 
