@@ -330,4 +330,4 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 
 ---
 
-Developed by Aselens Software [https://aselens.com]
+Developed by [Aselens Software](https://aselens.com) 
