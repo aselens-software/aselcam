@@ -251,7 +251,7 @@ class TestRawFiltersAndUI(unittest.TestCase):
         """Verifies Screen Mirror UI button, command dispatch, and telemetry synchronization."""
         win = MainWindow()
         self.assertTrue(hasattr(win, "btn_screen_mirror"))
-        self.assertEqual(win.btn_screen_mirror.text(), "📱 Ekranı Yansıt (Telefon Ekranı)")
+        self.assertEqual(win.btn_screen_mirror.text(), "Ekranı Yansıt (Telefon Ekranı)")
 
         # Simulate receiving telemetry that phone started screen mirroring
         win.is_connected = True

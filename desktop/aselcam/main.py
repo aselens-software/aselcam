@@ -43,6 +43,7 @@ def main():
     app.setApplicationDisplayName("AselCam")
     app.setDesktopFileName("aselcam.desktop")
     app.setOrganizationName("Asel")
+    app.setQuitOnLastWindowClosed(False)
 
     icon_path = os.path.join(os.path.dirname(__file__), "assets", "aselcam_icon_256.png")
     if os.path.exists(icon_path):

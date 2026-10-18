@@ -126,10 +126,27 @@ class CameraSession(
             }
 
             override fun onError(camera: CameraDevice, error: Int) {
-                Log.e(TAG, "Camera open error: $error")
-                camera.close()
+                Log.e(TAG, "Camera open error: $error, scheduling self-healing retry...")
+                try {
+                    camera.close()
+                } catch (e: Exception) {}
                 cameraDevice = null
                 isSessionActive.set(false)
+
+                // Self-healing auto-recovery: retry opening camera if surface is valid
+                val enc = encoderSurface
+                if (enc != null && enc.isValid) {
+                    backgroundHandler?.postDelayed({
+                        if (!isSessionActive.get() && encoderSurface?.isValid == true) {
+                            try {
+                                Log.i(TAG, "Attempting auto-recovery for camera $cameraId...")
+                                startCamera(currentCameraId, encoderSurface!!, previewSurface, currentResolution, currentFps, onOpened)
+                            } catch (e: Exception) {
+                                Log.e(TAG, "Auto-recovery error: ${e.message}")
+                            }
+                        }
+                    }, 400)
+                }
             }
         }, backgroundHandler)
     }
@@ -183,7 +200,17 @@ class CameraSession(
                 }
 
                 override fun onConfigureFailed(session: CameraCaptureSession) {
-                    Log.e(TAG, "Camera session configuration failed")
+                    Log.e(TAG, "Camera session configuration failed, retrying...")
+                    captureSession = null
+                    backgroundHandler?.postDelayed({
+                        if (isSessionActive.get() && cameraDevice != null && encoderSurface?.isValid == true) {
+                            try {
+                                createCaptureSession()
+                            } catch (e: Exception) {
+                                Log.e(TAG, "Retry createCaptureSession failed: ${e.message}")
+                            }
+                        }
+                    }, 300)
                 }
             }
 
@@ -212,6 +239,10 @@ class CameraSession(
 
         try {
             session.setRepeatingRequest(builder.build(), null, backgroundHandler)
+        } catch (e: IllegalStateException) {
+            Log.w(TAG, "Session closed during updateRepeatingRequest: ${e.message}")
+        } catch (e: CameraAccessException) {
+            Log.w(TAG, "CameraAccessException during updateRepeatingRequest: ${e.message}")
         } catch (e: Exception) {
             Log.e(TAG, "Error updating repeating request: ${e.message}")
         }

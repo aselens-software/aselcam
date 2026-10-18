@@ -66,6 +66,8 @@ class CameraStreamService : Service(), CommandListener {
     private val _isStreaming = MutableStateFlow(false)
     val isStreaming: StateFlow<Boolean> = _isStreaming
 
+    private val pipelineLock = Any()
+
     @Volatile
     var userStoppedManually: Boolean = false
 
@@ -202,7 +204,6 @@ class CameraStreamService : Service(), CommandListener {
         return START_STICKY
     }
 
-    @Synchronized
     fun startStreaming(
         cameraId: String = "0",
         width: Int = 1920,
@@ -212,7 +213,8 @@ class CameraStreamService : Service(), CommandListener {
         codec: String = "h264",
         previewSurface: Surface? = null
     ) {
-        if (_isStreaming.value) return
+        synchronized(pipelineLock) {
+            if (_isStreaming.value) return
         userStoppedManually = false
 
         Log.i(TAG, "Starting streaming: cam=$cameraId, ${width}x${height} @ ${fps}fps, bitrate=$bitrate, cameraEnabled=${isCameraEnabledGlobal.value}")
@@ -304,27 +306,29 @@ class CameraStreamService : Service(), CommandListener {
             isStreamingGlobal.value = false
         }
     }
+}
 
-    @Synchronized
     fun stopStreaming() {
-        if (!_isStreaming.value) return
-        Log.i(TAG, "Stopping streaming")
+        synchronized(pipelineLock) {
+            if (!_isStreaming.value) return
+            Log.i(TAG, "Stopping streaming")
 
-        cameraSession.stopCamera()
-        eglPipeline.stop()
-        screenMirrorManager.stop()
-        videoEncoder.stop()
-        audioEncoder.stop()
+            cameraSession.stopCamera()
+            eglPipeline.stop()
+            screenMirrorManager.stop()
+            videoEncoder.stop()
+            audioEncoder.stop()
 
-        _isStreaming.value = false
-        isStreamingGlobal.value = false
-        isScreenMirroringGlobal.value = false
-        try {
-            stopForeground(STOP_FOREGROUND_REMOVE)
-        } catch (e: Exception) {}
+            _isStreaming.value = false
+            isStreamingGlobal.value = false
+            isScreenMirroringGlobal.value = false
+            try {
+                stopForeground(STOP_FOREGROUND_REMOVE)
+            } catch (e: Exception) {}
+        }
     }
 
-    fun setPreviewSurface(surface: Surface?) {
+    fun setPreviewSurface(surface: Surface?) = synchronized(pipelineLock) {
         cameraSession.setPreviewSurface(surface)
         eglPipeline.setPreviewSurface(surface)
     }
@@ -408,8 +412,7 @@ class CameraStreamService : Service(), CommandListener {
         return root
     }
 
-    @Synchronized
-    override fun onSwitchCamera(cameraId: String) {
+    override fun onSwitchCamera(cameraId: String) = synchronized(pipelineLock) {
         currentCameraIdGlobal.value = cameraId
         if (!_isStreaming.value) {
             startStreaming(
@@ -421,12 +424,12 @@ class CameraStreamService : Service(), CommandListener {
                 codec = videoEncoder.currentCodec,
                 previewSurface = cameraSession.previewSurface
             )
-            return
+            return@synchronized
         }
 
-        val glCameraSurface = eglPipeline.cameraSurface ?: return
+        val glCameraSurface = eglPipeline.cameraSurface ?: return@synchronized
         val cameras = CameraManagerHelper.getAvailableCameras(this)
-        val targetCam = cameras.find { it.id == cameraId } ?: return
+        val targetCam = cameras.find { it.id == cameraId } ?: return@synchronized
         if (!targetCam.hasFlash) {
             isTorchGlobal.value = false
         }
@@ -457,17 +460,16 @@ class CameraStreamService : Service(), CommandListener {
         )
     }
 
-    override fun onSetTorch(enabled: Boolean) {
+    override fun onSetTorch(enabled: Boolean) = synchronized(pipelineLock) {
         cameraSession.setTorch(enabled)
         isTorchGlobal.value = enabled
     }
 
-    override fun onSetZoom(zoom: Float) {
+    override fun onSetZoom(zoom: Float) = synchronized(pipelineLock) {
         cameraSession.setZoom(zoom)
     }
 
-    @Synchronized
-    override fun onSetConfig(width: Int, height: Int, fps: Int, bitrate: Int, codec: String) {
+    override fun onSetConfig(width: Int, height: Int, fps: Int, bitrate: Int, codec: String) = synchronized(pipelineLock) {
         currentBitrateMbpsGlobal.value = bitrate / 1_000_000f
         currentCodecGlobal.value = if (codec.lowercase() == "hevc" || codec.lowercase() == "h265") "hevc" else "h264"
 
@@ -481,7 +483,7 @@ class CameraStreamService : Service(), CommandListener {
                 codec = codec,
                 previewSurface = cameraSession.previewSurface
             )
-            return
+            return@synchronized
         }
 
         val normalizedCodec = if (codec.lowercase() == "hevc" || codec.lowercase() == "h265") "hevc" else "h264"
@@ -493,7 +495,7 @@ class CameraStreamService : Service(), CommandListener {
         ) {
             videoEncoder.setBitrate(bitrate)
             videoEncoder.requestKeyFrame()
-            return
+            return@synchronized
         }
 
         val cameras = CameraManagerHelper.getAvailableCameras(this)
@@ -543,84 +545,85 @@ class CameraStreamService : Service(), CommandListener {
         }
     }
 
-    override fun onSetMute(muted: Boolean) {
+    override fun onSetMute(muted: Boolean) = synchronized(pipelineLock) {
         audioEncoder.setMuted(muted, _isStreaming.value)
         isMutedGlobal.value = muted
     }
 
-    override fun onSetAudioGain(gain: Float) {
+    override fun onSetAudioGain(gain: Float) = synchronized(pipelineLock) {
         audioEncoder.gain = gain
     }
 
-    override fun onSetPreviewEnabled(enabled: Boolean) {
+    override fun onSetPreviewEnabled(enabled: Boolean) = synchronized(pipelineLock) {
         cameraSession.setPreviewEnabled(enabled)
         eglPipeline.setPreviewEnabledState(enabled)
         isPreviewGlobal.value = enabled
     }
 
-    @Synchronized
     override fun onSetCameraEnabled(enabled: Boolean) {
-        if (isCameraEnabledGlobal.value == enabled) return
-        isCameraEnabledGlobal.value = enabled
-        if (!_isStreaming.value) return
+        synchronized(pipelineLock) {
+            if (isCameraEnabledGlobal.value == enabled) return
+            isCameraEnabledGlobal.value = enabled
+            if (!_isStreaming.value) return
 
-        if (!enabled) {
-            // Physically power down camera sensor and MediaCodec encoder
-            cameraSession.stopCamera()
-            eglPipeline.stop()
-            videoEncoder.stop()
-            streamServer.clearQueues()
-            Log.i(TAG, "Camera & video pipeline physically stopped to save power")
-        } else {
-            // Power on camera sensor and MediaCodec encoder
-            Log.i(TAG, "Camera & video pipeline powering back on...")
-            try {
-                val cameras = CameraManagerHelper.getAvailableCameras(this)
-                val targetCam = cameras.find { it.id == currentCameraIdGlobal.value } ?: cameras.firstOrNull()
-                val effectiveCamId = targetCam?.id ?: currentCameraIdGlobal.value
+            if (!enabled) {
+                // Physically power down camera sensor and MediaCodec encoder
+                cameraSession.stopCamera()
+                eglPipeline.stop()
+                videoEncoder.stop()
+                streamServer.clearQueues()
+                Log.i(TAG, "Camera & video pipeline physically stopped to save power")
+            } else {
+                // Power on camera sensor and MediaCodec encoder
+                Log.i(TAG, "Camera & video pipeline powering back on...")
+                try {
+                    val cameras = CameraManagerHelper.getAvailableCameras(this)
+                    val targetCam = cameras.find { it.id == currentCameraIdGlobal.value } ?: cameras.firstOrNull()
+                    val effectiveCamId = targetCam?.id ?: currentCameraIdGlobal.value
 
-                val encSurface = videoEncoder.start(
-                    videoEncoder.currentWidth,
-                    videoEncoder.currentHeight,
-                    videoEncoder.currentFps,
-                    videoEncoder.currentBitrate,
-                    videoEncoder.currentCodec
-                )
-                val actualEncW = videoEncoder.currentWidth
-                val actualEncH = videoEncoder.currentHeight
+                    val encSurface = videoEncoder.start(
+                        videoEncoder.currentWidth,
+                        videoEncoder.currentHeight,
+                        videoEncoder.currentFps,
+                        videoEncoder.currentBitrate,
+                        videoEncoder.currentCodec
+                    )
+                    val actualEncW = videoEncoder.currentWidth
+                    val actualEncH = videoEncoder.currentHeight
 
-                val sensorRes = if (targetCam != null) {
-                    CameraManagerHelper.findBestMatchingResolution(targetCam, actualEncW, actualEncH)
-                } else {
-                    Size(maxOf(actualEncW, actualEncH), minOf(actualEncW, actualEncH))
-                }
-
-                val activePreview = cameraSession.previewSurface
-                eglPipeline.sensorOrientation = targetCam?.sensorOrientation ?: 90
-                eglPipeline.isFacingBack = targetCam?.isFacingBack ?: true
-                eglPipeline.isPreviewEnabled = isPreviewGlobal.value
-
-                val glCameraSurface = eglPipeline.start(
-                    sensorW = sensorRes.width,
-                    sensorH = sensorRes.height,
-                    encW = actualEncW,
-                    encH = actualEncH,
-                    encoderSurface = encSurface,
-                    previewSurface = activePreview
-                )
-
-                cameraSession.startCamera(
-                    cameraId = effectiveCamId,
-                    encoderSurface = glCameraSurface,
-                    previewSurface = activePreview,
-                    targetResolution = sensorRes,
-                    targetFps = videoEncoder.currentFps,
-                    onOpened = {
-                        videoEncoder.requestKeyFrame()
+                    val sensorRes = if (targetCam != null) {
+                        CameraManagerHelper.findBestMatchingResolution(targetCam, actualEncW, actualEncH)
+                    } else {
+                        Size(maxOf(actualEncW, actualEncH), minOf(actualEncW, actualEncH))
                     }
-                )
-            } catch (e: Exception) {
-                Log.e(TAG, "Failed to power on camera pipeline: ${e.message}", e)
+
+                    val activePreview = cameraSession.previewSurface
+                    eglPipeline.sensorOrientation = targetCam?.sensorOrientation ?: 90
+                    eglPipeline.isFacingBack = targetCam?.isFacingBack ?: true
+                    eglPipeline.isPreviewEnabled = isPreviewGlobal.value
+
+                    val glCameraSurface = eglPipeline.start(
+                        sensorW = sensorRes.width,
+                        sensorH = sensorRes.height,
+                        encW = actualEncW,
+                        encH = actualEncH,
+                        encoderSurface = encSurface,
+                        previewSurface = activePreview
+                    )
+
+                    cameraSession.startCamera(
+                        cameraId = effectiveCamId,
+                        encoderSurface = glCameraSurface,
+                        previewSurface = activePreview,
+                        targetResolution = sensorRes,
+                        targetFps = videoEncoder.currentFps,
+                        onOpened = {
+                            videoEncoder.requestKeyFrame()
+                        }
+                    )
+                } catch (e: Exception) {
+                    Log.e(TAG, "Failed to power on camera pipeline: ${e.message}", e)
+                }
             }
         }
     }

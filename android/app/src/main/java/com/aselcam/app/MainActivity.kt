@@ -51,6 +51,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import com.aselcam.app.camera.CameraInfo
 import com.aselcam.app.camera.CameraManagerHelper
+import com.aselcam.app.i18n.MobileI18n
 import com.aselcam.app.service.CameraStreamService
 import java.net.Inet4Address
 import java.net.NetworkInterface
@@ -239,7 +240,7 @@ fun AselCamApp(
     val globalBitrateMbps by CameraStreamService.currentBitrateMbpsGlobal.collectAsState()
     val selectedCodec by CameraStreamService.currentCodecGlobal.collectAsState()
 
-    var selectedBitrateMbps by remember(globalBitrateMbps) { mutableStateOf(globalBitrateMbps) }
+    var selectedBitrateMbps by remember(globalBitrateMbps) { mutableStateOf(maxOf(2f, globalBitrateMbps)) }
     var audioGain by remember { mutableStateOf(1.0f) }
 
     var surfaceHolder by remember { mutableStateOf<SurfaceHolder?>(null) }
@@ -250,7 +251,7 @@ fun AselCamApp(
     val copyToClipboard: (String, String) -> Unit = { label, text ->
         val cm = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         cm.setPrimaryClip(ClipData.newPlainText(label, text))
-        Toast.makeText(context, "$label kopyalandı", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, "$label ${MobileI18n.tr("copied")}", Toast.LENGTH_SHORT).show()
     }
 
     // Synchronize preview surface and auto-start streaming when ready
@@ -264,7 +265,7 @@ fun AselCamApp(
             val parts = selectedResolution.split("x")
             val w = parts.getOrNull(0)?.toIntOrNull() ?: 1920
             val h = parts.getOrNull(1)?.toIntOrNull() ?: 1080
-            val br = (selectedBitrateMbps * 1_000_000).toInt()
+            val br = (maxOf(2f, selectedBitrateMbps) * 1_000_000).toInt()
             srv.startStreaming(
                 cameraId = selectedCameraId,
                 width = w,
@@ -281,7 +282,7 @@ fun AselCamApp(
     LaunchedEffect(isBlackout) {
         val window = activity.window
         val lp = window.attributes
-        lp.screenBrightness = if (isBlackout) 0.01f else WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE
+        lp.screenBrightness = if (isBlackout) 0.001f else WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE
         window.attributes = lp
     }
 
@@ -393,12 +394,66 @@ fun AselCamApp(
                                         )
                                         Spacer(modifier = Modifier.width(5.dp))
                                         Text(
-                                            text = if (isStreaming) "YAYINDA" else "BEKLEMEDE",
+                                            text = if (isStreaming) MobileI18n.tr("status_live") else MobileI18n.tr("status_idle"),
                                             fontSize = 10.sp,
                                             fontWeight = FontWeight.Bold,
                                             fontFamily = FontFamily.Monospace,
                                             color = if (isStreaming) ErrorRed else MintNeon
                                         )
+                                    }
+                                }
+
+                                // Language Selector Dropdown
+                                var langMenuExpanded by remember { mutableStateOf(false) }
+                                Box {
+                                    Surface(
+                                        color = ObsidianLow,
+                                        shape = RoundedCornerShape(8.dp),
+                                        border = BorderStroke(1.dp, ObsidianBorder),
+                                        modifier = Modifier.clickable { langMenuExpanded = true }
+                                    ) {
+                                        Row(
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            modifier = Modifier.padding(horizontal = 7.dp, vertical = 5.dp)
+                                        ) {
+                                            val curFlag = MobileI18n.SUPPORTED_LANGUAGES.find { it.first == MobileI18n.currentLanguage }?.second ?: "🇹🇷 TR"
+                                            Text(
+                                                text = curFlag,
+                                                fontSize = 10.sp,
+                                                fontWeight = FontWeight.SemiBold,
+                                                color = TextPrimary
+                                            )
+                                            Spacer(modifier = Modifier.width(2.dp))
+                                            Icon(
+                                                Icons.Default.ArrowDropDown,
+                                                contentDescription = null,
+                                                tint = TextSecondary,
+                                                modifier = Modifier.size(14.dp)
+                                            )
+                                        }
+                                    }
+
+                                    DropdownMenu(
+                                        expanded = langMenuExpanded,
+                                        onDismissRequest = { langMenuExpanded = false },
+                                        modifier = Modifier.background(ObsidianCard).border(1.dp, ObsidianBorder, RoundedCornerShape(8.dp))
+                                    ) {
+                                        MobileI18n.SUPPORTED_LANGUAGES.forEach { (code, flagLabel) ->
+                                            DropdownMenuItem(
+                                                text = {
+                                                    Text(
+                                                        flagLabel,
+                                                        color = if (MobileI18n.currentLanguage == code) MintNeon else TextPrimary,
+                                                        fontWeight = if (MobileI18n.currentLanguage == code) FontWeight.Bold else FontWeight.Normal,
+                                                        fontSize = 12.sp
+                                                    )
+                                                },
+                                                onClick = {
+                                                    MobileI18n.currentLanguage = code
+                                                    langMenuExpanded = false
+                                                }
+                                            )
+                                        }
                                     }
                                 }
 
@@ -534,13 +589,13 @@ fun AselCamApp(
                                 )
                                 Spacer(modifier = Modifier.height(6.dp))
                                 Text(
-                                    text = "Telefon Ekranı Yayında",
+                                    text = MobileI18n.tr("screen_mirror_title"),
                                     fontWeight = FontWeight.Bold,
                                     color = SkyCyan,
                                     fontSize = 14.sp
                                 )
                                 Text(
-                                    text = "Cihaz ekranınız bilgisayara aktarılıyor",
+                                    text = MobileI18n.tr("screen_mirror_sub"),
                                     color = TextSecondary,
                                     fontSize = 11.sp
                                 )
@@ -552,7 +607,7 @@ fun AselCamApp(
                                     modifier = Modifier.clickable { service?.stopScreenMirroring() }
                                 ) {
                                     Text(
-                                        "Kameraya Dön",
+                                        MobileI18n.tr("back_to_cam"),
                                         color = SkyCyan,
                                         fontSize = 12.sp,
                                         fontWeight = FontWeight.SemiBold,
@@ -577,13 +632,13 @@ fun AselCamApp(
                                 )
                                 Spacer(modifier = Modifier.height(6.dp))
                                 Text(
-                                    text = "Kamera Donanımı Kapalı",
+                                    text = MobileI18n.tr("cam_off_title"),
                                     fontWeight = FontWeight.Bold,
                                     color = Color(0xFFFCA5A5),
                                     fontSize = 14.sp
                                 )
                                 Text(
-                                    text = "Sensör ve donanım kodlayıcı kapatıldı (Pil & Ağ Tasarrufu)",
+                                    text = MobileI18n.tr("cam_off_sub"),
                                     color = TextSecondary,
                                     fontSize = 11.sp
                                 )
@@ -605,13 +660,41 @@ fun AselCamApp(
                                 )
                                 Spacer(modifier = Modifier.height(6.dp))
                                 Text(
-                                    text = "Önizleme Devre Dışı",
+                                    text = MobileI18n.tr("preview_off_title"),
                                     fontWeight = FontWeight.Bold,
                                     color = TextPrimary,
                                     fontSize = 14.sp
                                 )
                                 Text(
-                                    text = "GPU & Ekran tasarruf modu devrede. Yayın devam ediyor.",
+                                    text = MobileI18n.tr("preview_off_sub"),
+                                    color = TextSecondary,
+                                    fontSize = 11.sp
+                                )
+                            }
+                        } else if (!isStreaming) {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center,
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .background(ObsidianLowest)
+                                    .padding(16.dp)
+                            ) {
+                                Icon(
+                                    Icons.Default.HourglassEmpty,
+                                    contentDescription = null,
+                                    tint = MintNeon,
+                                    modifier = Modifier.size(36.dp)
+                                )
+                                Spacer(modifier = Modifier.height(6.dp))
+                                Text(
+                                    text = MobileI18n.tr("waiting_stream_title"),
+                                    fontWeight = FontWeight.Bold,
+                                    color = TextPrimary,
+                                    fontSize = 14.sp
+                                )
+                                Text(
+                                    text = MobileI18n.tr("waiting_stream_sub"),
                                     color = TextSecondary,
                                     fontSize = 11.sp
                                 )
@@ -645,8 +728,8 @@ fun AselCamApp(
                                     }
                                     .padding(horizontal = 6.dp, vertical = 2.dp)
                             ) {
-                                Icon(Icons.Default.Cameraswitch, "Çevir", tint = TextPrimary, modifier = Modifier.size(18.dp))
-                                Text("Çevir", fontSize = 9.sp, color = TextSecondary)
+                                Icon(Icons.Default.Cameraswitch, MobileI18n.tr("tb_flip"), tint = TextPrimary, modifier = Modifier.size(18.dp))
+                                Text(MobileI18n.tr("tb_flip"), fontSize = 9.sp, color = TextSecondary)
                             }
 
                             // 2. Camera Sensor Power Toggle
@@ -662,11 +745,11 @@ fun AselCamApp(
                             ) {
                                 Icon(
                                     if (isCameraEnabled) Icons.Default.Videocam else Icons.Default.VideocamOff,
-                                    "Kamera",
+                                    MobileI18n.tr("tb_cam"),
                                     tint = if (isCameraEnabled) MintNeon else ErrorRed,
                                     modifier = Modifier.size(18.dp)
                                 )
-                                Text("Kamera", fontSize = 9.sp, color = if (isCameraEnabled) MintNeon else ErrorRed)
+                                Text(MobileI18n.tr("tb_cam"), fontSize = 9.sp, color = if (isCameraEnabled) MintNeon else ErrorRed)
                             }
 
                             // 3. Preview Power Save Toggle
@@ -682,11 +765,11 @@ fun AselCamApp(
                             ) {
                                 Icon(
                                     if (isPreviewEnabled) Icons.Default.Visibility else Icons.Default.VisibilityOff,
-                                    "Önizleme",
+                                    MobileI18n.tr("tb_preview"),
                                     tint = if (isPreviewEnabled) SkyCyan else ErrorRed,
                                     modifier = Modifier.size(18.dp)
                                 )
-                                Text("Önizleme", fontSize = 9.sp, color = if (isPreviewEnabled) SkyCyan else ErrorRed)
+                                Text(MobileI18n.tr("tb_preview"), fontSize = 9.sp, color = if (isPreviewEnabled) SkyCyan else ErrorRed)
                             }
 
                             // 4. Torch / Flashlight Toggle
@@ -702,11 +785,11 @@ fun AselCamApp(
                             ) {
                                 Icon(
                                     if (isTorchEnabled) Icons.Default.FlashOn else Icons.Default.FlashOff,
-                                    "Flaş",
+                                    MobileI18n.tr("tb_flash"),
                                     tint = if (isTorchEnabled) Color(0xFFFBBF24) else TextSecondary,
                                     modifier = Modifier.size(18.dp)
                                 )
-                                Text("Flaş", fontSize = 9.sp, color = if (isTorchEnabled) Color(0xFFFBBF24) else TextSecondary)
+                                Text(MobileI18n.tr("tb_flash"), fontSize = 9.sp, color = if (isTorchEnabled) Color(0xFFFBBF24) else TextSecondary)
                             }
 
                             // 5. Mic Mute Toggle
@@ -722,26 +805,14 @@ fun AselCamApp(
                             ) {
                                 Icon(
                                     if (isMuted) Icons.Default.MicOff else Icons.Default.Mic,
-                                    "Mikrofon",
+                                    MobileI18n.tr("tb_mic"),
                                     tint = if (isMuted) ErrorRed else MintNeon,
                                     modifier = Modifier.size(18.dp)
                                 )
-                                Text("Mikrofon", fontSize = 9.sp, color = if (isMuted) ErrorRed else MintNeon)
+                                Text(MobileI18n.tr("tb_mic"), fontSize = 9.sp, color = if (isMuted) ErrorRed else MintNeon)
                             }
 
-                            // 6. AMOLED Blackout
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                modifier = Modifier
-                                    .clip(RoundedCornerShape(6.dp))
-                                    .clickable { onBlackout() }
-                                    .padding(horizontal = 6.dp, vertical = 2.dp)
-                            ) {
-                                Icon(Icons.Default.PowerSettingsNew, "Karart", tint = Color(0xFFA78BFA), modifier = Modifier.size(18.dp))
-                                Text("Karart", fontSize = 9.sp, color = Color(0xFFA78BFA))
-                            }
-
-                            // 7. Screen Mirroring
+                            // 6. Screen Mirroring
                             Column(
                                 horizontalAlignment = Alignment.CenterHorizontally,
                                 modifier = Modifier
@@ -757,12 +828,12 @@ fun AselCamApp(
                             ) {
                                 Icon(
                                     if (isScreenMirroring) Icons.Default.ScreenShare else Icons.Default.StopScreenShare,
-                                    "Ekran Yansıt",
+                                    MobileI18n.tr("tb_screen"),
                                     tint = if (isScreenMirroring) SkyCyan else TextSecondary,
                                     modifier = Modifier.size(18.dp)
                                 )
                                 Text(
-                                    if (isScreenMirroring) "Yansıtılıyor" else "Ekran",
+                                    MobileI18n.tr("tb_screen"),
                                     fontSize = 9.sp,
                                     color = if (isScreenMirroring) SkyCyan else TextSecondary
                                 )
@@ -779,7 +850,7 @@ fun AselCamApp(
                                 val parts = selectedResolution.split("x")
                                 val w = parts.getOrNull(0)?.toIntOrNull() ?: 1920
                                 val h = parts.getOrNull(1)?.toIntOrNull() ?: 1080
-                                val br = (selectedBitrateMbps * 1_000_000).toInt()
+                                val br = (maxOf(2f, selectedBitrateMbps) * 1_000_000).toInt()
                                 onStartStream(
                                     selectedCameraId,
                                     w,
@@ -807,7 +878,7 @@ fun AselCamApp(
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = if (isStreaming) "YAYINI DURDUR" else "YAYINI BAŞLAT",
+                            text = if (isStreaming) MobileI18n.tr("btn_stop") else MobileI18n.tr("btn_start"),
                             fontWeight = FontWeight.Bold,
                             fontSize = 15.sp,
                             letterSpacing = 0.5.sp
@@ -830,7 +901,7 @@ fun AselCamApp(
                                 Row(verticalAlignment = Alignment.CenterVertically) {
                                     Icon(Icons.Default.Sensors, null, tint = PrimaryLight, modifier = Modifier.size(18.dp))
                                     Spacer(modifier = Modifier.width(6.dp))
-                                    Text("Bağlantı Bilgileri", fontWeight = FontWeight.Bold, color = TextPrimary, fontSize = 14.sp)
+                                    Text(MobileI18n.tr("conn_title"), fontWeight = FontWeight.Bold, color = TextPrimary, fontSize = 14.sp)
                                 }
                                 Surface(
                                     color = ObsidianHigh,
@@ -838,7 +909,7 @@ fun AselCamApp(
                                     border = BorderStroke(1.dp, ObsidianBorder)
                                 ) {
                                     Text(
-                                        "Yerel Ağ Hazır",
+                                        MobileI18n.tr("net_ready"),
                                         fontFamily = FontFamily.Monospace,
                                         fontSize = 10.sp,
                                         color = MintNeon,
@@ -870,7 +941,7 @@ fun AselCamApp(
                                     }
                                     Spacer(modifier = Modifier.width(10.dp))
                                     Column {
-                                        Text("Wi-Fi IP Adresi", fontSize = 11.sp, color = TextSecondary)
+                                        Text(MobileI18n.tr("wifi_ip"), fontSize = 11.sp, color = TextSecondary)
                                         Text(localIp, fontSize = 13.sp, fontWeight = FontWeight.SemiBold, fontFamily = FontFamily.Monospace, color = TextPrimary)
                                     }
                                 }
@@ -886,7 +957,7 @@ fun AselCamApp(
                                     ) {
                                         Icon(Icons.Default.ContentCopy, null, tint = PrimaryLight, modifier = Modifier.size(12.dp))
                                         Spacer(modifier = Modifier.width(4.dp))
-                                        Text("Kopyala", fontSize = 11.sp, color = PrimaryLight)
+                                        Text(MobileI18n.tr("copy"), fontSize = 11.sp, color = PrimaryLight)
                                     }
                                 }
                             }
@@ -909,7 +980,7 @@ fun AselCamApp(
                                     Row(verticalAlignment = Alignment.CenterVertically) {
                                         Icon(Icons.Default.Usb, null, tint = SkyCyan, modifier = Modifier.size(16.dp))
                                         Spacer(modifier = Modifier.width(6.dp))
-                                        Text("USB (ADB) Terminal Tüneli", fontSize = 11.sp, color = TextSecondary)
+                                        Text(MobileI18n.tr("usb_tunnel"), fontSize = 11.sp, color = TextSecondary)
                                     }
                                     Surface(
                                         color = ObsidianHigh,
@@ -922,7 +993,7 @@ fun AselCamApp(
                                         ) {
                                             Icon(Icons.Default.Terminal, null, tint = SkyCyan, modifier = Modifier.size(12.dp))
                                             Spacer(modifier = Modifier.width(4.dp))
-                                            Text("Komut", fontSize = 10.sp, color = SkyCyan)
+                                            Text(MobileI18n.tr("cmd"), fontSize = 10.sp, color = SkyCyan)
                                         }
                                     }
                                 }
@@ -945,7 +1016,7 @@ fun AselCamApp(
                                     )
                                     Icon(
                                         Icons.Default.ContentCopy,
-                                        contentDescription = "Kopyala",
+                                        contentDescription = MobileI18n.tr("copy"),
                                         tint = TextSecondary,
                                         modifier = Modifier
                                             .size(14.dp)
@@ -967,11 +1038,11 @@ fun AselCamApp(
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Icon(Icons.Default.Tune, null, tint = PrimaryLight, modifier = Modifier.size(18.dp))
                                 Spacer(modifier = Modifier.width(6.dp))
-                                Text("Ayrıntılı Kalite & Akış Ayarları", fontWeight = FontWeight.Bold, color = TextPrimary, fontSize = 14.sp)
+                                Text(MobileI18n.tr("settings_title"), fontWeight = FontWeight.Bold, color = TextPrimary, fontSize = 14.sp)
                             }
 
                             // 1. Camera Selector
-                            Text("Kamera Seçimi:", color = TextSecondary, fontSize = 12.sp)
+                            Text(MobileI18n.tr("cam_select"), color = TextSecondary, fontSize = 12.sp)
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -998,18 +1069,75 @@ fun AselCamApp(
                             }
 
                             // 2. Aspect Ratio & Orientation Quick Selector (16:9, 9:16, 4:3, 3:4, 1:1)
-                            Text("En-Boy Oranı & Yön:", color = TextSecondary, fontSize = 12.sp)
+                            Text(MobileI18n.tr("aspect_select"), color = TextSecondary, fontSize = 12.sp)
                             val aspectPresets = listOf(
-                                "16:9 Yatay" to "1920x1080",
-                                "9:16 Dikey" to "1080x1920",
-                                "4:3 Yatay" to "1440x1080",
-                                "3:4 Dikey" to "1080x1440",
-                                "1:1 Kare" to "1080x1080"
+                                "16:9 Yatay" to "16:9",
+                                "9:16 Dikey" to "9:16",
+                                "4:3 Yatay" to "4:3",
+                                "3:4 Dikey" to "3:4",
+                                "1:1 Kare" to "1:1"
                             )
                             val resParts = selectedResolution.split("x")
                             val curW = resParts.getOrNull(0)?.toIntOrNull() ?: 1920
                             val curH = resParts.getOrNull(1)?.toIntOrNull() ?: 1080
                             val curRatio = curW.toFloat() / maxOf(1, curH).toFloat()
+
+                            val curAspect = when {
+                                curRatio > 1.6f -> "16:9"
+                                curRatio < 0.65f -> "9:16"
+                                curRatio in 1.2f..1.6f -> "4:3"
+                                curRatio in 0.65f..0.85f -> "3:4"
+                                else -> "1:1"
+                            }
+
+                            val maxDim = maxOf(curW, curH)
+                            val curTier = when {
+                                maxDim >= 3000 -> "4k"
+                                maxDim >= 2200 -> "2k"
+                                maxDim >= 1400 -> "1080p"
+                                maxDim >= 900 -> "720p"
+                                else -> "480p"
+                            }
+
+                            fun resolveResolution(tierTag: String, aspectTag: String): String {
+                                return when (aspectTag) {
+                                    "16:9" -> when (tierTag) {
+                                        "4k" -> "3840x2160"
+                                        "2k" -> "2560x1440"
+                                        "1080p" -> "1920x1080"
+                                        "720p" -> "1280x720"
+                                        else -> "854x480"
+                                    }
+                                    "9:16" -> when (tierTag) {
+                                        "4k" -> "2160x3840"
+                                        "2k" -> "1440x2560"
+                                        "1080p" -> "1080x1920"
+                                        "720p" -> "720x1280"
+                                        else -> "480x854"
+                                    }
+                                    "4:3" -> when (tierTag) {
+                                        "4k" -> "2880x2160"
+                                        "2k" -> "1920x1440"
+                                        "1080p" -> "1440x1080"
+                                        "720p" -> "960x720"
+                                        else -> "640x480"
+                                    }
+                                    "3:4" -> when (tierTag) {
+                                        "4k" -> "2160x2880"
+                                        "2k" -> "1440x1920"
+                                        "1080p" -> "1080x1440"
+                                        "720p" -> "720x960"
+                                        else -> "480x640"
+                                    }
+                                    else -> when (tierTag) {
+                                        "4k" -> "2160x2160"
+                                        "2k" -> "1440x1440"
+                                        "1080p" -> "1080x1080"
+                                        "720p" -> "720x720"
+                                        else -> "480x480"
+                                    }
+                                }
+                            }
 
                             Row(
                                 modifier = Modifier
@@ -1017,21 +1145,15 @@ fun AselCamApp(
                                     .horizontalScroll(rememberScrollState()),
                                 horizontalArrangement = Arrangement.spacedBy(6.dp)
                             ) {
-                                for ((ratioLabel, defaultRes) in aspectPresets) {
-                                    val isRatioSelected = when (ratioLabel) {
-                                        "16:9 Yatay" -> curRatio > 1.6f
-                                        "9:16 Dikey" -> curRatio < 0.65f
-                                        "4:3 Yatay" -> curRatio in 1.2f..1.6f
-                                        "3:4 Dikey" -> curRatio in 0.65f..0.85f
-                                        "1:1 Kare" -> curRatio in 0.9f..1.1f
-                                        else -> false
-                                    }
+                                for ((ratioLabel, aspectTag) in aspectPresets) {
+                                    val isRatioSelected = curAspect == aspectTag
                                     Surface(
                                         color = if (isRatioSelected) ObsidianHigh else ObsidianLowest,
                                         shape = RoundedCornerShape(8.dp),
                                         border = BorderStroke(1.dp, if (isRatioSelected) PrimaryLight else ObsidianBorder),
                                         modifier = Modifier.clickable {
-                                            applyLiveConfig(defaultRes, selectedFps, selectedBitrateMbps, selectedCodec)
+                                            val newRes = resolveResolution(curTier, aspectTag)
+                                            applyLiveConfig(newRes, selectedFps, maxOf(2f, selectedBitrateMbps), selectedCodec)
                                         }
                                     ) {
                                         Text(
@@ -1045,24 +1167,15 @@ fun AselCamApp(
                                 }
                             }
 
-                            // 3. Resolution Selector
-                            Text("Çözünürlük:", color = TextSecondary, fontSize = 12.sp)
-                            val standardResList = listOf(
-                                "1920x1080",
-                                "1080x1920",
-                                "1280x720",
-                                "720x1280",
-                                "1440x1080",
-                                "1080x1440",
-                                "1080x1080",
-                                "720x720",
-                                "3840x2160",
-                                "2560x1440",
-                                "960x720",
-                                "640x480"
+                            // 3. Resolution Selector (clean tiers, automatically adapting to selected aspect ratio)
+                            Text(MobileI18n.tr("res_select"), color = TextSecondary, fontSize = 12.sp)
+                            val resTiers = listOf(
+                                "4K UHD" to "4k",
+                                "2K QHD" to "2k",
+                                "1080p FHD" to "1080p",
+                                "720p HD" to "720p",
+                                "480p SD" to "480p"
                             )
-                            val hwResList = currentCamera?.supportedResolutions?.map { "${it.width}x${it.height}" } ?: emptyList()
-                            val resList = (standardResList + hwResList).distinct()
 
                             Row(
                                 modifier = Modifier
@@ -1070,34 +1183,22 @@ fun AselCamApp(
                                     .horizontalScroll(rememberScrollState()),
                                 horizontalArrangement = Arrangement.spacedBy(6.dp)
                             ) {
-                                for (res in resList) {
-                                    val isResSelected = selectedResolution == res
-                                    val label = when (res) {
-                                        "3840x2160" -> "4K UHD"
-                                        "2560x1440" -> "2K QHD"
-                                        "1920x1080" -> "1080p FHD"
-                                        "1080x1920" -> "1080p Dikey"
-                                        "1280x720" -> "720p HD"
-                                        "720x1280" -> "720p Dikey"
-                                        "1440x1080" -> "1080p (4:3)"
-                                        "1080x1440" -> "1080p (3:4)"
-                                        "1080x1080" -> "1080p (1:1)"
-                                        "720x720" -> "720p (1:1)"
-                                        else -> res
-                                    }
+                                for ((tierLabel, tierTag) in resTiers) {
+                                    val isTierSelected = curTier == tierTag
                                     Surface(
-                                        color = if (isResSelected) ObsidianHigh else ObsidianLowest,
+                                        color = if (isTierSelected) ObsidianHigh else ObsidianLowest,
                                         shape = RoundedCornerShape(8.dp),
-                                        border = BorderStroke(1.dp, if (isResSelected) PrimaryLight else ObsidianBorder),
+                                        border = BorderStroke(1.dp, if (isTierSelected) PrimaryLight else ObsidianBorder),
                                         modifier = Modifier.clickable {
-                                            applyLiveConfig(res, selectedFps, selectedBitrateMbps, selectedCodec)
+                                            val newRes = resolveResolution(tierTag, curAspect)
+                                            applyLiveConfig(newRes, selectedFps, maxOf(2f, selectedBitrateMbps), selectedCodec)
                                         }
                                     ) {
                                         Text(
-                                            text = label,
+                                            text = tierLabel,
                                             fontSize = 11.sp,
-                                            fontWeight = if (isResSelected) FontWeight.Bold else FontWeight.Normal,
-                                            color = if (isResSelected) PrimaryLight else TextSecondary,
+                                            fontWeight = if (isTierSelected) FontWeight.Bold else FontWeight.Normal,
+                                            color = if (isTierSelected) PrimaryLight else TextSecondary,
                                             modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)
                                         )
                                     }
@@ -1105,7 +1206,7 @@ fun AselCamApp(
                             }
 
                             // 4. FPS Selector
-                            Text("Kare Hızı (FPS):", color = TextSecondary, fontSize = 12.sp)
+                            Text(MobileI18n.tr("fps_select"), color = TextSecondary, fontSize = 12.sp)
                             val fpsOptions = listOf(60, 30, 24, 15)
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
@@ -1120,7 +1221,7 @@ fun AselCamApp(
                                         modifier = Modifier
                                             .weight(1f)
                                             .clickable {
-                                                applyLiveConfig(selectedResolution, fps, selectedBitrateMbps, selectedCodec)
+                                                applyLiveConfig(selectedResolution, fps, maxOf(2f, selectedBitrateMbps), selectedCodec)
                                             }
                                     ) {
                                         Text(
@@ -1134,20 +1235,20 @@ fun AselCamApp(
                                 }
                             }
 
-                            // 5. Video Bitrate Slider
+                            // 5. Video Bitrate Slider (Min 2 Mbps)
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Text("Video Bitrate:", color = TextSecondary, fontSize = 12.sp)
+                                Text(MobileI18n.tr("bitrate_select"), color = TextSecondary, fontSize = 12.sp)
                                 Surface(
                                     color = ObsidianLowest,
                                     shape = RoundedCornerShape(4.dp),
                                     border = BorderStroke(1.dp, ObsidianBorder)
                                 ) {
                                     Text(
-                                        "${selectedBitrateMbps.toInt()} Mbps",
+                                        "${maxOf(2f, selectedBitrateMbps).toInt()} Mbps",
                                         fontFamily = FontFamily.Monospace,
                                         fontWeight = FontWeight.Bold,
                                         fontSize = 11.sp,
@@ -1157,13 +1258,13 @@ fun AselCamApp(
                                 }
                             }
                             Slider(
-                                value = selectedBitrateMbps,
-                                onValueChange = { selectedBitrateMbps = it },
+                                value = maxOf(2f, selectedBitrateMbps),
+                                onValueChange = { selectedBitrateMbps = maxOf(2f, it) },
                                 onValueChangeFinished = {
-                                    applyLiveConfig(selectedResolution, selectedFps, selectedBitrateMbps, selectedCodec)
+                                    applyLiveConfig(selectedResolution, selectedFps, maxOf(2f, selectedBitrateMbps), selectedCodec)
                                 },
-                                valueRange = 1f..50f,
-                                steps = 49,
+                                valueRange = 2f..50f,
+                                steps = 48,
                                 colors = SliderDefaults.colors(
                                     thumbColor = PrimaryLight,
                                     activeTrackColor = PrimaryBlue,
@@ -1171,8 +1272,8 @@ fun AselCamApp(
                                 )
                             )
 
-                            // 6. Video Codec
-                            Text("Video Codec Donanım Hızlandırma:", color = TextSecondary, fontSize = 12.sp)
+                            // 6. Video Codec (Padded Cards)
+                            Text(MobileI18n.tr("codec_select"), color = TextSecondary, fontSize = 12.sp)
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -1185,13 +1286,13 @@ fun AselCamApp(
                                     modifier = Modifier
                                         .weight(1f)
                                         .clickable {
-                                            applyLiveConfig(selectedResolution, selectedFps, selectedBitrateMbps, "h264")
+                                            applyLiveConfig(selectedResolution, selectedFps, maxOf(2f, selectedBitrateMbps), "h264")
                                         }
-                                        .padding(8.dp)
                                 ) {
-                                    Column {
+                                    Column(modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp)) {
                                         Text("H.264 (AVC)", fontWeight = FontWeight.Bold, fontSize = 12.sp, color = if (isH264) PrimaryLight else TextPrimary)
-                                        Text("Evrensel uyumluluk, minimum gecikme", fontSize = 10.sp, color = TextSecondary)
+                                        Spacer(modifier = Modifier.height(2.dp))
+                                        Text(MobileI18n.tr("h264_sub"), fontSize = 10.sp, color = TextSecondary)
                                     }
                                 }
 
@@ -1203,13 +1304,13 @@ fun AselCamApp(
                                     modifier = Modifier
                                         .weight(1f)
                                         .clickable {
-                                            applyLiveConfig(selectedResolution, selectedFps, selectedBitrateMbps, "hevc")
+                                            applyLiveConfig(selectedResolution, selectedFps, maxOf(2f, selectedBitrateMbps), "hevc")
                                         }
-                                        .padding(8.dp)
                                 ) {
-                                    Column {
+                                    Column(modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp)) {
                                         Text("H.265 (HEVC)", fontWeight = FontWeight.Bold, fontSize = 12.sp, color = if (isHevc) PrimaryLight else TextPrimary)
-                                        Text("Bant tasarrufu, yüksek GPU sıkıştırma", fontSize = 10.sp, color = TextSecondary)
+                                        Spacer(modifier = Modifier.height(2.dp))
+                                        Text(MobileI18n.tr("hevc_sub"), fontSize = 10.sp, color = TextSecondary)
                                     }
                                 }
                             }
@@ -1223,7 +1324,7 @@ fun AselCamApp(
                                 Row(verticalAlignment = Alignment.CenterVertically) {
                                     Icon(Icons.Default.Mic, null, tint = MintNeon, modifier = Modifier.size(16.dp))
                                     Spacer(modifier = Modifier.width(6.dp))
-                                    Text("Mikrofon Ses Seviyesi:", color = TextSecondary, fontSize = 12.sp)
+                                    Text(MobileI18n.tr("mic_vol"), color = TextSecondary, fontSize = 12.sp)
                                 }
                                 Text(
                                     "${(audioGain * 100).toInt()}%",
@@ -1278,27 +1379,37 @@ fun AselCamApp(
                 }
             }
 
-            // Fullscreen Pure-Black AMOLED Overlay
+            // Fullscreen Pure-Black AMOLED & LED Power Saver Overlay with Tap-to-Wake
             if (isBlackout) {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
                         .background(Color.Black)
-                        .pointerInput(Unit) {
-                            detectTapGestures(
-                                onDoubleTap = {
-                                    CameraStreamService.isBlackoutGlobal.value = false
-                                }
-                            )
+                        .clickable {
+                            CameraStreamService.isBlackoutGlobal.value = false
                         },
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(
-                        text = "AselCam Yayında\n(Çıkmak için ekrana çift dokunun)",
-                        color = Color(0x33FFFFFF),
-                        fontFamily = FontFamily.Monospace,
-                        fontSize = 13.sp
-                    )
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center,
+                        modifier = Modifier.padding(24.dp)
+                    ) {
+                        Text(
+                            text = MobileI18n.tr("blackout_overlay_title"),
+                            color = Color(0x88FFFFFF),
+                            fontFamily = FontFamily.Monospace,
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.Medium
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = MobileI18n.tr("blackout_overlay_sub"),
+                            color = Color(0x44FFFFFF),
+                            fontFamily = FontFamily.Monospace,
+                            fontSize = 11.sp
+                        )
+                    }
                 }
             }
         }

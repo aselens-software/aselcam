@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/aselcam_logo-horz.svg" alt="AselCam Logo" width="380">
+</p>
+
 # AselCam 🎥
 
 > **Ultra Low-Latency Virtual Camera & Microphone Studio**  

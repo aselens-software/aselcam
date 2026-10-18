@@ -12,7 +12,7 @@ All release packages are pre-built, tested, and ready to share or deploy across 
 | **🍎 macOS** | macOS 11+ (Intel & Apple Silicon) | [`AselCam-v1.2-macOS.zip`](releases/macos/AselCam-v1.2-macOS.zip) | **855 KB** | `44e98a4cfd7a476dd3a4e165df9b94123ffcfa97abc60593e8c3b310bf93b9bd` |
 | **📱 iOS** | iOS 15.0+ (Sideload / AltStore) | [`AselCam-v1.2-iOS.ipa`](releases/ios/AselCam-v1.2-iOS.ipa) | **263 KB** | `ce681243acc9770b9c6b547df63dd1d058ba4e95144f7b9904b4a3fa741dc0ea` |
 | **🛠️ iOS** | iOS 15.0+ (Xcode Source Project) | [`AselCam-v1.2-iOS-Xcode.zip`](releases/ios/AselCam-v1.2-iOS-Xcode.zip) | **284 KB** | `3862cf67f5c74e300baee9c94d9f4314dc6107436bfaaffef81ace113f617b05` |
-| **🤖 Android** | Android 8.0 to 15+ | [`AselCam-v1.2-Android.apk`](releases/android/AselCam-v1.2-Android.apk) | **18.9 MB** | `c76a3c57396cef9527fd568e2e995a68551164593edce2e4bffb691eaaad6acc` |
+| **🤖 Android** | Android 8.0 to 15+ | [`AselCam-v1.2-Android.apk`](releases/android/AselCam-v1.2-Android.apk) | **12.4 MB** | `20c0ce30ef68420e6bfc4ae507e6e8fe5c9d3b1c6b7e6ad77d458ee2bcf25f1b` |
 
 ---
 

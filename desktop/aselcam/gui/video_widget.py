@@ -1,6 +1,7 @@
+import os
 from typing import Optional
 from PyQt6.QtWidgets import QWidget
-from PyQt6.QtGui import QPainter, QImage, QColor, QFont, QPen, QBrush
+from PyQt6.QtGui import QPainter, QImage, QColor, QFont, QPen, QBrush, QPixmap
 from PyQt6.QtCore import Qt, QRectF
 import numpy as np
 from ..core.i18n import _t
@@ -20,6 +21,14 @@ class VideoWidget(QWidget):
         self._bitrate_text = "- kbps"
         self._preview_enabled = True
         self._screen_mirroring = False
+        self._horz_logo: Optional[QPixmap] = None
+
+        logo_path = os.path.join(os.path.dirname(__file__), "..", "assets", "aselcam_logo_horz_128.png")
+        if not os.path.exists(logo_path):
+            logo_path = os.path.join(os.path.dirname(__file__), "..", "..", "docs", "aselcam_logo-horz.svg")
+        if os.path.exists(logo_path):
+            self._horz_logo = QPixmap(logo_path)
+
         self.setMinimumSize(480, 270)
         self.setStyleSheet("background-color: #080c14; border-radius: 12px;")
 
@@ -178,21 +187,33 @@ class VideoWidget(QWidget):
                 painter.setBrush(QBrush(QColor("#0f172a")))
                 painter.drawRoundedRect(card_rect, 12.0, 12.0)
 
-                # Camera Icon Placeholder inside elevated badge
-                icon_box_w, icon_box_h = 56.0, 56.0
-                icon_box_rect = QRectF((w - icon_box_w) / 2.0, float(h // 2 - 96), icon_box_w, icon_box_h)
-                painter.setPen(QPen(QColor(255, 255, 255, 25), 1))
-                painter.setBrush(QBrush(QColor("#1e293b")))
-                painter.drawRoundedRect(icon_box_rect, 12.0, 12.0)
-
+                # Draw Horizontal Logo instead of generic character
                 is_mirror = self._screen_mirroring
-                painter.setPen(QColor("#38bdf8" if is_mirror else "#4d8eff"))
-                painter.setFont(QFont("Space Grotesk", 22, QFont.Weight.Bold))
-                painter.drawText(
-                    icon_box_rect,
-                    Qt.AlignmentFlag.AlignCenter,
-                    "📱" if is_mirror else "◈"
-                )
+                if not is_mirror and self._horz_logo and not self._horz_logo.isNull():
+                    scaled_logo = self._horz_logo.scaled(
+                        220, 52,
+                        Qt.AspectRatioMode.KeepAspectRatio,
+                        Qt.TransformationMode.SmoothTransformation
+                    )
+                    lw = scaled_logo.width()
+                    lh = scaled_logo.height()
+                    lx = (w - lw) / 2.0
+                    ly = float(h // 2 - 92)
+                    painter.drawPixmap(int(lx), int(ly), scaled_logo)
+                else:
+                    icon_box_w, icon_box_h = 56.0, 56.0
+                    icon_box_rect = QRectF((w - icon_box_w) / 2.0, float(h // 2 - 96), icon_box_w, icon_box_h)
+                    painter.setPen(QPen(QColor(255, 255, 255, 25), 1))
+                    painter.setBrush(QBrush(QColor("#1e293b")))
+                    painter.drawRoundedRect(icon_box_rect, 12.0, 12.0)
+
+                    painter.setPen(QColor("#38bdf8" if is_mirror else "#4d8eff"))
+                    painter.setFont(QFont("Space Grotesk", 22, QFont.Weight.Bold))
+                    painter.drawText(
+                        icon_box_rect,
+                        Qt.AlignmentFlag.AlignCenter,
+                        "📺" if is_mirror else "◈"
+                    )
 
                 painter.setPen(QColor("#dfe2f1"))
                 title_font = QFont("Space Grotesk", 15, QFont.Weight.Bold)
