@@ -1,11 +1,12 @@
 /**
  * AselCam Apple-Design Client Application
- * - Interactive Before/After Image Comparison Slider
+ * - Interactive Before/After Image Comparison Slider (Modern clip-path engine)
  * - Real Video Call Portrait Studio Viewfinder
  * - Apple Segmented Control Downloads (3 Desktop + 2 Mobile)
  * - Direct GitHub Releases Links (No server storage)
  * - Privacy Policy & Terms of Service Modals
  * - 8-Language Dynamic Localization & Smart OS Detection
+ * - Full Responsive Mobile Navigation Drawer & Hamburger Menu
  */
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -54,7 +55,52 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // 2. PLATFORM DETECTION & SMART GITHUB DOWNLOAD CTA
+  // 2. MOBILE MENU HAMBURGER & LIQUID GLASS DRAWER
+  const btnMobileMenu = document.getElementById("btn-mobile-menu");
+  const mobileNavDrawer = document.getElementById("mobile-nav-drawer");
+
+  function openMobileMenu() {
+    if (!btnMobileMenu || !mobileNavDrawer) return;
+    btnMobileMenu.classList.add("open");
+    mobileNavDrawer.classList.add("open");
+    btnMobileMenu.setAttribute("aria-expanded", "true");
+    mobileNavDrawer.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
+  }
+
+  function closeMobileMenu() {
+    if (!btnMobileMenu || !mobileNavDrawer) return;
+    btnMobileMenu.classList.remove("open");
+    mobileNavDrawer.classList.remove("open");
+    btnMobileMenu.setAttribute("aria-expanded", "false");
+    mobileNavDrawer.setAttribute("aria-hidden", "true");
+    document.body.style.overflow = "";
+  }
+
+  if (btnMobileMenu) {
+    btnMobileMenu.addEventListener("click", () => {
+      const isOpen = btnMobileMenu.classList.contains("open");
+      if (isOpen) {
+        closeMobileMenu();
+      } else {
+        openMobileMenu();
+      }
+    });
+  }
+
+  document.querySelectorAll(".mobile-nav-link, .btn-mobile-dl").forEach(link => {
+    link.addEventListener("click", () => {
+      closeMobileMenu();
+    });
+  });
+
+  window.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && btnMobileMenu?.classList.contains("open")) {
+      closeMobileMenu();
+    }
+  });
+
+  // 3. PLATFORM DETECTION & SMART GITHUB DOWNLOAD CTA
   const detectedOsInfo = detectOS();
   const heroCtaBtn = document.getElementById("hero-cta-btn");
   const heroCtaSub = document.getElementById("hero-cta-sub");
@@ -122,7 +168,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // 3. SEGMENTED DOWNLOADS CONTROLLER (DESKTOP VS MOBILE)
+  // 4. SEGMENTED DOWNLOADS CONTROLLER (DESKTOP VS MOBILE)
   const tabDesktop = document.getElementById("tab-dl-desktop");
   const tabMobile = document.getElementById("tab-dl-mobile");
   const panelDesktop = document.getElementById("dl-panel-desktop");
@@ -145,22 +191,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
   setDownloadSegment(detectedOsInfo.type !== "mobile");
 
-  // 4. INTERACTIVE BEFORE / AFTER IMAGE COMPARISON SLIDER
+  // 5. INTERACTIVE BEFORE / AFTER IMAGE COMPARISON SLIDER (CLIP-PATH ENGINE)
   const compareContainer = document.getElementById("compare-slider-container");
-  const compareBeforeLayer = document.getElementById("compare-layer-before");
-  const compareHandle = document.getElementById("compare-handle");
 
   let isDraggingCompare = false;
 
   function updateCompareSlider(clientX) {
-    if (!compareContainer || !compareBeforeLayer || !compareHandle) return;
+    if (!compareContainer) return;
     const rect = compareContainer.getBoundingClientRect();
     let x = clientX - rect.left;
     x = Math.max(0, Math.min(x, rect.width));
-    const percent = (x / rect.width) * 100;
-    
-    compareBeforeLayer.style.width = `${percent}%`;
-    compareHandle.style.left = `${percent}%`;
+    const percent = ((x / rect.width) * 100).toFixed(2);
+    compareContainer.style.setProperty("--slider-pos", `${percent}%`);
   }
 
   if (compareContainer) {
@@ -198,20 +240,18 @@ document.addEventListener("DOMContentLoaded", () => {
     compareContainer.setAttribute("role", "slider");
     compareContainer.setAttribute("aria-label", "Webcam vs AselCam Image Comparison");
     compareContainer.addEventListener("keydown", (e) => {
-      const currentWidth = parseFloat(compareBeforeLayer.style.width) || 50;
+      const currentVal = parseFloat(compareContainer.style.getPropertyValue("--slider-pos")) || 50;
       if (e.key === "ArrowLeft") {
-        const next = Math.max(0, currentWidth - 5);
-        compareBeforeLayer.style.width = `${next}%`;
-        compareHandle.style.left = `${next}%`;
+        const next = Math.max(0, currentVal - 5);
+        compareContainer.style.setProperty("--slider-pos", `${next}%`);
       } else if (e.key === "ArrowRight") {
-        const next = Math.min(100, currentWidth + 5);
-        compareBeforeLayer.style.width = `${next}%`;
-        compareHandle.style.left = `${next}%`;
+        const next = Math.min(100, currentVal + 5);
+        compareContainer.style.setProperty("--slider-pos", `${next}%`);
       }
     });
   }
 
-  // 5. REAL PHOTOGRAPHIC STUDIO VIEWFINDER
+  // 6. REAL PHOTOGRAPHIC STUDIO VIEWFINDER
   const simPhoto = document.getElementById("sim-photo-subject");
   const simTempSlider = document.getElementById("sim-temp");
   const simTintSlider = document.getElementById("sim-tint");
@@ -239,109 +279,93 @@ document.addEventListener("DOMContentLoaded", () => {
     const sharp = parseInt(simSharpSlider?.value || 0, 10);
     const bokeh = simBokehToggle?.classList.contains("active");
 
-    const dict = I18N_DATA[currentLang] || I18N_DATA.en;
-
-    // Badges update
-    if (simValTemp) simValTemp.textContent = temp === 0 ? dict.sim_preset_natural : (temp > 0 ? `+${temp}K` : `${temp}K`);
-    if (simValTint) simValTint.textContent = tint === 0 ? dict.sim_preset_natural : (tint > 0 ? `+${tint}` : `${tint}`);
-    if (simValSharp) simValSharp.textContent = sharp === 0 ? "Off" : `${sharp}%`;
-
     let sepia = 0;
-    let hueRotate = 0;
-    let saturate = 1;
-    let contrast = 1;
-    let brightness = 1;
+    let hue = 0;
+    let saturate = 100;
+    let contrast = 100;
+    let brightness = 100;
+    let blur = 0;
 
-    // Kelvin temp
+    // Temperature (Kelvin shift)
     if (temp > 0) {
-      sepia = temp * 0.35;
-      saturate += temp * 0.004;
-      brightness += temp * 0.001;
+      sepia += temp * 0.7;
+      saturate += temp * 0.5;
     } else if (temp < 0) {
-      hueRotate = temp * 0.25;
-      saturate += Math.abs(temp) * 0.002;
+      hue += temp * 0.4;
+      saturate += Math.abs(temp) * 0.2;
     }
 
     // Tint
-    if (tint !== 0) {
-      hueRotate += tint * 0.35;
+    if (tint > 0) {
+      hue += tint * 0.6;
+    } else if (tint < 0) {
+      hue -= Math.abs(tint) * 0.6;
     }
 
-    // Profiles
-    if (activeProfile === "cinema") {
-      contrast = 1.18;
-      saturate = 1.25;
-      sepia += 10;
-    } else if (activeProfile === "vivid") {
-      saturate = 1.45;
-      contrast = 1.1;
-    } else if (activeProfile === "bw") {
-      saturate = 0;
-      contrast = 1.28;
-    } else if (activeProfile === "night") {
-      brightness = 1.15;
-      contrast = 0.95;
-      sepia += 5;
-    } else if (activeProfile === "portrait") {
-      contrast = 1.06;
-      saturate = 1.12;
-      sepia += 4;
-    }
-
+    // Sharpness effect
     if (sharp > 0) {
-      contrast += (sharp / 100) * 0.22;
+      contrast += sharp * 0.35;
+    }
+
+    // Color Profile Preset Modifiers
+    switch (activeProfile) {
+      case "vivid":
+        saturate += 40;
+        contrast += 15;
+        brightness += 4;
+        break;
+      case "cinema":
+        contrast += 25;
+        saturate -= 10;
+        sepia += 15;
+        break;
+      case "portrait":
+        brightness += 8;
+        saturate += 12;
+        break;
+      case "night":
+        brightness += 25;
+        contrast += 10;
+        saturate -= 15;
+        break;
+      case "bw":
+        saturate = 0;
+        contrast += 30;
+        break;
+      case "natural":
+      default:
+        break;
     }
 
     if (simPhoto) {
-      simPhoto.style.filter = `sepia(${sepia}%) hue-rotate(${hueRotate}deg) saturate(${saturate}) contrast(${contrast}) brightness(${brightness})`;
-      simPhoto.style.transform = bokeh ? `scale(1.04)` : `scale(1)`;
-      simPhoto.style.transition = "transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), filter 0.2s ease";
+      simPhoto.style.filter = `sepia(${sepia}%) hue-rotate(${hue}deg) saturate(${saturate}%) contrast(${contrast}%) brightness(${brightness}%) blur(${blur}px)`;
     }
+
+    // Sync labels
+    const dict = I18N_DATA[currentLang] || I18N_DATA.en;
+    if (simValTemp) simValTemp.textContent = temp === 0 ? dict.sim_preset_natural : `${temp > 0 ? "+" : ""}${temp}`;
+    if (simValTint) simValTint.textContent = tint === 0 ? dict.sim_preset_natural : `${tint > 0 ? "+" : ""}${tint}`;
+    if (simValSharp) simValSharp.textContent = sharp === 0 ? "Off" : `${sharp}%`;
   }
 
+  // Presets click listeners
   document.querySelectorAll(".chip-preset").forEach(chip => {
     chip.addEventListener("click", () => {
       document.querySelectorAll(".chip-preset").forEach(c => c.classList.remove("active"));
       chip.classList.add("active");
       activeProfile = chip.getAttribute("data-preset");
-
-      if (activeProfile === "cinema") {
-        if (simTempSlider) simTempSlider.value = 16;
-        if (simTintSlider) simTintSlider.value = -6;
-        if (simSharpSlider) simSharpSlider.value = 45;
-      } else if (activeProfile === "vivid") {
-        if (simTempSlider) simTempSlider.value = 8;
-        if (simTintSlider) simTintSlider.value = 4;
-        if (simSharpSlider) simSharpSlider.value = 60;
-      } else if (activeProfile === "bw") {
-        if (simTempSlider) simTempSlider.value = 0;
-        if (simTintSlider) simTintSlider.value = 0;
-        if (simSharpSlider) simSharpSlider.value = 50;
-      } else if (activeProfile === "portrait") {
-        if (simTempSlider) simTempSlider.value = 12;
-        if (simTintSlider) simTintSlider.value = 2;
-        if (simSharpSlider) simSharpSlider.value = 35;
-        if (simBokehToggle && !simBokehToggle.classList.contains("active")) {
-          simBokehToggle.classList.add("active");
-        }
-      } else if (activeProfile === "night") {
-        if (simTempSlider) simTempSlider.value = -12;
-        if (simTintSlider) simTintSlider.value = -6;
-        if (simSharpSlider) simSharpSlider.value = 20;
-      } else {
-        // Natural
-        if (simTempSlider) simTempSlider.value = 0;
-        if (simTintSlider) simTintSlider.value = 0;
-        if (simSharpSlider) simSharpSlider.value = 0;
-      }
       updateSimPhotoFilters();
     });
   });
 
-  if (simTempSlider) simTempSlider.addEventListener("input", () => { activeProfile = "custom"; updateSimPhotoFilters(); });
-  if (simTintSlider) simTintSlider.addEventListener("input", () => { activeProfile = "custom"; updateSimPhotoFilters(); });
-  if (simSharpSlider) simSharpSlider.addEventListener("input", () => { activeProfile = "custom"; updateSimPhotoFilters(); });
+  // Slider input listeners
+  [simTempSlider, simTintSlider, simSharpSlider].forEach(slider => {
+    if (slider) {
+      slider.addEventListener("input", updateSimPhotoFilters);
+    }
+  });
 
+  // Bokeh toggle
   if (simBokehToggle) {
     simBokehToggle.addEventListener("click", () => {
       simBokehToggle.classList.toggle("active");
@@ -349,17 +373,17 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // Blackout toggle
   if (simBlackoutToggle) {
     simBlackoutToggle.addEventListener("click", () => {
-      simBlackoutToggle.classList.toggle("active");
-      const isBlackout = simBlackoutToggle.classList.contains("active");
+      const isActive = simBlackoutToggle.classList.toggle("active");
       if (simBlackoutOverlay) {
-        simBlackoutOverlay.style.opacity = isBlackout ? "0.96" : "0";
-        simBlackoutOverlay.style.pointerEvents = isBlackout ? "all" : "none";
+        simBlackoutOverlay.style.opacity = isActive ? "0.96" : "0";
       }
     });
   }
 
+  // Reset button
   if (simResetBtn) {
     simResetBtn.addEventListener("click", () => {
       if (simTempSlider) simTempSlider.value = 0;
@@ -368,35 +392,44 @@ document.addEventListener("DOMContentLoaded", () => {
       if (simBokehToggle) simBokehToggle.classList.remove("active");
       if (simBlackoutToggle) simBlackoutToggle.classList.remove("active");
       if (simBlackoutOverlay) simBlackoutOverlay.style.opacity = "0";
-      document.querySelectorAll(".chip-preset").forEach(c => c.classList.remove("active"));
-      const naturalChip = document.querySelector('.chip-preset[data-preset="natural"]');
-      if (naturalChip) naturalChip.classList.add("active");
       activeProfile = "natural";
+      document.querySelectorAll(".chip-preset").forEach(c => {
+        c.classList.toggle("active", c.getAttribute("data-preset") === "natural");
+      });
       updateSimPhotoFilters();
     });
   }
 
+  // Connection mode toggles
   function setConnMode(usb) {
     isUsbMode = usb;
-    if (simModeUsb) simModeUsb.classList.toggle("active", usb);
-    if (simModeWifi) simModeWifi.classList.toggle("active", !usb);
-
-    if (usb) {
-      if (simStatPing) simStatPing.textContent = "4.2 ms";
-      if (simStatBitrate) simStatBitrate.textContent = "28.5 Mbps";
-      if (simStatFps) simStatFps.textContent = "60.0 FPS";
-    } else {
-      if (simStatPing) simStatPing.textContent = "14.2 ms";
-      if (simStatBitrate) simStatBitrate.textContent = "18.0 Mbps";
-      if (simStatFps) simStatFps.textContent = "59.8 FPS";
+    if (simModeUsb) {
+      simModeUsb.classList.toggle("active", usb);
+      simModeUsb.setAttribute("aria-selected", usb ? "true" : "false");
+    }
+    if (simModeWifi) {
+      simModeWifi.classList.toggle("active", !usb);
+      simModeWifi.setAttribute("aria-selected", !usb ? "true" : "false");
+    }
+    if (simStatPing && simStatFps && simStatBitrate) {
+      if (usb) {
+        simStatPing.textContent = "4.2 ms";
+        simStatFps.textContent = "60.0 FPS";
+        simStatBitrate.textContent = "28.5 Mbps";
+      } else {
+        simStatPing.textContent = "14.8 ms";
+        simStatFps.textContent = "60.0 FPS";
+        simStatBitrate.textContent = "18.2 Mbps";
+      }
     }
   }
 
   if (simModeUsb) simModeUsb.addEventListener("click", () => setConnMode(true));
   if (simModeWifi) simModeWifi.addEventListener("click", () => setConnMode(false));
 
+  // Live telemetry pulse
   setInterval(() => {
-    if (!simStatPing) return;
+    if (!simStatPing || !simStatFps) return;
     if (isUsbMode) {
       const ping = (3.8 + Math.random() * 0.8).toFixed(1);
       const fps = (59.8 + Math.random() * 0.4).toFixed(1);
@@ -410,7 +443,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }, 2400);
 
-  // 6. SHA256 COPY TO CLIPBOARD
+  // 7. SHA256 COPY TO CLIPBOARD
   document.querySelectorAll(".btn-copy-checksum").forEach(btn => {
     btn.addEventListener("click", async () => {
       const checksum = btn.getAttribute("data-checksum");
@@ -430,7 +463,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // 7. LEGAL MODAL SHEETS (PRIVACY & TERMS)
+  // 8. LEGAL MODAL SHEETS (PRIVACY & TERMS)
   function setupModal(triggerId, modalId, closeId) {
     const trigger = document.getElementById(triggerId);
     const modal = document.getElementById(modalId);
@@ -465,7 +498,7 @@ document.addEventListener("DOMContentLoaded", () => {
   setupModal("link-open-privacy", "modal-privacy", "btn-close-privacy");
   setupModal("link-open-terms", "modal-terms", "btn-close-terms");
 
-  // 8. STICKY NAV SCROLL
+  // 9. STICKY NAV SCROLL
   const navHeader = document.querySelector(".nav-header");
   window.addEventListener("scroll", () => {
     if (window.scrollY > 20) {
