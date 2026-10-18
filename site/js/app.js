@@ -1,8 +1,10 @@
 /**
  * AselCam Apple-Design Client Application
- * - Real Photographic Studio Viewfinder Engine
- * - Interactive Webcam vs AselCam Comparison
+ * - Interactive Before/After Image Comparison Slider
+ * - Real Video Call Portrait Studio Viewfinder
  * - Apple Segmented Control Downloads (3 Desktop + 2 Mobile)
+ * - Direct GitHub Releases Links (No server storage)
+ * - Privacy Policy & Terms of Service Modals
  * - 8-Language Dynamic Localization & Smart OS Detection
  */
 
@@ -29,7 +31,6 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll("[data-i18n]").forEach(el => {
       const key = el.getAttribute("data-i18n");
       if (dict[key]) {
-        // preserve line breaks if in titles
         if (dict[key].includes("\n")) {
           el.innerHTML = dict[key].replace(/\n/g, "<br>");
         } else {
@@ -53,7 +54,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // 2. PLATFORM DETECTION & SMART DOWNLOAD CTA
+  // 2. PLATFORM DETECTION & SMART GITHUB DOWNLOAD CTA
   const detectedOsInfo = detectOS();
   const heroCtaBtn = document.getElementById("hero-cta-btn");
   const heroCtaSub = document.getElementById("hero-cta-sub");
@@ -64,7 +65,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return {
         name: "macOS",
         type: "desktop",
-        file: "releases/macos/AselCam-v1.4.7-macOS.zip",
+        file: "https://github.com/aselens-software/aselcam/releases/download/v1.4.7/AselCam-v1.4.7-macOS.zip",
         sub: "Apple Silicon & Intel • 1.4 MB",
         icon: "🍎"
       };
@@ -72,7 +73,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return {
         name: "Windows",
         type: "desktop",
-        file: "releases/windows/AselCam-v1.4.7-Windows-x64.zip",
+        file: "https://github.com/aselens-software/aselcam/releases/download/v1.4.7/AselCam-v1.4.7-Windows-x64.zip",
         sub: "Windows 10 / 11 (64-bit) • 98 MB",
         icon: "🪟"
       };
@@ -80,7 +81,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return {
         name: "Android",
         type: "mobile",
-        file: "releases/android/AselCam-v1.4.7-Android.apk",
+        file: "https://github.com/aselens-software/aselcam/releases/download/v1.4.7/AselCam-v1.4.7-Android.apk",
         sub: "Android 8.0 — 15+ • 13 MB",
         icon: "🤖"
       };
@@ -88,7 +89,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return {
         name: "iOS",
         type: "mobile",
-        file: "releases/ios/AselCam-v1.4.7-iOS.ipa",
+        file: "https://github.com/aselens-software/aselcam/releases/download/v1.4.7/AselCam-v1.4.7-iOS.ipa",
         sub: "iOS 15.0+ Sideload • 263 KB",
         icon: "📱"
       };
@@ -96,7 +97,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return {
         name: "Linux",
         type: "desktop",
-        file: "#downloads",
+        file: "https://github.com/aselens-software/aselcam#linux-installation",
         sub: "Arch, Ubuntu, Fedora, Debian",
         icon: "🐧"
       };
@@ -142,10 +143,75 @@ document.addEventListener("DOMContentLoaded", () => {
   if (tabDesktop) tabDesktop.addEventListener("click", () => setDownloadSegment(true));
   if (tabMobile) tabMobile.addEventListener("click", () => setDownloadSegment(false));
 
-  // Initialize downloads tab based on detected visitor platform
   setDownloadSegment(detectedOsInfo.type !== "mobile");
 
-  // 4. REAL PHOTOGRAPHIC STUDIO VIEWFINDER
+  // 4. INTERACTIVE BEFORE / AFTER IMAGE COMPARISON SLIDER
+  const compareContainer = document.getElementById("compare-slider-container");
+  const compareBeforeLayer = document.getElementById("compare-layer-before");
+  const compareHandle = document.getElementById("compare-handle");
+
+  let isDraggingCompare = false;
+
+  function updateCompareSlider(clientX) {
+    if (!compareContainer || !compareBeforeLayer || !compareHandle) return;
+    const rect = compareContainer.getBoundingClientRect();
+    let x = clientX - rect.left;
+    x = Math.max(0, Math.min(x, rect.width));
+    const percent = (x / rect.width) * 100;
+    
+    compareBeforeLayer.style.width = `${percent}%`;
+    compareHandle.style.left = `${percent}%`;
+  }
+
+  if (compareContainer) {
+    compareContainer.addEventListener("mousedown", (e) => {
+      isDraggingCompare = true;
+      updateCompareSlider(e.clientX);
+    });
+
+    window.addEventListener("mousemove", (e) => {
+      if (!isDraggingCompare) return;
+      updateCompareSlider(e.clientX);
+    });
+
+    window.addEventListener("mouseup", () => {
+      isDraggingCompare = false;
+    });
+
+    // Touch support
+    compareContainer.addEventListener("touchstart", (e) => {
+      isDraggingCompare = true;
+      if (e.touches[0]) updateCompareSlider(e.touches[0].clientX);
+    }, { passive: true });
+
+    window.addEventListener("touchmove", (e) => {
+      if (!isDraggingCompare) return;
+      if (e.touches[0]) updateCompareSlider(e.touches[0].clientX);
+    }, { passive: true });
+
+    window.addEventListener("touchend", () => {
+      isDraggingCompare = false;
+    });
+
+    // Keyboard Accessibility
+    compareContainer.setAttribute("tabindex", "0");
+    compareContainer.setAttribute("role", "slider");
+    compareContainer.setAttribute("aria-label", "Webcam vs AselCam Image Comparison");
+    compareContainer.addEventListener("keydown", (e) => {
+      const currentWidth = parseFloat(compareBeforeLayer.style.width) || 50;
+      if (e.key === "ArrowLeft") {
+        const next = Math.max(0, currentWidth - 5);
+        compareBeforeLayer.style.width = `${next}%`;
+        compareHandle.style.left = `${next}%`;
+      } else if (e.key === "ArrowRight") {
+        const next = Math.min(100, currentWidth + 5);
+        compareBeforeLayer.style.width = `${next}%`;
+        compareHandle.style.left = `${next}%`;
+      }
+    });
+  }
+
+  // 5. REAL PHOTOGRAPHIC STUDIO VIEWFINDER
   const simPhoto = document.getElementById("sim-photo-subject");
   const simTempSlider = document.getElementById("sim-temp");
   const simTintSlider = document.getElementById("sim-tint");
@@ -175,19 +241,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const dict = I18N_DATA[currentLang] || I18N_DATA.en;
 
-    // Numeric badge updates
+    // Badges update
     if (simValTemp) simValTemp.textContent = temp === 0 ? dict.sim_preset_natural : (temp > 0 ? `+${temp}K` : `${temp}K`);
     if (simValTint) simValTint.textContent = tint === 0 ? dict.sim_preset_natural : (tint > 0 ? `+${tint}` : `${tint}`);
     if (simValSharp) simValSharp.textContent = sharp === 0 ? "Off" : `${sharp}%`;
 
-    // Photographic color calculations
     let sepia = 0;
     let hueRotate = 0;
     let saturate = 1;
     let contrast = 1;
     let brightness = 1;
 
-    // Kelvin temperature shift
+    // Kelvin temp
     if (temp > 0) {
       sepia = temp * 0.35;
       saturate += temp * 0.004;
@@ -197,12 +262,12 @@ document.addEventListener("DOMContentLoaded", () => {
       saturate += Math.abs(temp) * 0.002;
     }
 
-    // Tint shift
+    // Tint
     if (tint !== 0) {
       hueRotate += tint * 0.35;
     }
 
-    // Preset LUT profiles
+    // Profiles
     if (activeProfile === "cinema") {
       contrast = 1.18;
       saturate = 1.25;
@@ -223,7 +288,6 @@ document.addEventListener("DOMContentLoaded", () => {
       sepia += 4;
     }
 
-    // Sharpness effect via high-frequency contrast
     if (sharp > 0) {
       contrast += (sharp / 100) * 0.22;
     }
@@ -235,7 +299,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Preset Chips
   document.querySelectorAll(".chip-preset").forEach(chip => {
     chip.addEventListener("click", () => {
       document.querySelectorAll(".chip-preset").forEach(c => c.classList.remove("active"));
@@ -313,7 +376,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // USB vs Wi-Fi Modes
   function setConnMode(usb) {
     isUsbMode = usb;
     if (simModeUsb) simModeUsb.classList.toggle("active", usb);
@@ -333,7 +395,6 @@ document.addEventListener("DOMContentLoaded", () => {
   if (simModeUsb) simModeUsb.addEventListener("click", () => setConnMode(true));
   if (simModeWifi) simModeWifi.addEventListener("click", () => setConnMode(false));
 
-  // Telemetry Micro Jitter
   setInterval(() => {
     if (!simStatPing) return;
     if (isUsbMode) {
@@ -348,35 +409,6 @@ document.addEventListener("DOMContentLoaded", () => {
       simStatFps.textContent = `${fps} FPS`;
     }
   }, 2400);
-
-  // 5. INTERACTIVE WEBCAM VS ASELCAM COMPARISON
-  const btnCompareWebcam = document.getElementById("btn-compare-webcam");
-  const btnCompareAselcam = document.getElementById("btn-compare-aselcam");
-  const comparePhoto = document.getElementById("compare-photo");
-  const compareTag = document.getElementById("compare-status-tag");
-
-  function setComparison(isAselcam) {
-    if (btnCompareWebcam && btnCompareAselcam && comparePhoto && compareTag) {
-      btnCompareWebcam.classList.toggle("active", !isAselcam);
-      btnCompareAselcam.classList.toggle("active", isAselcam);
-
-      const dict = I18N_DATA[currentLang] || I18N_DATA.en;
-
-      if (isAselcam) {
-        comparePhoto.style.filter = "none";
-        compareTag.textContent = dict.compare_aselcam_tag;
-        compareTag.className = "compare-badge aselcam";
-      } else {
-        // Simulate grainy low-light webcam
-        comparePhoto.style.filter = "blur(1.6px) contrast(0.82) saturate(0.7) brightness(0.9) grayscale(0.2)";
-        compareTag.textContent = dict.compare_webcam_tag;
-        compareTag.className = "compare-badge webcam";
-      }
-    }
-  }
-
-  if (btnCompareWebcam) btnCompareWebcam.addEventListener("click", () => setComparison(false));
-  if (btnCompareAselcam) btnCompareAselcam.addEventListener("click", () => setComparison(true));
 
   // 6. SHA256 COPY TO CLIPBOARD
   document.querySelectorAll(".btn-copy-checksum").forEach(btn => {
@@ -398,7 +430,42 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // 7. STICKY NAV BLUR ON SCROLL
+  // 7. LEGAL MODAL SHEETS (PRIVACY & TERMS)
+  function setupModal(triggerId, modalId, closeId) {
+    const trigger = document.getElementById(triggerId);
+    const modal = document.getElementById(modalId);
+    const closeBtn = document.getElementById(closeId);
+    if (!modal) return;
+
+    function openModal(e) {
+      if (e) e.preventDefault();
+      modal.classList.add("open");
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeModal() {
+      modal.classList.remove("open");
+      document.body.style.overflow = "";
+    }
+
+    if (trigger) trigger.addEventListener("click", openModal);
+    if (closeBtn) closeBtn.addEventListener("click", closeModal);
+
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) closeModal();
+    });
+
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && modal.classList.contains("open")) {
+        closeModal();
+      }
+    });
+  }
+
+  setupModal("link-open-privacy", "modal-privacy", "btn-close-privacy");
+  setupModal("link-open-terms", "modal-terms", "btn-close-terms");
+
+  // 8. STICKY NAV SCROLL
   const navHeader = document.querySelector(".nav-header");
   window.addEventListener("scroll", () => {
     if (window.scrollY > 20) {
@@ -412,5 +479,4 @@ document.addEventListener("DOMContentLoaded", () => {
   applyLanguage(currentLang);
   updateSimPhotoFilters();
   setConnMode(true);
-  setComparison(true);
 });
