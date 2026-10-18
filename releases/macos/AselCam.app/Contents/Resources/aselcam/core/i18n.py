@@ -193,7 +193,16 @@ TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "ctrl_torch_off": "Fener / Flaş Kapat",
         "ctrl_phone_preview_on": "Telefonda Önizlemeyi Aç",
         "ctrl_phone_preview_off": "Telefonda Önizlemeyi Kapat",
-        "ctrl_blackout_on": "Ekranı Karart (AMOLED Tasarruf)"
+        "ctrl_blackout_on": "Ekranı Karart (AMOLED Tasarruf)",
+        "audio_label": "SES",
+        "detail_geometry": "Detay && Geometri",
+        "laplacian_sharpness": "Gerçek Keskinlik (Laplacian):",
+        "flip_h": "Yatay Aynalama (Mirror)",
+        "flip_v": "Dikey Çevir",
+        "grayscale": "Siyah && Beyaz",
+        "invert_colors": "Renkleri Ters Çevir",
+        "rotation": "Döndürme",
+        "btn_reset_all_raw": "Tüm RAW && Renk Ayarlarını Sıfırla"
     },
     "en": {
         "app_title": "AselCam - Ultra Low-Latency Virtual Camera Studio",
@@ -382,7 +391,16 @@ TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "ctrl_torch_off": "Turn Off Flashlight",
         "ctrl_phone_preview_on": "Open Phone Preview",
         "ctrl_phone_preview_off": "Close Phone Preview",
-        "ctrl_blackout_on": "Blackout Screen (AMOLED Save)"
+        "ctrl_blackout_on": "Blackout Screen (AMOLED Save)",
+        "audio_label": "AUDIO",
+        "detail_geometry": "Detail && Geometry",
+        "laplacian_sharpness": "True Sharpness (Laplacian):",
+        "flip_h": "Horizontal Mirror",
+        "flip_v": "Vertical Flip",
+        "grayscale": "Black && White",
+        "invert_colors": "Invert Colors",
+        "rotation": "Rotation",
+        "btn_reset_all_raw": "Reset All RAW && Color Settings"
     },
     "de": {
         "app_title": "AselCam - Ultra Low-Latency Virtual Camera Studio",
@@ -571,7 +589,16 @@ TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "ctrl_torch_off": "Blitzlicht aus",
         "ctrl_phone_preview_on": "Vorschau auf Smartphone öffnen",
         "ctrl_phone_preview_off": "Vorschau auf Smartphone schließen",
-        "ctrl_blackout_on": "Bildschirm abdunkeln (AMOLED)"
+        "ctrl_blackout_on": "Bildschirm abdunkeln (AMOLED)",
+        "audio_label": "AUDIO",
+        "detail_geometry": "Detail && Geometrie",
+        "laplacian_sharpness": "Echte Schärfe (Laplacian):",
+        "flip_h": "Horizontal spiegeln",
+        "flip_v": "Vertikal spiegeln",
+        "grayscale": "Schwarzweiß",
+        "invert_colors": "Farben invertieren",
+        "rotation": "Drehung",
+        "btn_reset_all_raw": "Alle RAW- && Farbeinstellungen zurücksetzen"
     },
     "fr": {
         "app_title": "AselCam - Ultra Low-Latency Virtual Camera Studio",
@@ -760,7 +787,16 @@ TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "ctrl_torch_off": "Éteindre le flash",
         "ctrl_phone_preview_on": "Activer aperçu sur téléphone",
         "ctrl_phone_preview_off": "Désactiver aperçu sur téléphone",
-        "ctrl_blackout_on": "Écran noir (AMOLED)"
+        "ctrl_blackout_on": "Écran noir (AMOLED)",
+        "audio_label": "AUDIO",
+        "detail_geometry": "Détail && Géométrie",
+        "laplacian_sharpness": "Netteté réelle (Laplacien) :",
+        "flip_h": "Miroir horizontal",
+        "flip_v": "Retournement vertical",
+        "grayscale": "Noir && Blanc",
+        "invert_colors": "Inverser les couleurs",
+        "rotation": "Rotation",
+        "btn_reset_all_raw": "Réinitialiser tous les paramètres RAW && couleur"
     },
     "es": {
         "app_title": "AselCam - Ultra Low-Latency Virtual Camera Studio",
@@ -949,7 +985,16 @@ TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "ctrl_torch_off": "Apagar linterna",
         "ctrl_phone_preview_on": "Activar vista previa en móvil",
         "ctrl_phone_preview_off": "Desactivar vista previa en móvil",
-        "ctrl_blackout_on": "Pantalla negra (Ahorro AMOLED)"
+        "ctrl_blackout_on": "Pantalla negra (Ahorro AMOLED)",
+        "audio_label": "AUDIO",
+        "detail_geometry": "Detalle && Geometría",
+        "laplacian_sharpness": "Nitidez real (Laplaciano):",
+        "flip_h": "Reflejo horizontal",
+        "flip_v": "Giro vertical",
+        "grayscale": "Blanco y Negro",
+        "invert_colors": "Invertir colores",
+        "rotation": "Rotación",
+        "btn_reset_all_raw": "Restablecer todos los ajustes RAW y de color"
     },
     "ru": {
         "app_title": "AselCam - Ultra Low-Latency Virtual Camera Studio",
@@ -1138,7 +1183,16 @@ TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "ctrl_torch_off": "Выключить фонарик",
         "ctrl_phone_preview_on": "Включить предпросмотр на телефоне",
         "ctrl_phone_preview_off": "Отключить предпросмотр на телефоне",
-        "ctrl_blackout_on": "Затемнить экран (Экономия AMOLED)"
+        "ctrl_blackout_on": "Затемнить экран (Экономия AMOLED)",
+        "audio_label": "АУДИО",
+        "detail_geometry": "Детали && геометрия",
+        "laplacian_sharpness": "Истинная резкость (Лапласиан):",
+        "flip_h": "Отразить по горизонтали",
+        "flip_v": "Отразить по вертикали",
+        "grayscale": "Черно-белый",
+        "invert_colors": "Инвертировать цвета",
+        "rotation": "Поворот",
+        "btn_reset_all_raw": "Сбросить все настройки RAW && цвета"
     },
     "ja": {
         "app_title": "AselCam - Ultra Low-Latency Virtual Camera Studio",
@@ -1327,7 +1381,16 @@ TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "ctrl_torch_off": "ライト消灯",
         "ctrl_phone_preview_on": "スマホ側プレビューを表示",
         "ctrl_phone_preview_off": "スマホ側プレビューを非表示",
-        "ctrl_blackout_on": "画面消灯 (AMOLED省電力)"
+        "ctrl_blackout_on": "画面消灯 (AMOLED省電力)",
+        "audio_label": "音声",
+        "detail_geometry": "ディテール && ジオメトリ",
+        "laplacian_sharpness": "真の鮮鋭度 (ラプラシアン):",
+        "flip_h": "水平反転 (ミラー)",
+        "flip_v": "垂直反転",
+        "grayscale": "モノクロ",
+        "invert_colors": "色を反転",
+        "rotation": "回転",
+        "btn_reset_all_raw": "すべてのRAW・カラー設定をリセット"
     },
     "ar": {
         "app_title": "AselCam - Ultra Low-Latency Virtual Camera Studio",
@@ -1516,7 +1579,16 @@ TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "ctrl_torch_off": "إطفاء الفلاش",
         "ctrl_phone_preview_on": "تشغيل المعاينة على الهاتف",
         "ctrl_phone_preview_off": "إيقاف المعاينة على الهاتف",
-        "ctrl_blackout_on": "إعتام الشاشة (توفير AMOLED)"
+        "ctrl_blackout_on": "إعتام الشاشة (توفير AMOLED)",
+        "audio_label": "صوت",
+        "detail_geometry": "التفاصيل والهندسة",
+        "laplacian_sharpness": "الحدة الحقيقية (لابلاسي):",
+        "flip_h": "مرآة أفقية",
+        "flip_v": "قلب رأسي",
+        "grayscale": "أبيض وأسود",
+        "invert_colors": "عكس الألوان",
+        "rotation": "تدوير",
+        "btn_reset_all_raw": "إعادة ضبط جميع إعدادات RAW والألوان"
     }
 }
 

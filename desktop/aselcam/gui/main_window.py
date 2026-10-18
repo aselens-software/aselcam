@@ -690,9 +690,9 @@ class MainWindow(QMainWindow):
         audio_l.setContentsMargins(4, 2, 4, 2)
         audio_l.setSpacing(6)
 
-        lbl_mic_icon = QLabel("SES")
-        lbl_mic_icon.setStyleSheet("color: #8c909f; font-size: 10px; font-weight: 700; font-family: 'JetBrains Mono', monospace;")
-        audio_l.addWidget(lbl_mic_icon)
+        self.lbl_mic_icon = QLabel(_t("audio_label"))
+        self.lbl_mic_icon.setStyleSheet("color: #8c909f; font-size: 10px; font-weight: 700; font-family: 'JetBrains Mono', monospace;")
+        audio_l.addWidget(self.lbl_mic_icon)
 
         self.slider_mic_gain = QSlider(Qt.Orientation.Horizontal)
         self.slider_mic_gain.setRange(0, 200)
@@ -774,11 +774,11 @@ class MainWindow(QMainWindow):
 
         self.btn_collapse_hub = QPushButton("✕")
         self.btn_collapse_hub.setObjectName("btn_collapse_hub")
-        self.btn_collapse_hub.setFixedSize(24, 24)
-        self.btn_collapse_hub.setToolTip("Paneli Gizle")
+        self.btn_collapse_hub.setFixedSize(26, 26)
+        self.btn_collapse_hub.setToolTip(_t("hub_collapse"))
         self.btn_collapse_hub.setStyleSheet(
-            "QPushButton { background: #262a35; color: #94a3b8; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 4px; font-weight: bold; font-size: 11px; } "
-            "QPushButton:hover { background: #313540; color: #ffffff; }"
+            "QPushButton#btn_collapse_hub { background: #262a35; color: #cbd5e1; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 6px; font-weight: bold; font-size: 12px; padding: 0px !important; margin: 0px !important; text-align: center; } "
+            "QPushButton#btn_collapse_hub:hover { background: #334155; color: #ffffff; border-color: rgba(255, 255, 255, 0.25); }"
         )
         self.btn_collapse_hub.clicked.connect(self._toggle_hub_panel)
         insp_header.addWidget(self.btn_collapse_hub)
@@ -1272,13 +1272,13 @@ class MainWindow(QMainWindow):
         filters_layout.addWidget(rgb_box)
 
         # SECTION 6: Detay & Geometri
-        self.detail_box = detail_box = QGroupBox("Detay && Geometri")
+        self.detail_box = detail_box = QGroupBox(_t("detail_geometry"))
         detail_layout = QVBoxLayout(detail_box)
         detail_layout.setSpacing(8)
 
         # True Laplacian Sharpness
         sharp_row = QHBoxLayout()
-        self.lbl_sharp_title = QLabel("Gerçek Keskinlik (Laplacian):")
+        self.lbl_sharp_title = QLabel(_t("laplacian_sharpness"))
         sharp_row.addWidget(self.lbl_sharp_title)
         self.lbl_sharp = ValueBadgeEdit("0%" if self.filters.sharpness == 0 else f"{self.filters.sharpness}%", min_val=0, max_val=100, suffix="%")
         self.lbl_sharp.setObjectName("lbl_value_badge")
@@ -1294,22 +1294,22 @@ class MainWindow(QMainWindow):
 
         # Checkboxes
         chk_grid = QGridLayout()
-        self.chk_flip_h = QCheckBox("Yatay Aynalama (Mirror)")
+        self.chk_flip_h = QCheckBox(_t("flip_h"))
         self.chk_flip_h.setChecked(self.filters.flip_h)
         self.chk_flip_h.stateChanged.connect(self._update_filters)
         chk_grid.addWidget(self.chk_flip_h, 0, 0)
 
-        self.chk_flip_v = QCheckBox("Dikey Çevir")
+        self.chk_flip_v = QCheckBox(_t("flip_v"))
         self.chk_flip_v.setChecked(self.filters.flip_v)
         self.chk_flip_v.stateChanged.connect(self._update_filters)
         chk_grid.addWidget(self.chk_flip_v, 0, 1)
 
-        self.chk_gray = QCheckBox("Siyah && Beyaz")
+        self.chk_gray = QCheckBox(_t("grayscale"))
         self.chk_gray.setChecked(self.filters.grayscale)
         self.chk_gray.stateChanged.connect(self._update_filters)
         chk_grid.addWidget(self.chk_gray, 1, 0)
 
-        self.chk_invert = QCheckBox("Renkleri Ters Çevir")
+        self.chk_invert = QCheckBox(_t("invert_colors"))
         self.chk_invert.setChecked(self.filters.invert)
         self.chk_invert.stateChanged.connect(self._update_filters)
         chk_grid.addWidget(self.chk_invert, 1, 1)
@@ -1317,7 +1317,8 @@ class MainWindow(QMainWindow):
 
         # Rotation
         rot_layout = QHBoxLayout()
-        rot_layout.addWidget(QLabel("Döndürme:"))
+        self.lbl_rot_title = QLabel(_t("rotation") + ":")
+        rot_layout.addWidget(self.lbl_rot_title)
         self.combo_rot = QComboBox()
         self.combo_rot.addItems(["0°", "90°", "180°", "270°"])
         rot_idx = {0: 0, 90: 1, 180: 2, 270: 3}.get(self.filters.rotation, 0)
@@ -1329,14 +1330,14 @@ class MainWindow(QMainWindow):
         filters_layout.addWidget(detail_box)
 
         # Reset button
-        self.btn_reset_filters = QPushButton("Tüm RAW && Renk Ayarlarını Sıfırla")
+        self.btn_reset_filters = QPushButton(_t("btn_reset_all_raw"))
         self.btn_reset_filters.clicked.connect(self._reset_filters)
         filters_layout.addWidget(self.btn_reset_filters)
 
         filters_layout.addStretch()
 
         scroll_area.setWidget(filters_tab)
-        self.control_tabs.addTab(scroll_area, "RAW && Renk")
+        self.control_tabs.addTab(scroll_area, _t("tab_raw"))
 
         # TAB 3: Advanced Stream & Driver Settings
         settings_scroll = QScrollArea()
@@ -1693,7 +1694,25 @@ class MainWindow(QMainWindow):
             if hasattr(self, "lbl_sharp_title"):
                 self.lbl_sharp_title.setText(_t("raw_sharpness") + ":")
         if hasattr(self, "btn_reset_filters"):
-            self.btn_reset_filters.setText(_t("btn_reset_filters"))
+            self.btn_reset_filters.setText(_t("btn_reset_all_raw"))
+
+        # Section 6: Detay & Geometri Retranslation
+        if hasattr(self, "detail_box"):
+            self.detail_box.setTitle(_t("detail_geometry"))
+        if hasattr(self, "lbl_sharp_title"):
+            self.lbl_sharp_title.setText(_t("laplacian_sharpness"))
+        if hasattr(self, "chk_flip_h"):
+            self.chk_flip_h.setText(_t("flip_h"))
+        if hasattr(self, "chk_flip_v"):
+            self.chk_flip_v.setText(_t("flip_v"))
+        if hasattr(self, "chk_gray"):
+            self.chk_gray.setText(_t("grayscale"))
+        if hasattr(self, "chk_invert"):
+            self.chk_invert.setText(_t("invert_colors"))
+        if hasattr(self, "lbl_rot_title"):
+            self.lbl_rot_title.setText(_t("rotation") + ":")
+        if hasattr(self, "lbl_mic_icon"):
+            self.lbl_mic_icon.setText(_t("audio_label"))
 
         # 7. Settings Tab
         if hasattr(self, "lbl_settings_res"):
@@ -1780,6 +1799,112 @@ class MainWindow(QMainWindow):
         # Repaint video widget
         if hasattr(self, "video_widget"):
             self.video_widget.update()
+
+        # Run Auto-Size engine to adaptively scale buttons and bounds for active language
+        self.auto_size_ui()
+
+    def auto_size_ui(self):
+        """
+        Dynamically calculates text metrics and resizes buttons, dock frames,
+        splitters, and window bounds to perfectly accommodate any active language
+        (TR, EN, DE, FR, ES, RU, JA, AR) without text clipping or layout overflow.
+        """
+        try:
+            # 1. Adapt Connection Strip buttons
+            if hasattr(self, "btn_mode_usb"):
+                w = self.btn_mode_usb.fontMetrics().horizontalAdvance(self.btn_mode_usb.text()) + 28
+                self.btn_mode_usb.setMinimumWidth(max(80, w))
+            if hasattr(self, "btn_mode_wifi"):
+                w = self.btn_mode_wifi.fontMetrics().horizontalAdvance(self.btn_mode_wifi.text()) + 28
+                self.btn_mode_wifi.setMinimumWidth(max(80, w))
+            if hasattr(self, "btn_refresh_adb"):
+                w = self.btn_refresh_adb.fontMetrics().horizontalAdvance(self.btn_refresh_adb.text()) + 24
+                self.btn_refresh_adb.setMinimumWidth(max(68, w))
+                self.btn_refresh_adb.setFixedHeight(30)
+            if hasattr(self, "btn_master_connect"):
+                w = self.btn_master_connect.fontMetrics().horizontalAdvance(self.btn_master_connect.text()) + 32
+                self.btn_master_connect.setMinimumWidth(max(130, w))
+
+            # 2. Adapt Viewfinder Quick Control Dock Buttons (Below Video)
+            dock_buttons = []
+            if hasattr(self, "btn_toggle_preview"):
+                dock_buttons.append(self.btn_toggle_preview)
+            if hasattr(self, "btn_pause_cam"):
+                dock_buttons.append(self.btn_pause_cam)
+            if hasattr(self, "btn_mute_mic"):
+                dock_buttons.append(self.btn_mute_mic)
+            if hasattr(self, "btn_toggle_hub"):
+                dock_buttons.append(self.btn_toggle_hub)
+
+            total_dock_btn_w = 0
+            for btn in dock_buttons:
+                w = btn.fontMetrics().horizontalAdvance(btn.text()) + 24
+                btn.setMinimumWidth(max(85, w))
+                total_dock_btn_w += max(85, w)
+
+            # 3. Adapt Hub #1 Action & Reset Buttons
+            remote_buttons = []
+            for attr in ["btn_flip_camera", "btn_torch", "btn_remote_preview", "btn_remote_blackout"]:
+                if hasattr(self, attr):
+                    remote_buttons.append(getattr(self, attr))
+            for btn in remote_buttons:
+                w = btn.fontMetrics().horizontalAdvance(btn.text()) + 18
+                btn.setMinimumWidth(max(105, w))
+
+            if hasattr(self, "btn_screen_mirror"):
+                w = self.btn_screen_mirror.fontMetrics().horizontalAdvance(self.btn_screen_mirror.text()) + 28
+                self.btn_screen_mirror.setMinimumWidth(max(150, w))
+
+            if hasattr(self, "btn_reset_filters"):
+                w = self.btn_reset_filters.fontMetrics().horizontalAdvance(self.btn_reset_filters.text()) + 28
+                self.btn_reset_filters.setMinimumWidth(max(160, w))
+
+            if hasattr(self, "btn_apply_settings_cta"):
+                w = self.btn_apply_settings_cta.fontMetrics().horizontalAdvance(self.btn_apply_settings_cta.text()) + 28
+                self.btn_apply_settings_cta.setMinimumWidth(max(160, w))
+
+            # 4. Header & Telemetry Labels
+            if hasattr(self, "title_bar") and hasattr(self.title_bar, "status_badge"):
+                self.title_bar.status_badge.adjustSize()
+            if hasattr(self, "lbl_device_info"):
+                self.lbl_device_info.adjustSize()
+            if hasattr(self, "lbl_battery"):
+                self.lbl_battery.adjustSize()
+            if hasattr(self, "lbl_ping"):
+                self.lbl_ping.adjustSize()
+            if hasattr(self, "lbl_mic_icon"):
+                self.lbl_mic_icon.adjustSize()
+
+            # 5. Adaptive Splitter & Window Width
+            audio_inset_w = 215
+            needed_dock_w = total_dock_btn_w + audio_inset_w + 48
+            min_left = max(520, needed_dock_w)
+            min_right = 380
+
+            if hasattr(self, "right_container") and self.right_container.isVisible():
+                total_needed_w = min_left + min_right + 32
+            else:
+                total_needed_w = min_left + 40
+
+            if self.width() < total_needed_w:
+                self.resize(total_needed_w, self.height())
+
+            if hasattr(self, "splitter"):
+                curr_sizes = self.splitter.sizes()
+                if len(curr_sizes) == 2:
+                    current_left, current_right = curr_sizes[0], curr_sizes[1]
+                    target_left = max(min_left, current_left)
+                    target_right = max(min_right, current_right)
+                    self.splitter.setSizes([target_left, target_right])
+
+            if hasattr(self, "control_tabs"):
+                self.control_tabs.tabBar().adjustSize()
+
+            if self.layout():
+                self.layout().activate()
+            self.updateGeometry()
+        except Exception as e:
+            print(f"[Auto-Size] Warning during auto-sizing: {e}")
 
     def _parse_selected_bitrate(self) -> int:
         try:

@@ -23,11 +23,13 @@ class VideoWidget(QWidget):
         self._screen_mirroring = False
         self._horz_logo: Optional[QPixmap] = None
 
-        logo_path = os.path.join(os.path.dirname(__file__), "..", "assets", "aselcam_logo-horz-white.svg")
+        logo_path = os.path.join(os.path.dirname(__file__), "..", "assets", "aselcam_logo_horz.png")
         if not os.path.exists(logo_path):
-            logo_path = os.path.join(os.path.dirname(__file__), "..", "..", "docs", "aselcam_logo-horz-white.svg")
+            logo_path = os.path.join(os.path.dirname(__file__), "..", "assets", "aselcam_logo_horz_512.png")
         if not os.path.exists(logo_path):
-            logo_path = os.path.join(os.path.dirname(__file__), "..", "assets", "aselcam_logo_horz_128.png")
+            logo_path = os.path.join(os.path.dirname(__file__), "..", "..", "docs", "aselcam_logo_horz.png")
+        if not os.path.exists(logo_path):
+            logo_path = os.path.join(os.path.dirname(__file__), "..", "assets", "aselcam_logo-horz-white.svg")
         if os.path.exists(logo_path):
             self._horz_logo = QPixmap(logo_path)
 
@@ -108,7 +110,7 @@ class VideoWidget(QWidget):
                 # Draw Horizontal White Logo
                 if self._horz_logo and not self._horz_logo.isNull():
                     scaled_logo = self._horz_logo.scaled(
-                        220, 52,
+                        220, 65,
                         Qt.AspectRatioMode.KeepAspectRatio,
                         Qt.TransformationMode.SmoothTransformation
                     )
@@ -206,7 +208,7 @@ class VideoWidget(QWidget):
                 is_mirror = self._screen_mirroring
                 if not is_mirror and self._horz_logo and not self._horz_logo.isNull():
                     scaled_logo = self._horz_logo.scaled(
-                        220, 52,
+                        220, 65,
                         Qt.AspectRatioMode.KeepAspectRatio,
                         Qt.TransformationMode.SmoothTransformation
                     )

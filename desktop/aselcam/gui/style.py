@@ -498,6 +498,24 @@ QPushButton#btn_win_close:hover {
     color: #ffffff;
 }
 
+QPushButton#btn_collapse_hub {
+    background-color: #262a35;
+    color: #cbd5e1;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: bold;
+    padding: 0px !important;
+    margin: 0px !important;
+    text-align: center;
+}
+
+QPushButton#btn_collapse_hub:hover {
+    background-color: #334155;
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.25);
+}
+
 /* ==========================================================================
    SCROLL AREA & MINIMAL SCROLLBAR
    ========================================================================== */
