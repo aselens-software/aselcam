@@ -1109,20 +1109,30 @@ body {
 .privacy-bento-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
+  gap: 0;
   margin-top: 48px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius-xl);
+  background: transparent;
+  overflow: hidden;
 }
 
 /* Bento Hero Card (Spans full width across 2 columns) */
 .privacy-bento-hero {
   grid-column: span 2;
-  background: radial-gradient(ellipse at 85% 15%, rgba(0, 113, 227, 0.16) 0%, transparent 60%), #17171A;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: var(--radius-xl);
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0;
   padding: 48px 44px;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+  box-shadow: none;
+  transition: background 0.3s ease;
+}
+
+.privacy-bento-hero:hover {
+  background: rgba(255, 255, 255, 0.015);
 }
 
 .privacy-status-badge {
@@ -1131,8 +1141,8 @@ body {
   gap: 8px;
   padding: 6px 14px;
   border-radius: var(--radius-full);
-  background: rgba(48, 209, 88, 0.12);
-  border: 1px solid rgba(48, 209, 88, 0.3);
+  background: rgba(48, 209, 88, 0.08);
+  border: 1px solid rgba(48, 209, 88, 0.25);
   color: var(--apple-emerald);
   font-size: 0.78rem;
   font-weight: 600;
@@ -1176,37 +1186,51 @@ body {
   gap: 8px;
   padding: 8px 16px;
   border-radius: var(--radius-full);
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   font-size: 0.82rem;
   font-weight: 500;
   color: #FFFFFF;
 }
 
-/* 3 Complementary Bento Feature Cards */
+/* Framed Feature Cells (Transparent bg, thin divider borders) */
 .privacy-bento-card {
-  background: #17171A;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: var(--radius-lg);
-  padding: 36px 30px;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 38px 34px;
   display: flex;
   flex-direction: column;
   gap: 12px;
-  transition: all 0.25s ease;
+  box-shadow: none;
+  transition: background 0.3s ease;
 }
 
 .privacy-bento-card:hover {
-  background: #1C1C20;
-  border-color: rgba(255, 255, 255, 0.18);
-  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.015);
+  transform: none;
+}
+
+/* Internal frame dividers */
+.privacy-bento-card.card-border-right {
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.privacy-bento-card.card-border-bottom {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.privacy-bento-card.card-full-span {
+  grid-column: span 2;
+  border: none;
 }
 
 .bento-card-icon {
   width: 44px;
   height: 44px;
   border-radius: var(--radius-sm);
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1759,16 +1783,31 @@ body {
 
   .privacy-bento-grid {
     grid-template-columns: 1fr;
-    gap: 16px;
+    gap: 0;
+    border-radius: var(--radius-lg);
   }
 
   .privacy-bento-hero {
     grid-column: span 1;
     padding: 32px 22px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   }
 
   .privacy-bento-card {
     padding: 28px 22px;
+  }
+
+  .privacy-bento-card.card-border-right {
+    border-right: none;
+  }
+
+  .privacy-bento-card.card-border-bottom {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .privacy-bento-card.card-full-span {
+    grid-column: span 1;
+    border-bottom: none;
   }
 
   .bento-hero-title {
