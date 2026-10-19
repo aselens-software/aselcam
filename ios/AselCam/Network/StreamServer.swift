@@ -13,7 +13,7 @@ public final class StreamServer {
     public static let defaultPort: UInt16 = 4747
     
     private var listener: NWListener?
-    private let queue = DispatchQueue(label: "com.aselcam.streamserver", qos: .userInteractive)
+    private let queue = DispatchQueue(label: "com.aselens.aselcam.streamserver", qos: .userInteractive)
     private var connections: [NWConnection] = []
     
     // Cached codec configuration and latest keyframe for instant handshake

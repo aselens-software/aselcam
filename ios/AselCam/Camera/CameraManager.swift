@@ -15,7 +15,7 @@ public final class CameraManager: NSObject, AVCaptureVideoDataOutputSampleBuffer
     
     private let captureSession = AVCaptureSession()
     private let videoOutput = AVCaptureVideoDataOutput()
-    private let sessionQueue = DispatchQueue(label: "com.aselcam.camera.session", qos: .userInteractive)
+    private let sessionQueue = DispatchQueue(label: "com.aselens.aselcam.camera.session", qos: .userInteractive)
     
     private var currentDevice: AVCaptureDevice?
     private var currentInput: AVCaptureDeviceInput?

@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="tr" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>AselCam • Studio Camera & Wireless Microphone for Mobile & Desktop</title>
+  <meta name="description" content="Akıllı telefonunuzun gelişmiş kamera donanımını sıfır gecikmeyle bilgisayarınıza bağlayın. 4K kristal netlik, doğal optik derinlik, stüdyo mikrofonu ve gerçek zamanlı renk kontrolü. Sıfır bulut, %100 yerel ve özel.">
+  <link rel="icon" type="image/png" href="assets/aselcam_icon_512.png">
+  <link rel="apple-touch-icon" href="assets/aselcam_icon_512.png">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- =========================================================================
+       1. NAVIGATION BAR (APPLE LIQUID GLASS WITH MOBILE HAMBURGER & DRAWER)
+       ========================================================================= -->
+  <header class="nav-header">
+    <div class="nav-container">
+      <a href="#" class="nav-brand" aria-label="AselCam Home">
+        <img src="assets/aselcam_logo_horz.png" alt="AselCam" class="nav-logo">
+      </a>
+
+      <!-- Desktop Navigation Links (Hidden on Mobile) -->
+      <nav class="nav-desktop-links" aria-label="Main Navigation">
+        <ul class="nav-links">
+          <li>
+            <a href="#overview" class="nav-link">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3L2 12h3v8h6v-6h2v6h6v-8h3L12 3z"/></svg>
+              <span data-i18n="nav_overview">Genel Bakış</span>
+            </a>
+          </li>
+          <li>
+            <a href="#studio" class="nav-link">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3L7.17 5H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2h-3.17L15 3H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/></svg>
+              <span data-i18n="nav_studio">Stüdyo Vizörü</span>
+            </a>
+          </li>
+          <li>
+            <a href="#compare" class="nav-link">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h5v2h2V1h-2v2zm-2 14H5V5h3v12zm11-14h-5v2h5v12h-3v2h3c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg>
+              <span data-i18n="nav_compare">Karşılaştırma</span>
+            </a>
+          </li>
+          <li>
+            <a href="#privacy" class="nav-link">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
+              <span data-i18n="nav_privacy">Gizlilik</span>
+            </a>
+          </li>
+          <li>
+            <a href="#specs" class="nav-link">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg>
+              <span data-i18n="nav_specs">Teknik Özellikler</span>
+            </a>
+          </li>
+          <li>
+            <a href="#downloads" class="nav-link">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z"/></svg>
+              <span data-i18n="nav_downloads">İndir</span>
+            </a>
+          </li>
+          <li>
+            <a href="https://github.com/aselens-software/aselcam" target="_blank" rel="noopener noreferrer" class="nav-link">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+              <span data-i18n="nav_github">GitHub</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <!-- Nav Actions (Lang Selector + Desktop Download Button + Mobile Menu Hamburger) -->
+      <div class="nav-actions">
+        <!-- 8-Language Selector (Always Available) -->
+        <div class="lang-selector-wrapper">
+          <select id="lang-select" class="lang-select" aria-label="Select Language">
+            <option value="tr">🇹🇷 TR</option>
+            <option value="en">🇬🇧 EN</option>
+            <option value="de">🇩🇪 DE</option>
+            <option value="fr">🇫🇷 FR</option>
+            <option value="es">🇪🇸 ES</option>
+            <option value="ru">🇷🇺 RU</option>
+            <option value="ja">🇯🇵 JA</option>
+            <option value="ar">🇸🇦 AR</option>
+          </select>
+          <span class="lang-chevron" aria-hidden="true">▼</span>
+        </div>
+
+        <!-- Desktop Primary CTA Button -->
+        <a href="#downloads" class="btn btn-primary nav-desktop-btn" data-i18n="nav_downloads">İndir</a>
+
+        <!-- Mobile Hamburger Menu Button (Visible only on mobile devices) -->
+        <button id="btn-mobile-menu" class="btn-mobile-menu" aria-label="Menü" aria-expanded="false" aria-controls="mobile-nav-drawer">
+          <span class="hamburger-bar top" aria-hidden="true"></span>
+          <span class="hamburger-bar bottom" aria-hidden="true"></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Fullscreen Liquid Glass Navigation Drawer -->
+    <div id="mobile-nav-drawer" class="mobile-nav-drawer" aria-hidden="true">
+      <div class="mobile-nav-content">
+        <ul class="mobile-nav-links">
+          <li>
+            <a href="#overview" class="mobile-nav-link">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3L2 12h3v8h6v-6h2v6h6v-8h3L12 3z"/></svg>
+              <span data-i18n="nav_overview">Genel Bakış</span>
+            </a>
+          </li>
+          <li>
+            <a href="#studio" class="mobile-nav-link">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3L7.17 5H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2h-3.17L15 3H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/></svg>
+              <span data-i18n="nav_studio">Stüdyo Vizörü</span>
+            </a>
+          </li>
+          <li>
+            <a href="#compare" class="mobile-nav-link">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h5v2h2V1h-2v2zm-2 14H5V5h3v12zm11-14h-5v2h5v12h-3v2h3c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg>
+              <span data-i18n="nav_compare">Karşılaştırma</span>
+            </a>
+          </li>
+          <li>
+            <a href="#privacy" class="mobile-nav-link">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
+              <span data-i18n="nav_privacy">Gizlilik</span>
+            </a>
+          </li>
+          <li>
+            <a href="#specs" class="mobile-nav-link">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg>
+              <span data-i18n="nav_specs">Teknik Özellikler</span>
+            </a>
+          </li>
+          <li>
+            <a href="https://github.com/aselens-software/aselcam" target="_blank" rel="noopener noreferrer" class="mobile-nav-link">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+              <span data-i18n="nav_github">GitHub Repository ↗</span>
+            </a>
+          </li>
+        </ul>
+        <div class="mobile-nav-cta">
+          <a href="#downloads" class="btn btn-primary btn-large btn-mobile-dl" data-i18n="nav_downloads">İndir</a>
+          <div style="margin-top: 14px; text-align: center;">
+            <a href="https://www.buymeacoffee.com/aselens" target="_blank" rel="noopener noreferrer" class="bmc-btn-badge" aria-label="Buy Me a Coffee">
+              <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me a Coffee" style="height: 42px !important; width: auto !important;">
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- =========================================================================
+       2. HERO SECTION
+       ========================================================================= -->
+  <main id="overview">
+    <section class="hero-section">
+      <span class="hero-eyebrow" data-i18n="hero_eyebrow">Masaüstü için AselCam</span>
+      <h1 class="hero-title" data-i18n="hero_title">Masanıza profesyonel stüdyo kalitesi.<br>Cebinizdeki kamerayla.</h1>
+      <p class="hero-subtitle" data-i18n="hero_subtitle">Akıllı telefonunuzun gelişmiş kamera donanımını sıfır gecikmeyle bilgisayarınıza bağlayın. 4K kristal netlik, doğal optik derinlik, stüdyo mikrofonu ve gerçek zamanlı renk kontrolü. Sıfır bulut, %100 yerel ve özel.</p>
+
+      <div class="hero-cta-group">
+        <div>
+          <a id="hero-cta-btn" href="#downloads" class="btn btn-primary btn-large">
+            <span class="os-icon">⚡</span> <span data-i18n="hero_cta_detect">İndir: </span> macOS
+          </a>
+          <span id="hero-cta-sub" class="cta-subtext">Apple Silicon & Intel • 1.4 MB</span>
+        </div>
+        
+        <a href="#studio" class="btn btn-secondary btn-large" data-i18n="hero_explore">Stüdyo Deneyimini Başlat</a>
+      </div>
+
+      <!-- Key Statement Metrics Banner -->
+      <div class="statement-metrics-row">
+        <div class="metric-item">
+          <span class="metric-num" data-i18n="stat_latency">4 ms</span>
+          <span class="metric-label" data-i18n="stat_latency_label">Donanımsal ultra düşük gecikme</span>
+        </div>
+        <div class="metric-item">
+          <span class="metric-num" data-i18n="stat_res">4K HDR</span>
+          <span class="metric-label" data-i18n="stat_res_label">Kristal netliğinde yayın akışı</span>
+        </div>
+        <div class="metric-item">
+          <span class="metric-num" data-i18n="stat_audio">24 kHz</span>
+          <span class="metric-label" data-i18n="stat_audio_label">Kayıpsız stüdyo mikrofonu</span>
+        </div>
+        <div class="metric-item">
+          <span class="metric-num" data-i18n="stat_privacy">%100 Yerel</span>
+          <span class="metric-label" data-i18n="stat_privacy_label">Sıfır bulut, tam gizlilik</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         3. REAL PHOTOGRAPHIC STUDIO VIEWFINDER (LIVE WEB SIMULATOR)
+         ========================================================================= -->
+    <section id="studio" class="studio-section">
+      <div class="section-eyebrow" data-i18n="sim_eyebrow">Canlı Önizleme</div>
+      <h2 class="section-title" data-i18n="sim_title">Gerçek Zamanlı Stüdyo Vizörü.</h2>
+      <p class="section-desc" data-i18n="sim_subtitle">Görüntülü toplantılarda ve canlı yayınlarda kameranızın sensörünü doğrudan kontrol edin. Renk sıcaklığı, ton ve keskinlik ayarlarını anlık deneyimleyin.</p>
+
+      <div class="studio-chassis">
+        <!-- Chassis Title Bar -->
+        <div class="chassis-header">
+          <div class="window-dots" aria-hidden="true">
+            <span class="dot close"></span>
+            <span class="dot min"></span>
+            <span class="dot max"></span>
+          </div>
+
+          <div class="chassis-title">
+            <img src="assets/aselcam_logo_horz.png" alt="AselCam" style="height: 14px; opacity: 0.9;">
+            <span>Studio Viewfinder</span>
+          </div>
+
+          <!-- Connection Modes -->
+          <div class="mode-pills" role="tablist">
+            <button id="sim-mode-usb" class="mode-btn active" role="tab" aria-selected="true" data-i18n="sim_usb">Kablo ile Doğrudan</button>
+            <button id="sim-mode-wifi" class="mode-btn" role="tab" aria-selected="false" data-i18n="sim_wifi">Kablosuz Düşük Gecikme</button>
+          </div>
+        </div>
+
+        <!-- Studio Workspace Grid -->
+        <div class="chassis-workspace">
+          <!-- Viewfinder Photographic Viewport (Responsive 16:10 Aspect Ratio) -->
+          <div class="viewfinder-viewport">
+            <div class="photo-stage">
+              <!-- Landscape 16:9 Streamer / Video Call Subject Photo (Properly Framed) -->
+              <img id="sim-photo-subject" src="assets/studio_viewfinder.jpg" alt="Video Call Professional" class="photo-img">
+            </div>
+
+            <!-- Framing Crosshairs -->
+            <div class="viewfinder-crosshairs" aria-hidden="true"></div>
+
+            <!-- HUD Badges -->
+            <div class="hud-corner hud-top-left">
+              <span class="hud-live-tag" data-i18n="sim_status_live">CANLI YAYINDA • 60 FPS</span>
+              <span>• 4K UHD</span>
+            </div>
+
+            <div class="hud-corner hud-top-right">
+              <span class="hud-rec-dot" aria-hidden="true"></span>
+              <span>REC 00:42:15</span>
+            </div>
+
+            <!-- Blackout Screen Overlay -->
+            <div id="sim-blackout-overlay" class="blackout-overlay">
+              <span class="blackout-icon">🌙</span>
+              <span style="font-size: 0.9rem; font-weight: 600; color: #FFFFFF;" data-i18n="sim_blackout">Ekran Karartma & Pil Koruma</span>
+              <span style="font-size: 0.74rem; color: #777777; margin-top: 4px;">Camera sensor active • Display zero power</span>
+            </div>
+
+            <!-- Telemetry Footer Bar -->
+            <div class="chassis-telemetry-bar">
+              <div class="telemetry-item">
+                <span>FPS:</span>
+                <span id="sim-stat-fps" class="telemetry-val">60.0 FPS</span>
+              </div>
+              <div class="telemetry-item">
+                <span>Bitrate:</span>
+                <span id="sim-stat-bitrate" class="telemetry-val">28.5 Mbps</span>
+              </div>
+              <div class="telemetry-item">
+                <span>Latency:</span>
+                <span id="sim-stat-ping" class="telemetry-val">4.2 ms</span>
+              </div>
+              <div class="telemetry-item">
+                <span>Status:</span>
+                <span class="telemetry-val" style="color: var(--apple-emerald);">Ready for Zoom / OBS / Meet</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Studio RAW Control Panel -->
+          <div class="studio-controls-panel">
+            <h3 class="panel-title" data-i18n="sim_preset_cinema">RAW RENK & IŞIK AYARLARI</h3>
+
+            <!-- Presets -->
+            <div class="preset-chips-grid">
+              <button class="chip-preset active" data-preset="natural" data-i18n="sim_preset_natural">Doğal</button>
+              <button class="chip-preset" data-preset="vivid" data-i18n="sim_preset_vivid">Canlı</button>
+              <button class="chip-preset" data-preset="cinema" data-i18n="sim_preset_cinema">Sinematik</button>
+              <button class="chip-preset" data-preset="portrait" data-i18n="sim_preset_portrait">Portre</button>
+              <button class="chip-preset" data-preset="night" data-i18n="sim_preset_night">Gece</button>
+              <button class="chip-preset" data-preset="bw" data-i18n="sim_preset_bw">Siyah & Beyaz</button>
+            </div>
+
+            <!-- Temperature -->
+            <div class="slider-group">
+              <div class="slider-label-row">
+                <span data-i18n="sim_temp">Renk Sıcaklığı</span>
+                <span id="sim-val-temp" class="slider-val-badge" data-i18n="sim_preset_natural">Doğal</span>
+              </div>
+              <input id="sim-temp" type="range" min="-50" max="50" value="0" class="range-slider" aria-label="Color Temperature">
+            </div>
+
+            <!-- Tint -->
+            <div class="slider-group">
+              <div class="slider-label-row">
+                <span data-i18n="sim_tint">Renk Tonu</span>
+                <span id="sim-val-tint" class="slider-val-badge" data-i18n="sim_preset_natural">Doğal</span>
+              </div>
+              <input id="sim-tint" type="range" min="-50" max="50" value="0" class="range-slider" aria-label="Color Tint">
+            </div>
+
+            <!-- Sharpness -->
+            <div class="slider-group">
+              <div class="slider-label-row">
+                <span data-i18n="sim_sharp">Gerçek Keskinlik</span>
+                <span id="sim-val-sharp" class="slider-val-badge">Off</span>
+              </div>
+              <input id="sim-sharp" type="range" min="0" max="100" value="0" class="range-slider" aria-label="True Sharpness">
+            </div>
+
+            <!-- Toggles -->
+            <div id="sim-bokeh-toggle" class="toggle-card" role="button" tabindex="0">
+              <span class="toggle-text" data-i18n="sim_portrait">Portre Odak & Doğal Bokeh</span>
+              <div class="toggle-switch"></div>
+            </div>
+
+            <div id="sim-blackout-toggle" class="toggle-card" role="button" tabindex="0">
+              <span class="toggle-text" data-i18n="sim_blackout">Ekran Karartma & Pil Koruma</span>
+              <div class="toggle-switch"></div>
+            </div>
+
+            <!-- Reset Button -->
+            <button id="sim-reset-btn" class="btn btn-secondary" style="margin-top: auto;" data-i18n="sim_reset">Varsayılana Sıfırla</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         4. INTERACTIVE WEBCAM VS ASELCAM DRAGGABLE COMPARISON SLIDER (CLIP-PATH)
+         ========================================================================= -->
+    <section id="compare" class="compare-section">
+      <div class="section-eyebrow" data-i18n="compare_eyebrow">Farkı Görün</div>
+      <h2 class="section-title" data-i18n="compare_title">Klasik bir web kamerası ile<br>AselCam arasındaki uçurum.</h2>
+      <p class="section-desc" data-i18n="compare_subtitle">Aşağıdaki çubuğu sağa sola kaydırarak standart bir web kamerasının çamurlu görüntüsü ile telefonunuzun sunduğu 4K sinematik derinliği canlı karşılaştırın.</p>
+
+      <!-- Responsive Draggable Split Container -->
+      <div id="compare-slider-container" class="compare-slider-card" style="--slider-pos: 50%;">
+        <!-- Bottom / Base Layer: AselCam 4K Optical Depth -->
+        <div class="compare-layer-after">
+          <img src="assets/compare_subject.jpg" alt="AselCam 4K Clarity" class="compare-img-after">
+          <div class="compare-badge-floating badge-aselcam" data-i18n="compare_label_after">AselCam + Telefon Sensörü</div>
+        </div>
+
+        <!-- Top Layer: Standard Webcam (Dynamically Clipped via Modern clip-path) -->
+        <div id="compare-layer-before" class="compare-layer-before">
+          <img src="assets/compare_subject.jpg" alt="Standard Webcam Degraded" class="compare-img-before">
+          <div class="compare-badge-floating badge-webcam" data-i18n="compare_label_before">Standart Web Kamerası</div>
+        </div>
+
+        <!-- Central Draggable Handle -->
+        <div id="compare-handle" class="compare-handle" aria-hidden="true">
+          <div class="compare-handle-knob">
+            <svg viewBox="0 0 24 24">
+              <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" transform="rotate(180 12 12)"/>
+              <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="compare-hint-bar">
+        <span aria-hidden="true">↔</span>
+        <span data-i18n="compare_drag_hint">Karşılaştırmak için çubuğu sürükleyin</span>
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         5. INTEGRATED APPLE-STYLE PRIVACY BENTO SECTION
+         ========================================================================= -->
+    <section id="privacy" class="privacy-section">
+      <div class="section-eyebrow" data-i18n="privacy_eyebrow">Gizlilik & Güvenlik</div>
+      <h2 class="section-title" data-i18n="privacy_title">Görüntünüz yalnızca size aittir.<br>Sıfır bulut. %100 yerel iletişim.</h2>
+      <p class="section-desc" data-i18n="privacy_subtitle">Verileriniz asla harici sunuculardan geçmez. AselCam, tüm ses ve görüntü akışını yalnızca kapalı devre yerel ağınızda işler.</p>
+
+      <div class="privacy-bento-grid">
+        <!-- Main Bento Hero Card (Spans 2 columns) -->
+        <div class="privacy-bento-hero">
+          <div class="privacy-status-badge">
+            <span class="privacy-pulse-dot" aria-hidden="true"></span>
+            <span data-i18n="privacy_bento_badge_active">Aktif Yerel Ağ • İnternet Çıkışı Yok</span>
+          </div>
+          <h3 class="bento-hero-title" data-i18n="privacy_bento_main_title">Kapalı Devre Yerel İletişim</h3>
+          <p class="bento-hero-desc" data-i18n="privacy_bento_main_desc">Telefonunuz ile bilgisayarınız arasındaki tüm video ve ses akışı, sadece doğrudan USB kablonuz veya yerel Wi-Fi ağınız üzerinden doğrudan aktarılır. Sıfır sunucu, sıfır bulut bağımlılığı.</p>
+          
+          <div class="privacy-protocols-row">
+            <div class="protocol-chip">
+              <span aria-hidden="true">⚡</span>
+              <span>USB 3.2 Direct Loopback (4 ms)</span>
+            </div>
+            <div class="protocol-chip">
+              <span aria-hidden="true">📶</span>
+              <span>Local Wi-Fi 6 P2P Socket</span>
+            </div>
+            <div class="protocol-chip">
+              <span aria-hidden="true">🔒</span>
+              <span>Zero Cloud Relay Dependency</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bento Card 2: Zero Telemetry -->
+        <div class="privacy-bento-card card-border-right card-border-bottom">
+          <div class="bento-card-icon" aria-hidden="true">🛡️</div>
+          <h4 class="bento-card-title" data-i18n="privacy_bento_card2_title">Sıfır Telemetri & Veri</h4>
+          <p class="bento-card-desc" data-i18n="privacy_bento_card2_desc">Hiçbir izleyici, analitik kütüphanesi veya veri toplama kodu barındırmaz. Ne izlediğinizi ve ne konuştuğunuzu asla bilemeyiz.</p>
+        </div>
+
+        <!-- Bento Card 3: No Account Required -->
+        <div class="privacy-bento-card card-border-bottom">
+          <div class="bento-card-icon" aria-hidden="true">✨</div>
+          <h4 class="bento-card-title" data-i18n="privacy_bento_card3_title">Hesap veya Kayıt Yok</h4>
+          <p class="bento-card-desc" data-i18n="privacy_bento_card3_desc">Uygulamayı indirin ve hemen kullanın. E-posta, şifre, abonelik veya kullanıcı profili oluşturmanız gerekmez.</p>
+        </div>
+
+        <!-- Bento Card 4: Open Source & Transparent -->
+        <div class="privacy-bento-card card-full-span">
+          <div class="bento-card-icon" aria-hidden="true">🔍</div>
+          <h4 class="bento-card-title" data-i18n="privacy_bento_card4_title">Açık Kaynak & Şeffaf</h4>
+          <p class="bento-card-desc" data-i18n="privacy_bento_card4_desc">Tüm kod tabanı GitHub üzerinde herkese açıktır. Ağ soketlerinden kamera işleme mantığına kadar her satırı bağımsız inceleyebilirsiniz.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         6. EDITORIAL PRODUCT STORIES
+         ========================================================================= -->
+    <section class="editorial-section">
+      <!-- Story 1: Optics & Sensor -->
+      <div class="editorial-row">
+        <div class="editorial-text">
+          <span class="story-eyebrow" data-i18n="story_1_eyebrow">Optik Üstünlük</span>
+          <h3 class="story-title" data-i18n="story_1_title">Devasa bir sensör.<br>Doğal alan derinliği.</h3>
+          <p class="story-desc" data-i18n="story_1_desc">Geleneksel web kameraları 1/4 inç boyutunda küçücük sensörlere sıkışmıştır ve az ışıkta pikselli, çamurlu görüntüler üretir. Akıllı telefonunuzun devasa ana sensörü ise stüdyo ışığınızı mükemmel toplar, arka planı yapay filtrelere gerek kalmadan doğal bir şekilde yumuşatır.</p>
+        </div>
+        <div class="editorial-media">
+          <img src="assets/camera_lens.jpg" alt="Camera Sensor Optics" class="editorial-img">
+        </div>
+      </div>
+
+      <!-- Story 2: Sound & Acoustics -->
+      <div class="editorial-row reverse">
+        <div class="editorial-text">
+          <span class="story-eyebrow" data-i18n="story_2_eyebrow">Akıllı Ses</span>
+          <h3 class="story-title" data-i18n="story_2_title">Ayrı bir mikrofona gerek kalmadan.<br>Kristal netliğinde ses.</h3>
+          <p class="story-desc" data-i18n="story_2_desc">Telefonunuzun gelişmiş çoklu mikrofon donanımı, ortam gürültüsünü filtreler ve sesinizi 24 kHz yüksek çözünürlükle bilgisayarınıza doğrudan bir stüdyo mikrofonu olarak aktarır. Toplantılarda ve yayınlarda sesiniz her zaman berrak duyulur.</p>
+        </div>
+        <div class="editorial-media">
+          <img src="assets/studio_room.jpg" alt="Studio Sound Environment" class="editorial-img">
+        </div>
+      </div>
+
+      <!-- Story 3: Power & Thermal -->
+      <div class="editorial-row">
+        <div class="editorial-text">
+          <span class="story-eyebrow" data-i18n="story_3_eyebrow">Kesintisiz Güç</span>
+          <h3 class="story-title" data-i18n="story_3_title">Isınmadan saatlerce yayın.<br>Çift katmanlı karartma.</h3>
+          <p class="story-desc" data-i18n="story_3_desc">Yayın sırasında telefon ekranını tamamen karartarak panel enerjisini sıfıra indirir. Telefonunuz saatlerce süren yayınlarda dahi ısınmaz, pilini korur ve stüdyonuzda dikkat dağıtıcı parlama yapmaz.</p>
+        </div>
+        <div class="editorial-media">
+          <img src="assets/phone_studio.jpg" alt="Desk Studio Setup" class="editorial-img">
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         7. SEGMENTED DOWNLOADS HUB (DIRECT GITHUB RELEASES - NO SERVER STORAGE)
+         ========================================================================= -->
+    <section id="downloads" class="downloads-section">
+      <div class="section-eyebrow" data-i18n="dl_eyebrow">Hemen Başlayın</div>
+      <h2 class="section-title" data-i18n="dl_title">Tüm cihazlarınız için hazır.</h2>
+      <p class="section-desc" data-i18n="dl_subtitle">GitHub Releases üzerinden doğrudan indirilebilir, dijital imzalı resmi v1.4.7 sürüm paketleri.</p>
+
+      <!-- Apple Liquid Glass Segmented Control -->
+      <div class="segmented-control-wrapper">
+        <div class="segmented-control" role="tablist">
+          <button id="tab-dl-desktop" class="segmented-btn active" role="tab" aria-selected="true" data-i18n="dl_tab_desktop">Masaüstü (PC & Mac)</button>
+          <button id="tab-dl-mobile" class="segmented-btn" role="tab" aria-selected="false" data-i18n="dl_tab_mobile">Mobil (iOS & Android)</button>
+        </div>
+      </div>
+
+      <!-- DESKTOP PANEL (EXACTLY 3 BALANCED CARDS) -->
+      <div id="dl-panel-desktop" class="downloads-grid grid-desktop">
+        <!-- macOS Card -->
+        <div class="dl-card">
+          <div class="dl-card-header">
+            <span class="dl-os-icon">🍎</span>
+            <div>
+              <h3 class="dl-os-title" data-i18n="dl_macos_title">macOS</h3>
+              <span style="font-size: 0.78rem; color: var(--apple-blue); font-weight: 600;">1.4 MB • v1.4.7</span>
+            </div>
+          </div>
+          <p class="dl-card-desc" data-i18n="dl_macos_desc">Apple Silicon (M1/M2/M3/M4) ve Intel Mac'ler için evrensel uygulama paketi.</p>
+          <div class="dl-action-row">
+            <a href="https://github.com/aselens-software/aselcam/releases/download/v1.4.7/AselCam-v1.4.7-macOS.zip" class="btn btn-primary" style="flex: 1;" target="_blank" rel="noopener noreferrer">
+              <span data-i18n="dl_btn_download">GitHub'dan İndir</span> (.zip)
+            </a>
+          </div>
+          <div class="dl-checksum-box">
+            <span class="checksum-hash" title="632238b51407640171ccdc2a32e5f68331ebefab243594b3c953251302ecfbba">SHA: 632238b5...</span>
+            <button class="btn-copy-checksum" data-checksum="632238b51407640171ccdc2a32e5f68331ebefab243594b3c953251302ecfbba" data-i18n="dl_checksum">Doğrulama (SHA256)</button>
+          </div>
+        </div>
+
+        <!-- Windows Card -->
+        <div class="dl-card">
+          <div class="dl-card-header">
+            <span class="dl-os-icon">🪟</span>
+            <div>
+              <h3 class="dl-os-title" data-i18n="dl_windows_title">Windows</h3>
+              <span style="font-size: 0.78rem; color: var(--apple-blue); font-weight: 600;">98 MB • v1.4.7</span>
+            </div>
+          </div>
+          <p class="dl-card-desc" data-i18n="dl_windows_desc">Windows 10 ve 11 (64-bit) için taşınabilir sürüm ve sistem tepsisi entegrasyonu.</p>
+          <div class="dl-action-row">
+            <a href="https://github.com/aselens-software/aselcam/releases/download/v1.4.7/AselCam-v1.4.7-Windows-x64.zip" class="btn btn-primary" style="flex: 1;" target="_blank" rel="noopener noreferrer">
+              <span data-i18n="dl_btn_download">GitHub'dan İndir</span> (.zip)
+            </a>
+          </div>
+          <div class="dl-checksum-box">
+            <span class="checksum-hash" title="a16db7883cc61cbf3f37f92dde01eeb6929866735d85ad346fb05747b56cc088">SHA: a16db788...</span>
+            <button class="btn-copy-checksum" data-checksum="a16db7883cc61cbf3f37f92dde01eeb6929866735d85ad346fb05747b56cc088" data-i18n="dl_checksum">Doğrulama (SHA256)</button>
+          </div>
+        </div>
+
+        <!-- Linux Card -->
+        <div class="dl-card">
+          <div class="dl-card-header">
+            <span class="dl-os-icon">🐧</span>
+            <div>
+              <h3 class="dl-os-title" data-i18n="dl_linux_title">Linux</h3>
+              <span style="font-size: 0.78rem; color: var(--apple-blue); font-weight: 600;">Open Source</span>
+            </div>
+          </div>
+          <p class="dl-card-desc" data-i18n="dl_linux_desc">Arch, Ubuntu, Fedora ve Debian için optimize edilmiş bağımsız paket.</p>
+          <div class="dl-action-row">
+            <a href="https://github.com/aselens-software/aselcam#linux-installation" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="flex: 1;">
+              GitHub Repository ↗
+            </a>
+          </div>
+          <div class="dl-checksum-box">
+            <span class="checksum-hash">pip install -r requirements.txt</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- MOBILE PANEL (EXACTLY 2 BALANCED CARDS) -->
+      <div id="dl-panel-mobile" class="downloads-grid grid-mobile" style="display: none;">
+        <!-- iOS Card -->
+        <div class="dl-card">
+          <div class="dl-card-header">
+            <span class="dl-os-icon">📱</span>
+            <div>
+              <h3 class="dl-os-title" data-i18n="dl_ios_title">iOS</h3>
+              <span style="font-size: 0.78rem; color: var(--apple-blue); font-weight: 600;">263 KB • v1.4.7</span>
+            </div>
+          </div>
+          <p class="dl-card-desc" data-i18n="dl_ios_desc">iPhone ve iPad için doğrudan yüklenebilir uygulama paketi ve kaynak projesi.</p>
+          <div class="dl-action-row">
+            <a href="https://github.com/aselens-software/aselcam/releases/download/v1.4.7/AselCam-v1.4.7-iOS.ipa" class="btn btn-primary" style="flex: 1;" target="_blank" rel="noopener noreferrer">
+              IPA (.ipa)
+            </a>
+            <a href="https://github.com/aselens-software/aselcam/releases/download/v1.4.7/AselCam-v1.4.7-iOS-Xcode.zip" class="btn btn-secondary" style="flex: 1;" target="_blank" rel="noopener noreferrer">
+              Xcode (.zip)
+            </a>
+          </div>
+          <div class="dl-checksum-box">
+            <span class="checksum-hash" title="ce681243acc9770b9c6b547df63dd1d058ba4e95144f7b9904b4a3fa741dc0ea">SHA: ce681243...</span>
+            <button class="btn-copy-checksum" data-checksum="ce681243acc9770b9c6b547df63dd1d058ba4e95144f7b9904b4a3fa741dc0ea" data-i18n="dl_checksum">Doğrulama (SHA256)</button>
+          </div>
+        </div>
+
+        <!-- Android Card -->
+        <div class="dl-card">
+          <div class="dl-card-header">
+            <span class="dl-os-icon">🤖</span>
+            <div>
+              <h3 class="dl-os-title" data-i18n="dl_android_title">Android</h3>
+              <span style="font-size: 0.78rem; color: var(--apple-blue); font-weight: 600;">13 MB • v1.4.7</span>
+            </div>
+          </div>
+          <p class="dl-card-desc" data-i18n="dl_android_desc">Android 8.0 ve üzeri cihazlar için optimize edilmiş doğrudan kurulum paketi.</p>
+          <div class="dl-action-row">
+            <a href="https://github.com/aselens-software/aselcam/releases/download/v1.4.7/AselCam-v1.4.7-Android.apk" class="btn btn-primary" style="flex: 1;" target="_blank" rel="noopener noreferrer">
+              <span data-i18n="dl_btn_download">GitHub'dan İndir</span> (.apk)
+            </a>
+          </div>
+          <div class="dl-checksum-box">
+            <span class="checksum-hash" title="eb566cf0c9b231ea8ca67ceee27f9e54309eacd1482a18f4081dfe50da1bbc6b">SHA: eb566cf0...</span>
+            <button class="btn-copy-checksum" data-checksum="eb566cf0c9b231ea8ca67ceee27f9e54309eacd1482a18f4081dfe50da1bbc6b" data-i18n="dl_checksum">Doğrulama (SHA256)</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Buy Me a Coffee Support Banner -->
+      <div class="bmc-banner-row">
+        <span class="bmc-banner-text" data-i18n="bmc_support_text">AselCam tamamen ücretsiz ve açık kaynaklıdır. Geliştirmeyi desteklemek isterseniz:</span>
+        <a href="https://www.buymeacoffee.com/aselens" target="_blank" rel="noopener noreferrer" class="bmc-btn-badge" aria-label="Buy Me a Coffee">
+          <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me a Coffee" style="height: 42px !important; width: auto !important;">
+        </a>
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         8. TECHNICAL SPECIFICATIONS MATRIX (UNIVERSAL APP & HARDWARE SCOPE)
+         ========================================================================= -->
+    <section id="specs" class="specs-section">
+      <div class="section-eyebrow" data-i18n="specs_eyebrow">Detaylar</div>
+      <h2 class="section-title" data-i18n="specs_title">Teknik Özellikler.</h2>
+
+      <!-- Category 1: Video -->
+      <div class="specs-category-block">
+        <h3 class="specs-category-title" data-i18n="specs_cat_video">Görüntü & Optik</h3>
+        <div class="spec-row">
+          <span class="spec-key" data-i18n="specs_row_res">Çözünürlük & Hız</span>
+          <span class="spec-val" data-i18n="specs_row_res_val">4K UHD, 1080p Full HD, 720p HD (60 FPS'e kadar)</span>
+        </div>
+        <div class="spec-row">
+          <span class="spec-key" data-i18n="specs_row_color">Renk Bilimi</span>
+          <span class="spec-val" data-i18n="specs_row_color_val">Kelvin Renk Sıcaklığı, Ton Ayarı, RGB Kanal Dengesi, 6 Sinematik Profil</span>
+        </div>
+        <div class="spec-row">
+          <span class="spec-key" data-i18n="specs_row_zoom">Yakınlaştırma Kapasitesi</span>
+          <span class="spec-val" data-i18n="specs_row_zoom_val">100x'e kadar donanımsal optik ve kayıpsız sensör içi zoom</span>
+        </div>
+      </div>
+
+      <!-- Category 2: Audio & Connectivity -->
+      <div class="specs-category-block">
+        <h3 class="specs-category-title" data-i18n="specs_cat_audio">Ses & İletim</h3>
+        <div class="spec-row">
+          <span class="spec-key" data-i18n="specs_row_audio">Ses Akışı</span>
+          <span class="spec-val" data-i18n="specs_row_audio_val">24 kHz stüdyo kalitesinde gecikmesiz sanal mikrofon aktarımı</span>
+        </div>
+        <div class="spec-row">
+          <span class="spec-key" data-i18n="specs_row_latency">Aktarım Gecikmesi</span>
+          <span class="spec-val" data-i18n="specs_row_latency_val">USB 3.2 ile 4 ms ultra düşük gecikme; Wi-Fi 6 ile kablosuz özgürlük</span>
+        </div>
+      </div>
+
+      <!-- Category 3: Compatibility (Universal Scope) -->
+      <div class="specs-category-block">
+        <h3 class="specs-category-title" data-i18n="specs_cat_compat">Sistem & Uygulama Kapsamı</h3>
+        <div class="spec-row">
+          <span class="spec-key" data-i18n="specs_row_apps">Kamera & Mikrofon Destekleyen Tüm Uygulamalar</span>
+          <span class="spec-val" data-i18n="specs_row_apps_val">Sistem düzeyinde gerçek bir donanım kamerası ve mikrofonu olarak tanındığından; tarayıcılar (Chrome, Safari, Firefox), toplantı yazılımları (Zoom, Meet, Teams, Discord, FaceTime) ve yayın araçları (OBS Studio, vMix, Streamlabs) dahil kamera ve mikrofon girişi kabul eden tüm masaüstü ve web uygulamalarıyla sınırsız çalışır.</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- =========================================================================
+       9. ENRICHED MULTI-COLUMN APPLE FOOTER WITH ENLARGED LOGO
+       ========================================================================= -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-top-row">
+        <a href="#" aria-label="AselCam Home">
+          <img src="assets/aselcam_logo_horz.png" alt="AselCam" class="footer-logo">
+        </a>
+        <div class="footer-top-actions">
+          <a href="https://www.buymeacoffee.com/aselens" target="_blank" rel="noopener noreferrer" class="bmc-btn-badge" aria-label="Buy Me a Coffee">
+            <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me a Coffee" style="height: 38px !important; width: auto !important;">
+          </a>
+          <a href="https://github.com/aselens-software/aselcam" target="_blank" rel="noopener noreferrer" class="footer-developed-link">
+            <span>GitHub</span>
+            <span style="opacity: 0.6;">★</span>
+            <span>Open Source</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="footer-columns-grid">
+        <!-- Col 1: Product -->
+        <div>
+          <h4 class="footer-column-title" data-i18n="footer_col_product">Ürün</h4>
+          <ul class="footer-links-list">
+            <li class="footer-link-item"><a href="#overview" data-i18n="nav_overview">Genel Bakış</a></li>
+            <li class="footer-link-item"><a href="#studio" data-i18n="nav_studio">Stüdyo Vizörü</a></li>
+            <li class="footer-link-item"><a href="#compare" data-i18n="nav_compare">Karşılaştırma</a></li>
+            <li class="footer-link-item"><a href="#privacy" data-i18n="nav_privacy">Gizlilik</a></li>
+            <li class="footer-link-item"><a href="#specs" data-i18n="nav_specs">Teknik Özellikler</a></li>
+            <li class="footer-link-item"><a href="#downloads" data-i18n="nav_downloads">İndir</a></li>
+          </ul>
+        </div>
+
+        <!-- Col 2: Platforms -->
+        <div>
+          <h4 class="footer-column-title" data-i18n="footer_col_platforms">Platformlar</h4>
+          <ul class="footer-links-list">
+            <li class="footer-link-item"><a href="#downloads">macOS (Apple Silicon & Intel)</a></li>
+            <li class="footer-link-item"><a href="#downloads">Windows (10 / 11 64-bit)</a></li>
+            <li class="footer-link-item"><a href="#downloads">Linux (Universal)</a></li>
+            <li class="footer-link-item"><a href="#downloads">iOS (iPhone & iPad)</a></li>
+            <li class="footer-link-item"><a href="#downloads">Android (8.0+)</a></li>
+          </ul>
+        </div>
+
+        <!-- Col 3: Community & Source -->
+        <div>
+          <h4 class="footer-column-title" data-i18n="footer_col_community">Açık Kaynak</h4>
+          <ul class="footer-links-list">
+            <li class="footer-link-item"><a href="https://github.com/aselens-software/aselcam" target="_blank" rel="noopener noreferrer">GitHub Repository</a></li>
+            <li class="footer-link-item"><a href="https://github.com/aselens-software/aselcam/releases" target="_blank" rel="noopener noreferrer" data-i18n="footer_releases">Sürüm Notları (v1.4.7)</a></li>
+            <li class="footer-link-item"><a href="https://github.com/aselens-software/aselcam/issues" target="_blank" rel="noopener noreferrer" data-i18n="footer_issues">Sorun Bildir (GitHub Issues)</a></li>
+            <li class="footer-link-item"><a href="https://github.com/aselens-software/aselcam/pulls" target="_blank" rel="noopener noreferrer" data-i18n="footer_contribute">Katkıda Bulun</a></li>
+            <li class="footer-link-item"><a href="https://github.com/aselens-software/aselcam/blob/main/LICENSE" target="_blank" rel="noopener noreferrer" data-i18n="footer_license">MIT Lisansı</a></li>
+            <li class="footer-link-item"><a href="https://www.buymeacoffee.com/aselens" target="_blank" rel="noopener noreferrer" style="color: #FFDD00; font-weight: 500;">Buy Me a Coffee ☕</a></li>
+          </ul>
+        </div>
+
+        <!-- Col 4: Corporate & Legal -->
+        <div>
+          <h4 class="footer-column-title" data-i18n="footer_col_legal">Kurumsal & Yasal</h4>
+          <ul class="footer-links-list">
+            <li class="footer-link-item">
+              <button id="link-open-privacy" type="button" data-i18n="footer_privacy_link">Gizlilik Politikası</button>
+            </li>
+            <li class="footer-link-item">
+              <button id="link-open-terms" type="button" data-i18n="footer_terms">Kullanım Koşulları</button>
+            </li>
+            <li class="footer-link-item">
+              <a href="https://aselens.com" target="_blank" rel="noopener noreferrer">Aselens Software ↗</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom-row">
+        <div>
+          <a href="https://aselens.com" target="_blank" rel="noopener noreferrer" class="footer-developed-link">
+            <span data-i18n="footer_developed">Aselens Software tarafından geliştirildi</span>
+            <span aria-hidden="true">↗</span>
+          </a>
+        </div>
+
+        <p class="footer-meta" data-i18n="footer_rights">Tüm hakları saklıdır. Açık kaynak MIT lisansı ile sunulmaktadır.</p>
+        <p class="footer-privacy-note" data-i18n="footer_privacy_banner">Gizlilik Bildirimi: Hiçbir kullanıcı verisi toplanmaz, sunucu kullanılmaz, iletişim tamamen yerel ağınızda gerçekleşir.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- =========================================================================
+       10. ACCESSIBLE FROSTED-GLASS LEGAL MODAL DIALOGS (DETAILED LEGAL TEXTS)
+       ========================================================================= -->
+  <!-- Privacy Policy Modal -->
+  <div id="modal-privacy" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-privacy-title">
+    <div class="modal-sheet">
+      <div class="modal-header">
+        <h3 id="modal-privacy-title" class="modal-title" data-i18n="modal_privacy_title">Gizlilik Politikası</h3>
+        <!-- aria-label="X" as explicitly requested -->
+        <button id="btn-close-privacy" class="btn-modal-close" aria-label="X" data-i18n="modal_close">X</button>
+      </div>
+      <div class="modal-body">
+        <h4>1. Mimari İlke: Sıfır Bulut ve Sıfır Veri Toplama Taahhüdü</h4>
+        <p>AselCam, temelde bir veri toplamama mimarisi üzerine kurulmuştur. Yazılım; harici bir bulut altyapısı, ara sunucu (relay server) veya merkezi veri tabanı barındırmaz. Kullanıcılardan ad, soyad, e-posta adresi, telefon numarası veya herhangi bir kimlik bilgisi talep edilmez; hesap veya kayıt zorunluluğu bulunmaz.</p>
+        
+        <h4>2. Yerel Ağ (LAN) ve USB Üzerinden Noktadan Noktaya (P2P) İletişim</h4>
+        <p>Akıllı telefonunuz ile bilgisayarınız arasındaki görüntü ve ses iletimi, yalnızca iki cihazın doğrudan bağlı olduğu yerel ağ sınırları içinde (Local Area Network - LAN) veya fiziksel USB 3.2 kablosu üzerinden gerçekleşir:</p>
+        <ul>
+          <li><strong>Doğrudan USB Kablosu:</strong> Veri akışı, işletim sisteminin yerel soket tüneli üzerinden doğrudan bilgisayara akar. Ağ donanımı kullanılmadığı için dış dünyadan tamamen yalıtılmıştır.</li>
+          <li><strong>Yerel Wi-Fi İletişimi:</strong> İletişim paketleri yerel yönlendiricinizin (router) dışına çıkmaz. WAN (Geniş Alan Ağı) ya da internet ortamına tek bir görüntü karesi dahi gönderilmez.</li>
+        </ul>
+
+        <h4>3. Donanım İzinleri ve Kamera/Mikrofon Erişimi</h4>
+        <p>AselCam mobil uygulaması, yalnızca temel işlevini yerine getirebilmek adına cihazın kamera sensörüne ve mikrofon donanımına erişim izni ister:</p>
+        <ul>
+          <li>Sensörden okunan ham video kareleri ve ses örnekleri, anlık olarak kodlanıp doğrudan bilgisayarınıza aktarılır.</li>
+          <li>Telefonun yerel depolama alanına veya harici bir ortama video/ses kaydı yapılmaz. İletim tamamlandığında geçici bellek tamponları anında serbest bırakılır.</li>
+        </ul>
+
+        <h4>4. İzleyici, Analitik ve Üçüncü Taraf SDK Bulunmaması</h4>
+        <p>Yazılım bünyesinde Google Analytics, Firebase, Meta SDK, Crashlytics veya üçüncü taraf reklam/analitik kütüphaneleri yer almaz. Hangi işletim sistemini kullandığınız, ne kadar süre yayın yaptığınız veya donanım özellikleriniz Aselens Software ya da üçüncü taraflar tarafından izlenemez.</p>
+
+        <h4>5. Bellek Güvenliği ve Kalıcılık Karşıtlığı (Zero-Persistence)</h4>
+        <p>AselCam, oturum sonlandığında hiçbir görüntü izini bilgisayarda veya telefonda saklamaz. Sistem tepsisinden veya uygulamadan çıkış yapıldığında sanal sürücü köprüsü ve bellek alanları derhal sıfırlanır.</p>
+
+        <h4>6. Açık Kaynak Güvencesi ve Bağımsız Denetim</h4>
+        <p>AselCam'in tüm kaynak kodları <a href="https://github.com/aselens-software/aselcam" target="_blank" rel="noopener noreferrer" style="color: var(--apple-blue);">GitHub repository</a> üzerinde herkese açıktır. Ağ bağlantı mantığı, soket dinleyicileri ve sürücü entegrasyonu dileyen herkes tarafından bağımsız olarak denetlenebilir ve doğrulanabilir.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Terms of Service Modal -->
+  <div id="modal-terms" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-terms-title">
+    <div class="modal-sheet">
+      <div class="modal-header">
+        <h3 id="modal-terms-title" class="modal-title" data-i18n="modal_terms_title">Kullanım Koşulları</h3>
+        <!-- aria-label="X" as explicitly requested -->
+        <button id="btn-close-terms" class="btn-modal-close" aria-label="X" data-i18n="modal_close">X</button>
+      </div>
+      <div class="modal-body">
+        <h4>1. Lisans Kapsamı ve Açık Kaynak Hakları (MIT Lisansı)</h4>
+        <p>AselCam, açık kaynak kodlu bir yazılım projesidir ve uluslararası geçerliliğe sahip MIT Lisansı koşulları altında dağıtılmaktadır. Bu lisans kapsamında yazılımı ticari, kişisel, akademik veya kurumsal amaçlarla kullanma, inceleme, kopyalama, değiştirme, birleştirme ve yeniden dağıtma hakkına bedelsiz olarak sahipsiniz.</p>
+
+        <h4>2. Kullanım Şartları ve Kullanıcı Sorumluluğu</h4>
+        <p>Yazılımı kullanan her birey veya kurum, kullanımının yürürlükteki yerel ve uluslararası yasalara uygun olmasından bizzat sorumludur:</p>
+        <ul>
+          <li>Görüntülü görüşme veya yayın sırasında üçüncü kişilerin rızası olmaksızın gizli kayıt alınması veya hukuka aykırı yayın yapılması kullanıcının şahsi sorumluluğundadır.</li>
+          <li>Kullanıcı, yerel ağının güvenliğinden ve yetkisiz cihazların yerel Wi-Fi ağına erişimini engellemekten sorumludur.</li>
+        </ul>
+
+        <h4>3. Garanti Reddi (Disclaimer of Warranty)</h4>
+        <p>Yazılım, "olduğu gibi" (as-is) ve "mevcut haliyle" temin edilmektedir. Aselens Software ve projeye katkıda bulunan geliştiriciler; yazılımın kesintisiz, hatasız çalışacağını, belirli bir amaca mükemmel uygunluk sağlayacağını veya tüm üçüncü taraf donanım/işletim sistemleriyle yüzde yüz uyumlu olacağını garanti etmez.</p>
+
+        <h4>4. Sorumluluğun Sınırlandırılması (Limitation of Liability)</h4>
+        <p>Aselens Software veya geliştiriciler; yazılımın kullanımından veya kullanılamamasından kaynaklanan doğrudan, dolaylı, arızi, özel veya cezai zararlardan (veri kaybı, donanım aşırı ısınması, pil ömrü azalması veya iş kesintisi dahil) hiçbir koşulda sorumlu tutulamaz.</p>
+
+        <h4>5. Donanım ve Isı Yönetimi Uyarısı</h4>
+        <p>Yüksek çözünürlüklü (4K) video akışı, mobil cihaz sensörünü ve işlemcisini yoğun olarak çalıştırır. AselCam çift katmanlı ekran karartma ve güç tasarrufu modülleri sunmakla birlikte, kullanıcıların cihazlarını doğrudan güneş ışığı altında bırakmaması ve ortam havalandırmasına dikkat etmesi tavsiye edilir.</p>
+
+        <h4>6. Marka Hakları ve Değişiklikler</h4>
+        <p>"AselCam" ve "Aselens Software" ticari unvan ve logoları Aselens Software'e aittir. MIT Lisansı kaynak kodun serbestçe kullanımına izin verirken, resmi marka ve logoların yanıltıcı şekilde kullanımı yasaktır. Aselens Software, bu koşulları ve sürüm politikalarını zaman zaman güncelleme hakkını saklı tutar.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/i18n.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

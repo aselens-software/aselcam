@@ -21,7 +21,7 @@ public final class H264Encoder {
     private var bitrate: Int32 = 6000000
     
     private var isConfigSent = false
-    private let queue = DispatchQueue(label: "com.aselcam.encoder", qos: .userInteractive)
+    private let queue = DispatchQueue(label: "com.aselens.aselcam.encoder", qos: .userInteractive)
     
     public init(callback: @escaping PacketCallback) {
         self.callback = callback

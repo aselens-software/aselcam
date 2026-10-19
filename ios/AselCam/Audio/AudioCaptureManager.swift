@@ -20,7 +20,7 @@ public final class AudioCaptureManager {
     public var isMuted: Bool = false
     public var audioGain: Float = 1.0
     
-    private let queue = DispatchQueue(label: "com.aselcam.audiocapture", qos: .userInteractive)
+    private let queue = DispatchQueue(label: "com.aselens.aselcam.audiocapture", qos: .userInteractive)
     
     public init(callback: @escaping AudioPacketCallback) {
         self.callback = callback

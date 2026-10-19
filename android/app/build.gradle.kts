@@ -4,21 +4,33 @@ plugins {
 }
 
 android {
-    namespace = "com.aselcam.app"
+    namespace = "com.aselens.aselcam"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.aselcam.app"
+        applicationId = "com.aselens.aselcam"
         minSdk = 26
         targetSdk = 36
         versionCode = 147
         versionName = "1.4.7"
     }
 
+    val releaseKeystore = file("../aselcam-release.keystore")
+    signingConfigs {
+        create("release") {
+            if (releaseKeystore.exists()) {
+                storeFile = releaseKeystore
+                storePassword = "aselcam2026"
+                keyAlias = "aselcam"
+                keyPassword = "aselcam2026"
+            }
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = if (releaseKeystore.exists()) signingConfigs.getByName("release") else signingConfigs.getByName("debug")
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }

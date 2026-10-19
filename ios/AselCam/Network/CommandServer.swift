@@ -30,7 +30,7 @@ public final class CommandServer {
     public static let defaultPort: UInt16 = 4748
     
     private var listener: NWListener?
-    private let queue = DispatchQueue(label: "com.aselcam.cmdserver", qos: .userInitiated)
+    private let queue = DispatchQueue(label: "com.aselens.aselcam.cmdserver", qos: .userInitiated)
     private var connections: [NWConnection] = []
     
     public weak var delegate: CommandDelegate?
