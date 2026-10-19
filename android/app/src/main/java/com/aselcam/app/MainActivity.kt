@@ -49,6 +49,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
+import com.aselcam.app.ads.AdMobManager
 import com.aselcam.app.camera.CameraInfo
 import com.aselcam.app.camera.CameraManagerHelper
 import com.aselcam.app.i18n.MobileI18n
@@ -116,6 +117,7 @@ class MainActivity : ComponentActivity() {
         ) == PackageManager.PERMISSION_GRANTED
 
         requestPermissions()
+        AdMobManager.initialize(this)
 
         val serviceIntent = Intent(this, CameraStreamService::class.java)
         startService(serviceIntent)
@@ -441,6 +443,24 @@ fun AselCamApp(
                                     )
                                 }
                             }
+                        }
+                    }
+                },
+                bottomBar = {
+                    Surface(
+                        color = ObsidianLowest,
+                        border = BorderStroke(1.dp, ObsidianBorderSubtle),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .navigationBarsPadding()
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 4.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            AdMobManager.BannerAdView()
                         }
                     }
                 },
@@ -814,19 +834,21 @@ fun AselCamApp(
                             if (isStreaming) {
                                 onStopStream()
                             } else {
-                                val parts = selectedResolution.split("x")
-                                val w = parts.getOrNull(0)?.toIntOrNull() ?: 1920
-                                val h = parts.getOrNull(1)?.toIntOrNull() ?: 1080
-                                val br = (maxOf(2f, selectedBitrateMbps) * 1_000_000).toInt()
-                                onStartStream(
-                                    selectedCameraId,
-                                    w,
-                                    h,
-                                    selectedFps,
-                                    br,
-                                    selectedCodec,
-                                    if (isPreviewEnabled) surfaceHolder?.surface else null
-                                )
+                                AdMobManager.showInterstitialThen(activity) {
+                                    val parts = selectedResolution.split("x")
+                                    val w = parts.getOrNull(0)?.toIntOrNull() ?: 1920
+                                    val h = parts.getOrNull(1)?.toIntOrNull() ?: 1080
+                                    val br = (maxOf(2f, selectedBitrateMbps) * 1_000_000).toInt()
+                                    onStartStream(
+                                        selectedCameraId,
+                                        w,
+                                        h,
+                                        selectedFps,
+                                        br,
+                                        selectedCodec,
+                                        if (isPreviewEnabled) surfaceHolder?.surface else null
+                                    )
+                                }
                             }
                         },
                         colors = ButtonDefaults.buttonColors(
