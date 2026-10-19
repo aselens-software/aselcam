@@ -88,6 +88,18 @@ public final class AselCamViewModel: ObservableObject, CommandDelegate {
         isStreaming = true
     }
     
+    public func startStreaming() {
+        cameraManager?.startSession(preset: .hd1920x1080, targetFps: 60.0)
+        audioCapture?.start()
+        isStreaming = true
+    }
+    
+    public func stopStreaming() {
+        cameraManager?.stopSession()
+        audioCapture?.stop()
+        isStreaming = false
+    }
+    
     public func toggleTorch() {
         isTorchOn.toggle()
         cameraManager?.setTorch(enabled: isTorchOn)

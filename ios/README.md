@@ -60,6 +60,26 @@ AselCam requires the following permissions declared in `Info.plist`:
 
 ---
 
+## 💰 Google AdMob Integration
+
+AselCam iOS integrates Google AdMob for:
+- **Banner Ads**: Displayed at the bottom of the screen.
+- **Interstitial Ads**: Preloaded in the background and triggered on the **"Start Stream / Yayını Başlat"** action button.
+
+### AdMob Identifiers:
+- **Application ID**: `ca-app-pub-3011996181892691~1501320244` (configured in `Info.plist`)
+- **Banner Ad Unit ID**: `ca-app-pub-3011996181892691/3349588537`
+- **Interstitial Ad Unit ID**: `ca-app-pub-3011996181892691/5905178693`
+
+### Adding the Google Mobile Ads SDK via Xcode (Swift Package Manager):
+1. In Xcode, select **File > Add Package Dependencies...**
+2. Paste the official repository URL:
+   `https://github.com/googleads/swift-package-manager-google-mobile-ads.git`
+3. Select **GoogleMobileAds** and add it to the **AselCam** target.
+4. *Note: If building without the framework linked, `AdMobManager.swift` automatically falls back to ad-free execution safely via `#if canImport(GoogleMobileAds)`.*
+
+---
+
 ## 🌐 Network Protocol
 
 - **TCP Port 4747**: Low-latency video (H.264 NALUs) & audio (24 kHz PCM) wire protocol with 18-byte `ASEL` binary header.

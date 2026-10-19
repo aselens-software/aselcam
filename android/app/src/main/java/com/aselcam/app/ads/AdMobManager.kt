@@ -30,8 +30,7 @@ object AdMobManager {
     const val LIVE_BANNER_AD_UNIT_ID = "ca-app-pub-3011996181892691/3349588537"
     
     // Geçiş Reklamı (Interstitial) Birim Kimliği:
-    // AdMob panelinizden 'Geçiş Reklamı (Interstitial)' oluşturduğunuzda aldığınız ID'yi buraya yazabilirsiniz.
-    var liveInterstitialAdUnitId = "ca-app-pub-3011996181892691/XXXXXXXXXX"
+    var liveInterstitialAdUnitId = "ca-app-pub-3011996181892691/5905178693"
 
     // Google Resmi Test Reklam Birimi Kimlikleri (Geliştirme / Debug sırasında hesap güvenliği için zorunlu)
     private const val TEST_BANNER_AD_UNIT_ID = "ca-app-pub-3940256099942544/6300978111"

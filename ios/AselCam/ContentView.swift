@@ -27,7 +27,9 @@ public struct ContentView: View {
             "zoom_title": "OPTICAL & HARDWARE ZOOM",
             "clients": "Clients",
             "bitrate": "kbps",
-            "ip_title": "Wi-Fi IP"
+            "ip_title": "Wi-Fi IP",
+            "btn_start": "Start Stream",
+            "btn_stop": "Stop Stream"
         ],
         "tr": [
             "app_name": "AselCam",
@@ -42,7 +44,9 @@ public struct ContentView: View {
             "zoom_title": "DONANIMSAL ZOOM",
             "clients": "İstemci",
             "bitrate": "kbps",
-            "ip_title": "Wi-Fi IP"
+            "ip_title": "Wi-Fi IP",
+            "btn_start": "Yayını Başlat",
+            "btn_stop": "Yayını Durdur"
         ],
         "de": [
             "app_name": "AselCam",
@@ -57,7 +61,9 @@ public struct ContentView: View {
             "zoom_title": "HARDWARE-ZOOM",
             "clients": "Clients",
             "bitrate": "kbps",
-            "ip_title": "WLAN-IP"
+            "ip_title": "WLAN-IP",
+            "btn_start": "Stream starten",
+            "btn_stop": "Stream beenden"
         ],
         "fr": [
             "app_name": "AselCam",
@@ -72,7 +78,9 @@ public struct ContentView: View {
             "zoom_title": "ZOOM MATÉRIEL",
             "clients": "Clients",
             "bitrate": "kbps",
-            "ip_title": "IP Wi-Fi"
+            "ip_title": "IP Wi-Fi",
+            "btn_start": "Démarrer le flux",
+            "btn_stop": "Arrêter le flux"
         ],
         "es": [
             "app_name": "AselCam",
@@ -87,7 +95,9 @@ public struct ContentView: View {
             "zoom_title": "ZOOM HARDWARE",
             "clients": "Clientes",
             "bitrate": "kbps",
-            "ip_title": "IP Wi-Fi"
+            "ip_title": "IP Wi-Fi",
+            "btn_start": "Iniciar transmisión",
+            "btn_stop": "Detener transmisión"
         ]
     ]
     
@@ -139,10 +149,17 @@ public struct ContentView: View {
                     // 3. Quick Action Neumorphic Buttons
                     quickActionsView
                     
-                    // 4. Hardware Zoom Controller
+                    // 4. Primary Launch Button (With AdMob Interstitial Trigger)
+                    startStreamButtonView
+                    
+                    // 5. Hardware Zoom Controller
                     zoomControllerView
                     
                     Spacer()
+                    
+                    // 6. Google AdMob Banner
+                    AdmobBannerView()
+                        .padding(.bottom, 4)
                 }
                 .padding(.horizontal, 16)
                 .padding(.top, 8)
@@ -336,6 +353,33 @@ public struct ContentView: View {
                         RoundedRectangle(cornerRadius: 12)
                             .stroke(isActive ? Color.cyan.opacity(0.4) : Color.white.opacity(0.08), lineWidth: 1)
                     )
+            )
+        }
+    }
+    
+    // MARK: - Primary Action Launch Button (With AdMob Interstitial Trigger)
+    private var startStreamButtonView: some View {
+        Button(action: {
+            if viewModel.isStreaming {
+                viewModel.stopStreaming()
+            } else {
+                AdMobManager.shared.showInterstitialThen {
+                    viewModel.startStreaming()
+                }
+            }
+        }) {
+            HStack(spacing: 8) {
+                Image(systemName: viewModel.isStreaming ? "stop.fill" : "play.fill")
+                    .font(.system(size: 16, weight: .bold))
+                Text(viewModel.isStreaming ? tr("btn_stop") : tr("btn_start"))
+                    .font(.system(size: 15, weight: .bold))
+            }
+            .foregroundColor(viewModel.isStreaming ? .white : Color(red: 0.0, green: 0.19, blue: 0.12))
+            .frame(maxWidth: .infinity)
+            .frame(height: 50)
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(viewModel.isStreaming ? Color.red : Color(red: 0.31, green: 0.87, blue: 0.64))
             )
         }
     }
