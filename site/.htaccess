@@ -1,0 +1,22 @@
+# AselCam Apache / Litespeed Configuration
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteBase /
+
+# Force clean URL: redirect /privacy.html to /privacy
+RewriteCond %{THE_REQUEST} \s/+(.+/)?privacy\.html[\s?] [NC]
+RewriteRule ^privacy\.html$ /privacy [R=301,L]
+
+# Serve clean URL /privacy without .html
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}.html -f
+RewriteRule ^(.*)$ $1.html [L]
+</IfModule>
+
+# Browser Caching & MIME types
+<IfModule mod_headers.c>
+  <FilesMatch "\.(html|htm)$">
+    Header set Cache-Control "max-age=0, no-cache, no-store, must-revalidate"
+  </FilesMatch>
+</IfModule>

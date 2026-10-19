@@ -5,9 +5,798 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title data-i18n="privacy_page_meta_title">Gizlilik Politikası • AselCam</title>
   <meta name="description" content="AselCam Gizlilik Politikası: Sıfır bulut, sıfır sunucu, %100 yerel kapalı devre video ve ses aktarımı. Verileriniz, görüntünüz ve iletişiminiz yalnızca size aittir.">
-  <link rel="icon" type="image/png" href="assets/aselcam_icon_512.png">
-  <link rel="apple-touch-icon" href="assets/aselcam_icon_512.png">
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" type="image/png" href="/assets/aselcam_icon_512.png">
+  <link rel="apple-touch-icon" href="/assets/aselcam_icon_512.png">
+
+  <!-- External Stylesheets with Cache Busting -->
+  <link rel="stylesheet" href="/css/style.css?v=1.4.7.2">
+  <link rel="stylesheet" href="/css/privacy.css?v=1.4.7.2">
+  <!-- Fallback Relative Paths for Local Development -->
+  <link rel="stylesheet" href="../css/style.css?v=1.4.7.2">
+  <link rel="stylesheet" href="../css/privacy.css?v=1.4.7.2">
+
+  <!-- Guaranteed Inline Critical Styles (Immune to CDN/Cloudflare Caching Issues) -->
+  <style>
+    :root {
+      --bg-base: #0F0F0F;
+      --bg-canvas: #161616;
+      --bg-card: #1D1D20;
+      --text-primary: #F5F5F7;
+      --text-secondary: #8E8E93;
+      --text-tertiary: #636366;
+      --apple-blue: #0071E3;
+      --apple-blue-tint: rgba(0, 113, 227, 0.16);
+      --apple-emerald: #30D158;
+      --apple-emerald-tint: rgba(48, 209, 88, 0.16);
+      --glass-nav: rgba(18, 18, 20, 0.85);
+      --max-width: 1180px;
+      --header-height: 54px;
+      --radius-xs: 6px;
+      --radius-sm: 10px;
+      --radius-lg: 24px;
+      --radius-xl: 32px;
+      --radius-full: 9999px;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+      background-color: var(--bg-base);
+      color: var(--text-primary);
+      scroll-behavior: smooth;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      min-height: 100vh;
+      background-color: var(--bg-base);
+      color: var(--text-primary);
+      overflow-x: hidden;
+      line-height: 1.5;
+    }
+
+    /* Navigation Header */
+    .nav-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: var(--header-height);
+      background: var(--glass-nav);
+      -webkit-backdrop-filter: blur(24px);
+      backdrop-filter: blur(24px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      z-index: 1000;
+    }
+
+    .nav-container {
+      max-width: var(--max-width);
+      height: 100%;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      color: #FFFFFF;
+      font-weight: 700;
+      font-size: 1.15rem;
+    }
+
+    .nav-logo {
+      height: 24px;
+      width: auto;
+      display: block;
+    }
+
+    .nav-desktop-links {
+      display: flex;
+      align-items: center;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      list-style: none;
+    }
+
+    .nav-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: var(--radius-xs);
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 400;
+      transition: color 0.2s ease;
+    }
+
+    .nav-link:hover, .nav-link.active {
+      color: #FFFFFF;
+    }
+
+    .nav-link.active {
+      color: var(--apple-blue) !important;
+      font-weight: 500;
+    }
+
+    .nav-link svg {
+      width: 15px;
+      height: 15px;
+      fill: currentColor;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .lang-selector-wrapper {
+      position: relative;
+    }
+
+    .lang-select {
+      appearance: none;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: var(--radius-full);
+      padding: 5px 26px 5px 12px;
+      color: var(--text-primary);
+      font-size: 0.8rem;
+      cursor: pointer;
+      outline: none;
+    }
+
+    .lang-chevron {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.55rem;
+      color: var(--text-tertiary);
+      pointer-events: none;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 18px;
+      border-radius: var(--radius-full);
+      font-size: 0.85rem;
+      font-weight: 500;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s ease;
+    }
+
+    .btn-primary {
+      background: var(--apple-blue);
+      color: #FFFFFF;
+    }
+
+    .btn-primary:hover {
+      background: #0077ED;
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.08);
+      color: #FFFFFF;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.16);
+    }
+
+    .btn-mobile-menu {
+      display: none;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      width: 32px;
+      height: 32px;
+      flex-direction: column;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .hamburger-bar {
+      height: 2px;
+      width: 20px;
+      background: #FFFFFF;
+      border-radius: 2px;
+      transition: all 0.25s ease;
+    }
+
+    /* Privacy Page Main Wrapper */
+    .privacy-page-wrapper {
+      padding-top: calc(var(--header-height) + 50px);
+      padding-bottom: 120px;
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding-left: 24px;
+      padding-right: 24px;
+    }
+
+    .privacy-page-header {
+      text-align: center;
+      max-width: 860px;
+      margin: 0 auto 52px auto;
+    }
+
+    .privacy-page-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 18px;
+      background: var(--apple-emerald-tint);
+      color: var(--apple-emerald);
+      border: 1px solid rgba(48, 209, 88, 0.28);
+      border-radius: var(--radius-full);
+      font-size: 0.82rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      margin-bottom: 22px;
+    }
+
+    .privacy-pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--apple-emerald);
+      box-shadow: 0 0 10px rgba(48, 209, 88, 0.8);
+      animation: pulseGreen 2s infinite ease-in-out;
+    }
+
+    @keyframes pulseGreen {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.3); opacity: 0.6; }
+    }
+
+    .privacy-page-title {
+      font-size: clamp(2.4rem, 4.5vw, 3.8rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.12;
+      color: #FFFFFF;
+      margin-bottom: 18px;
+    }
+
+    .privacy-page-subtitle {
+      font-size: clamp(1.05rem, 1.8vw, 1.25rem);
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+
+    .privacy-meta-chips {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .privacy-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-full);
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+
+    .privacy-chip strong {
+      color: #FFFFFF;
+      font-weight: 600;
+    }
+
+    /* 4-Pillar Summary Cards */
+    .privacy-pillars-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 56px;
+    }
+
+    .privacy-pillar-card {
+      background: #161618;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-lg);
+      padding: 26px 22px;
+      transition: transform 0.25s ease, border-color 0.25s ease;
+    }
+
+    .privacy-pillar-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .pillar-icon-box {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-sm);
+      background: rgba(255, 255, 255, 0.06);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.35rem;
+      margin-bottom: 16px;
+    }
+
+    .pillar-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #FFFFFF;
+      margin-bottom: 8px;
+      letter-spacing: -0.01em;
+    }
+
+    .pillar-desc {
+      font-size: 0.86rem;
+      color: var(--text-secondary);
+      line-height: 1.55;
+    }
+
+    /* Document Layout: Sidebar TOC + Main Content */
+    .privacy-doc-layout {
+      display: grid;
+      grid-template-columns: 290px 1fr;
+      gap: 40px;
+      align-items: start;
+    }
+
+    .privacy-toc-sidebar {
+      position: sticky;
+      top: calc(var(--header-height) + 24px);
+      background: #161618;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-lg);
+      padding: 24px 18px;
+      max-height: calc(100vh - var(--header-height) - 48px);
+      overflow-y: auto;
+    }
+
+    .toc-title {
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-tertiary);
+      margin-bottom: 14px;
+      padding-left: 8px;
+    }
+
+    .toc-links {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      padding: 0;
+      margin: 0;
+    }
+
+    .toc-link {
+      display: block;
+      padding: 8px 12px;
+      border-radius: var(--radius-xs);
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      line-height: 1.35;
+    }
+
+    .toc-link:hover {
+      color: #FFFFFF !important;
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .toc-link.active {
+      color: var(--apple-blue) !important;
+      background: var(--apple-blue-tint);
+      font-weight: 600;
+    }
+
+    /* Privacy Body Sections */
+    .privacy-doc-content {
+      background: #141416;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-xl);
+      padding: 52px 48px;
+    }
+
+    .privacy-section-block {
+      margin-bottom: 52px;
+      scroll-margin-top: calc(var(--header-height) + 30px);
+    }
+
+    .privacy-section-block:last-child {
+      margin-bottom: 0;
+    }
+
+    .privacy-section-num {
+      font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+      font-size: 0.82rem;
+      color: var(--apple-blue);
+      font-weight: 600;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .privacy-section-heading {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #FFFFFF;
+      letter-spacing: -0.02em;
+      margin-bottom: 18px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .privacy-text {
+      font-size: 0.96rem;
+      color: #CCCCCC;
+      line-height: 1.8;
+      margin-bottom: 14px;
+    }
+
+    .privacy-list {
+      list-style: none;
+      margin: 14px 0 18px 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .privacy-list-item {
+      position: relative;
+      padding-left: 24px;
+      font-size: 0.94rem;
+      color: #CCCCCC;
+      line-height: 1.68;
+    }
+
+    .privacy-list-item::before {
+      content: "•";
+      position: absolute;
+      left: 8px;
+      color: var(--apple-blue);
+      font-size: 1.25rem;
+      line-height: 1;
+    }
+
+    .privacy-list-item strong {
+      color: #FFFFFF;
+    }
+
+    /* Highlight / Alert Callouts */
+    .privacy-callout {
+      background: rgba(0, 113, 227, 0.08);
+      border-left: 3px solid var(--apple-blue);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      padding: 18px 22px;
+      margin: 22px 0;
+    }
+
+    .privacy-callout.emerald {
+      background: rgba(48, 209, 88, 0.08);
+      border-left-color: var(--apple-emerald);
+    }
+
+    .privacy-callout-title {
+      font-size: 0.94rem;
+      font-weight: 700;
+      color: #FFFFFF;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .privacy-callout-text {
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+      line-height: 1.65;
+    }
+
+    /* Privacy Table (Permissions & Storage) */
+    .privacy-table-wrapper {
+      overflow-x: auto;
+      margin: 22px 0;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-sm);
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .privacy-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+      text-align: left;
+    }
+
+    .privacy-table th {
+      background: rgba(255, 255, 255, 0.05);
+      color: #FFFFFF;
+      font-weight: 600;
+      padding: 13px 18px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      white-space: nowrap;
+    }
+
+    .privacy-table td {
+      padding: 13px 18px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      color: #CCCCCC;
+      vertical-align: top;
+      line-height: 1.55;
+    }
+
+    .privacy-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .tag-badge {
+      display: inline-block;
+      padding: 3px 9px;
+      border-radius: var(--radius-xs);
+      font-size: 0.76rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .tag-emerald {
+      background: var(--apple-emerald-tint);
+      color: var(--apple-emerald);
+      border: 1px solid rgba(48, 209, 88, 0.2);
+    }
+
+    .tag-blue {
+      background: var(--apple-blue-tint);
+      color: var(--apple-blue);
+      border: 1px solid rgba(0, 113, 227, 0.2);
+    }
+
+    /* Bottom Back / Action Row */
+    .privacy-bottom-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 48px;
+      padding-top: 28px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .btn-back-home {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-primary);
+      text-decoration: none;
+      font-size: 0.92rem;
+      font-weight: 500;
+      transition: color 0.2s ease;
+    }
+
+    .btn-back-home:hover {
+      color: var(--apple-blue);
+    }
+
+    /* Footer */
+    .site-footer {
+      background: #0B0B0C;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 70px 24px 40px;
+    }
+
+    .footer-container {
+      max-width: var(--max-width);
+      margin: 0 auto;
+    }
+
+    .footer-columns-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 40px;
+      margin-bottom: 60px;
+    }
+
+    .footer-brand-desc {
+      font-size: 0.84rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-top: 14px;
+      max-width: 320px;
+    }
+
+    .footer-column-title {
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-tertiary);
+      margin-bottom: 16px;
+    }
+
+    .footer-links-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 0;
+    }
+
+    .footer-link-item a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.84rem;
+      transition: color 0.2s ease;
+    }
+
+    .footer-link-item a:hover {
+      color: #FFFFFF;
+    }
+
+    .footer-bottom-row {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 16px;
+      padding-top: 30px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .footer-developed-link {
+      color: #FFFFFF;
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 16px;
+      border-radius: var(--radius-full);
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .footer-meta {
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+    }
+
+    .footer-privacy-note {
+      font-size: 0.76rem;
+      color: var(--text-tertiary);
+      max-width: 760px;
+      line-height: 1.5;
+    }
+
+    /* Mobile Drawer */
+    .mobile-nav-drawer {
+      position: fixed;
+      inset: 0;
+      top: var(--header-height);
+      background: rgba(15, 15, 15, 0.96);
+      -webkit-backdrop-filter: blur(28px);
+      backdrop-filter: blur(28px);
+      z-index: 999;
+      display: none;
+      padding: 30px 24px;
+    }
+
+    .mobile-nav-drawer.open {
+      display: block;
+    }
+
+    .mobile-nav-links {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .mobile-nav-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: #FFFFFF;
+      text-decoration: none;
+      font-size: 1.15rem;
+      font-weight: 500;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .mobile-nav-link svg {
+      width: 20px;
+      height: 20px;
+      fill: currentColor;
+    }
+
+    /* Responsive */
+    @media (max-width: 980px) {
+      .nav-desktop-links, .nav-desktop-btn {
+        display: none;
+      }
+      .btn-mobile-menu {
+        display: flex;
+      }
+      .privacy-pillars-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .privacy-doc-layout {
+        grid-template-columns: 1fr;
+        gap: 30px;
+      }
+      .privacy-toc-sidebar {
+        position: static;
+        max-height: none;
+      }
+      .privacy-doc-content {
+        padding: 34px 24px;
+      }
+      .footer-columns-grid {
+        grid-template-columns: 1fr;
+        gap: 28px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .privacy-pillars-grid {
+        grid-template-columns: 1fr;
+      }
+      .privacy-page-wrapper {
+        padding-top: calc(var(--header-height) + 28px);
+        padding-left: 16px;
+        padding-right: 16px;
+        padding-bottom: 70px;
+      }
+      .privacy-page-header {
+        margin-bottom: 32px;
+      }
+      .privacy-page-title {
+        font-size: 2.1rem;
+      }
+      .privacy-doc-content {
+        padding: 24px 18px;
+      }
+      .privacy-bottom-actions {
+        flex-direction: column;
+        gap: 16px;
+        align-items: stretch;
+        text-align: center;
+      }
+      .privacy-bottom-actions .btn {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  </style>
 </head>
 <body>
 
@@ -16,45 +805,45 @@
        ========================================================================= -->
   <header class="nav-header">
     <div class="nav-container">
-      <a href="index.html" class="nav-brand" aria-label="AselCam Ana Sayfa">
-        <img src="assets/aselcam_logo_horz.png" alt="AselCam" class="nav-logo">
+      <a href="/" class="nav-brand" aria-label="AselCam Ana Sayfa">
+        <img src="/assets/aselcam_logo_horz.png" onerror="this.onerror=null; this.src='../assets/aselcam_logo_horz.png';" alt="AselCam" class="nav-logo">
       </a>
 
       <!-- Desktop Navigation Links -->
       <nav class="nav-desktop-links" aria-label="Main Navigation">
         <ul class="nav-links">
           <li>
-            <a href="index.html" class="nav-link">
+            <a href="/" class="nav-link">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3L2 12h3v8h6v-6h2v6h6v-8h3L12 3z"/></svg>
               <span data-i18n="nav_overview">Genel Bakış</span>
             </a>
           </li>
           <li>
-            <a href="index.html#studio" class="nav-link">
+            <a href="/#studio" class="nav-link">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3L7.17 5H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2h-3.17L15 3H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/></svg>
               <span data-i18n="nav_studio">Stüdyo Vizörü</span>
             </a>
           </li>
           <li>
-            <a href="index.html#compare" class="nav-link">
+            <a href="/#compare" class="nav-link">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h5v2h2V1h-2v2zm-2 14H5V5h3v12zm11-14h-5v2h5v12h-3v2h3c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg>
               <span data-i18n="nav_compare">Karşılaştırma</span>
             </a>
           </li>
           <li>
-            <a href="privacy.html" class="nav-link active" style="color: var(--apple-blue);">
+            <a href="/privacy" class="nav-link active">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
               <span data-i18n="nav_privacy">Gizlilik</span>
             </a>
           </li>
           <li>
-            <a href="index.html#specs" class="nav-link">
+            <a href="/#specs" class="nav-link">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg>
               <span data-i18n="nav_specs">Teknik Özellikler</span>
             </a>
           </li>
           <li>
-            <a href="index.html#downloads" class="nav-link">
+            <a href="/#downloads" class="nav-link">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z"/></svg>
               <span data-i18n="nav_downloads">İndir</span>
             </a>
@@ -86,7 +875,7 @@
         </div>
 
         <!-- Desktop Download CTA -->
-        <a href="index.html#downloads" class="btn btn-primary nav-desktop-btn" data-i18n="nav_downloads">İndir</a>
+        <a href="/#downloads" class="btn btn-primary nav-desktop-btn" data-i18n="nav_downloads">İndir</a>
 
         <!-- Mobile Hamburger Menu Button -->
         <button id="btn-mobile-menu" class="btn-mobile-menu" aria-label="Menü" aria-expanded="false" aria-controls="mobile-nav-drawer">
@@ -101,31 +890,31 @@
       <div class="mobile-nav-content">
         <ul class="mobile-nav-links">
           <li>
-            <a href="index.html" class="mobile-nav-link">
+            <a href="/" class="mobile-nav-link">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3L2 12h3v8h6v-6h2v6h6v-8h3L12 3z"/></svg>
               <span data-i18n="nav_overview">Genel Bakış</span>
             </a>
           </li>
           <li>
-            <a href="index.html#studio" class="mobile-nav-link">
+            <a href="/#studio" class="mobile-nav-link">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3L7.17 5H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2h-3.17L15 3H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/></svg>
               <span data-i18n="nav_studio">Stüdyo Vizörü</span>
             </a>
           </li>
           <li>
-            <a href="index.html#compare" class="mobile-nav-link">
+            <a href="/#compare" class="mobile-nav-link">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h5v2h2V1h-2v2zm-2 14H5V5h3v12zm11-14h-5v2h5v12h-3v2h3c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg>
               <span data-i18n="nav_compare">Karşılaştırma</span>
             </a>
           </li>
           <li>
-            <a href="privacy.html" class="mobile-nav-link" style="color: var(--apple-blue);">
+            <a href="/privacy" class="mobile-nav-link" style="color: var(--apple-blue);">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
               <span data-i18n="nav_privacy">Gizlilik</span>
             </a>
           </li>
           <li>
-            <a href="index.html#specs" class="mobile-nav-link">
+            <a href="/#specs" class="mobile-nav-link">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg>
               <span data-i18n="nav_specs">Teknik Özellikler</span>
             </a>
@@ -137,8 +926,8 @@
             </a>
           </li>
         </ul>
-        <div class="mobile-nav-cta">
-          <a href="index.html#downloads" class="btn btn-primary btn-large btn-mobile-dl" data-i18n="nav_downloads">İndir</a>
+        <div style="margin-top: 24px;">
+          <a href="/#downloads" class="btn btn-primary" style="width: 100%;" data-i18n="nav_downloads">İndir</a>
         </div>
       </div>
     </div>
@@ -469,11 +1258,11 @@
           </ul>
 
           <div class="privacy-bottom-actions">
-            <a href="index.html" class="btn-back-home">
+            <a href="/" class="btn-back-home">
               <span aria-hidden="true">←</span> <span data-i18n="btn_back_home">AselCam Ana Sayfasına Dön</span>
             </a>
             <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
-              <a href="index.html#downloads" class="btn btn-primary" data-i18n="nav_downloads">İndir</a>
+              <a href="/#downloads" class="btn btn-primary" data-i18n="nav_downloads">İndir</a>
               <button type="button" class="btn btn-secondary" onclick="window.scrollTo({top: 0, behavior: 'smooth'});" data-i18n="btn_scroll_top">Başa Dön ↑</button>
             </div>
           </div>
@@ -492,11 +1281,11 @@
         <!-- Col 1: Brand & Identity -->
         <div class="footer-brand-col">
           <div class="footer-logo-row">
-            <img src="assets/aselcam_logo_horz.png" alt="AselCam" class="footer-logo-img">
+            <img src="/assets/aselcam_logo_horz.png" onerror="this.onerror=null; this.src='../assets/aselcam_logo_horz.png';" alt="AselCam" style="height: 28px; width: auto;">
           </div>
           <p class="footer-brand-desc" data-i18n="footer_brand_desc">Telefonunuzun optik donanımını sıfır gecikmeli profesyonel stüdyo kamerasına dönüştüren yeni nesil açık kaynaklı masaüstü video köprüsü.</p>
-          <div class="footer-version-tag">
-            <span class="version-dot"></span>
+          <div style="margin-top: 14px; display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; background: rgba(255,255,255,0.06); border-radius: 9999px; font-size: 0.78rem; color: var(--text-secondary);">
+            <span style="width: 6px; height: 6px; border-radius: 50%; background: #30D158;"></span>
             <span data-i18n="footer_release_tag">v1.4.7 Yayında • Sıfır Bulut</span>
           </div>
         </div>
@@ -505,11 +1294,11 @@
         <div>
           <h4 class="footer-column-title" data-i18n="footer_col_product">Ürün</h4>
           <ul class="footer-links-list">
-            <li class="footer-link-item"><a href="index.html#overview" data-i18n="nav_overview">Genel Bakış</a></li>
-            <li class="footer-link-item"><a href="index.html#studio" data-i18n="nav_studio">Stüdyo Vizörü</a></li>
-            <li class="footer-link-item"><a href="index.html#compare" data-i18n="nav_compare">Karşılaştırma</a></li>
-            <li class="footer-link-item"><a href="index.html#specs" data-i18n="nav_specs">Teknik Özellikler</a></li>
-            <li class="footer-link-item"><a href="index.html#downloads" data-i18n="nav_downloads">İndirme Seçenekleri</a></li>
+            <li class="footer-link-item"><a href="/" data-i18n="nav_overview">Genel Bakış</a></li>
+            <li class="footer-link-item"><a href="/#studio" data-i18n="nav_studio">Stüdyo Vizörü</a></li>
+            <li class="footer-link-item"><a href="/#compare" data-i18n="nav_compare">Karşılaştırma</a></li>
+            <li class="footer-link-item"><a href="/#specs" data-i18n="nav_specs">Teknik Özellikler</a></li>
+            <li class="footer-link-item"><a href="/#downloads" data-i18n="nav_downloads">İndirme Seçenekleri</a></li>
           </ul>
         </div>
 
@@ -530,7 +1319,7 @@
           <h4 class="footer-column-title" data-i18n="footer_col_legal">Kurumsal & Yasal</h4>
           <ul class="footer-links-list">
             <li class="footer-link-item">
-              <a href="privacy.html" style="color: var(--apple-blue); font-weight: 600;" data-i18n="footer_privacy_link">Gizlilik Politikası (Ayrı Sayfa)</a>
+              <a href="/privacy" style="color: var(--apple-blue); font-weight: 600;" data-i18n="footer_privacy_link">Gizlilik Politikası (Ayrı Sayfa)</a>
             </li>
             <li class="footer-link-item">
               <a href="https://aselens.com" target="_blank" rel="noopener noreferrer">Aselens Software ↗</a>
@@ -554,7 +1343,191 @@
   </footer>
 
   <!-- Scripts -->
-  <script src="js/i18n.js"></script>
-  <script src="js/privacy.js"></script>
+  <script src="/js/i18n.js?v=1.4.7.2"></script>
+  <script src="/js/privacy.js?v=1.4.7.2"></script>
+  <!-- Fallback Scripts for Relative Paths -->
+  <script src="../js/i18n.js?v=1.4.7.2"></script>
+  <script src="../js/privacy.js?v=1.4.7.2"></script>
+
+  <!-- Guaranteed Inline Script (Language Switcher, Mobile Drawer & TOC Tracking) -->
+  <script>
+    (function() {
+      // Extended English dictionary for immediate standalone execution
+      var EN_TEXTS = {
+        "privacy_page_meta_title": "Privacy Policy • AselCam",
+        "privacy_page_badge": "Official Privacy & Security Notice",
+        "privacy_page_main_title": "AselCam Privacy Policy",
+        "privacy_page_main_subtitle": "Your video, audio, and communications belong solely to you. Zero cloud, zero external servers, zero telemetry, and 100% local closed-circuit architecture.",
+        "privacy_meta_updated_label": "Last Updated:",
+        "privacy_meta_updated_val": "October 19, 2026",
+        "privacy_meta_version_label": "Version:",
+        "privacy_meta_scope_label": "Scope:",
+        "privacy_meta_scope_val": "Desktop & Mobile (Android & iOS)",
+        "privacy_meta_compliance_label": "Compliance:",
+        "pillar_1_title": "Zero Cloud Dependency",
+        "pillar_1_desc": "Video and audio frames are never sent to external servers or cloud relays; they flow directly point-to-point between your devices.",
+        "pillar_2_title": "Zero Telemetry & Analytics",
+        "pillar_2_desc": "No user accounts, no login requirements, and no background tracking libraries. Your personal identity remains private.",
+        "pillar_3_title": "Point-to-Point Connection",
+        "pillar_3_desc": "Stream directly over physical USB cable or your local Wi-Fi network using encrypted or closed-circuit local socket communication.",
+        "pillar_4_title": "Open Source & Transparency",
+        "pillar_4_desc": "AselCam's network sockets, hardware encoders, and camera control pipelines are completely open to public inspection on GitHub.",
+        "toc_heading": "Table of Contents",
+        "toc_1": "1. Core Philosophy & Zero-Data",
+        "toc_2": "2. Processed Data & Zero-Persistence",
+        "toc_3": "3. Hardware Permissions & Purposes",
+        "toc_4": "4. Network Protocols & Security",
+        "toc_5": "5. Mobile Apps & Google AdMob",
+        "toc_6": "6. Third-Party Integrations & Links",
+        "toc_7": "7. Children's Privacy (COPPA & GDPR)",
+        "toc_8": "8. Legal Rights (GDPR Compliance)",
+        "toc_9": "9. Security Safeguards & Open Source",
+        "toc_10": "10. Contact & Policy Updates",
+        "sec1_title": "Core Philosophy and Zero-Data Collection Architecture",
+        "sec1_p1": "AselCam (and its developer Aselens Software) considers user privacy not as a marketing tagline, but as the fundamental architectural cornerstone of the entire application. AselCam was engineered from scratch with a strict \"zero-data-collection\" policy to eliminate the privacy risks associated with traditional webcams and cloud-mediated video streaming services.",
+        "sec1_p2": "None of our components contain a centralized user database, account management system, authentication server, or external relay (STUN/TURN) cloud. To use AselCam, you never have to provide your name, email address, phone number, or any personal identifying information.",
+        "sec1_callout_title": "Aselens Software Fundamental Pledge:",
+        "sec1_callout_text": "Not a single video frame, pixel, or audio waveform passing through your camera or microphone is ever transmitted, replicated, or stored on Aselens Software servers or any external cloud infrastructure.",
+        "sec2_title": "Processed Data Types and Zero-Persistence Architecture",
+        "sec2_p1": "AselCam processes strictly the transient hardware signals necessary to transform your mobile device into a high-performance desktop webcam:",
+        "sec2_item1_title": "Video Stream (Camera Feed):",
+        "sec2_item1_desc": "Raw camera sensor frames (YUV420/NV21 or CVPixelBuffer) are hardware-encoded on-device (Android MediaCodec or Apple VideoToolbox) directly into H.264 video packets and dispatched straight into the local socket.",
+        "sec2_item2_title": "Audio Stream (Microphone Feed):",
+        "sec2_item2_desc": "Raw 24 kHz mono/stereo PCM audio samples captured from the device microphone are encoded in real-time without latency and streamed directly to the desktop virtual audio receiver.",
+        "sec2_item3_title": "Camera Control Parameters:",
+        "sec2_item3_desc": "JSON-RPC adjustments such as color temperature (Kelvin), brightness, contrast, saturation, zoom, autofocus, and flashlight controls are executed instantaneously between both devices.",
+        "sec2_p2": "Zero-Persistence: None of these audio or video buffers are ever written to your phone's storage, SD card, or desktop hard drive. Data exists solely in volatile RAM circular buffers for mere milliseconds and is discarded immediately after being delivered to the desktop virtual camera pipeline. When the session ends, zero residual traces remain.",
+        "sec3_title": "Hardware Permissions and Operational Purposes",
+        "sec3_p1": "The AselCam mobile app (Android and iOS) requests strictly the minimum essential hardware permissions required for operation:",
+        "th_perm": "Permission / API",
+        "th_platform": "Platform",
+        "th_purpose": "Operational Purpose",
+        "th_storage": "Persistent Storage?",
+        "perm_camera_desc": "Opens the phone camera sensor to provide real-time video streaming to your desktop.",
+        "perm_mic_desc": "Transfers microphone input to your PC for wireless studio microphone functionality.",
+        "perm_fg_desc": "Prevents video interruption when the app runs in the background or during screen blackout.",
+        "perm_net_desc": "Discovers the desktop client on your local Wi-Fi network and binds local communication sockets.",
+        "perm_wake_desc": "Prevents device sleep during live streaming and activates the LED torch for studio lighting.",
+        "tag_no_storage": "NO STORAGE (Zero)",
+        "tag_service_only": "SERVICE ONLY",
+        "tag_runtime": "RUNTIME ONLY",
+        "sec3_p2": "AselCam never requests or accesses Location (GPS), Contacts, SMS, Files/Photo Gallery, or Biometric authentication.",
+        "sec4_title": "Communication Protocols and Network Security",
+        "sec4_p1": "Data transfer between the AselCam desktop client and mobile transmitter occurs over two physical channels:",
+        "sec4_item1_title": "Direct USB Cable Connection (Recommended):",
+        "sec4_item1_desc": "Uses ADB port forwarding on Android or usbmuxd local socket bridging on iOS. Traffic does not touch any network interface; it travels directly across the motherboard USB 3.0/3.2 bus, completely isolated from external eavesdropping.",
+        "sec4_item2_title": "Local Wi-Fi Network (LAN) Connection:",
+        "sec4_item2_desc": "Your phone listens on TCP port 4747 (video/audio streaming) and TCP port 4748 (camera control JSON-RPC) within your local subnet (e.g. 192.168.1.X). Packets never leave your local router and never access the public internet (WAN).",
+        "sec4_callout_title": "Security Recommendation:",
+        "sec4_callout_text": "When connected to public or untrusted Wi-Fi networks (hotels, cafes), we strongly recommend using the direct USB cable mode for absolute physical isolation.",
+        "sec5_title": "Mobile Applications and Advertising Policy (Google AdMob SDK)",
+        "sec5_p1": "AselCam is a free and open-source project. To support ongoing maintenance, continuous development, and infrastructure costs of the mobile apps, Google AdMob SDK is integrated into the Android and iOS apps.",
+        "sec5_p2": "Our Google AdMob integration operates under clear, transparent guidelines:",
+        "sec5_item1_title": "Banner Ads:",
+        "sec5_item1_desc": "A standard advertisement banner displayed at the bottom of the mobile main screen. It never interferes with streaming controls or camera settings.",
+        "sec5_item2_title": "Interstitial Ads:",
+        "sec5_item2_desc": "A full-screen ad shown when the user taps \"Start Stream\". No unexpected ads ever interrupt an ongoing live broadcast.",
+        "sec5_item3_title": "Ad Data Processed by Google:",
+        "sec5_item3_desc": "Google AdMob may process your device's Advertising ID (Google Advertising ID - GAID or iOS IDFA), IP address, and general device model for fraud prevention and ad delivery. This information is never transmitted to Aselens Software servers.",
+        "sec5_p3": "You can restrict personalized ads or reset your advertising ID at any time via your device settings (Android: Settings ➔ Google ➔ Ads; iOS: Settings ➔ Privacy & Security ➔ Tracking). For details, visit Google Privacy & Terms.",
+        "sec6_title": "Third-Party Integrations and External Links",
+        "sec6_p1": "AselCam desktop and website contain zero third-party trackers or cookies. Our ecosystem includes only these transparent external links:",
+        "sec6_item1_title": "GitHub Releases:",
+        "sec6_item1_desc": "Download buttons direct you to official binary release packages hosted on GitHub infrastructure.",
+        "sec6_item2_title": "Buy Me a Coffee:",
+        "sec6_item2_desc": "An optional external link for users who wish to support development with voluntary tips.",
+        "sec7_title": "Children's Privacy (COPPA & GDPR Compliance)",
+        "sec7_p1": "AselCam is a general-audience utility. We do not knowingly collect any personal data from children under 13 (or under 16 in the European Union). Because our software requires no registration and uses no central database, we hold no personal data belonging to children.",
+        "sec7_p2": "If you believe your child has shared information via third-party ad networks, please contact us immediately.",
+        "sec8_title": "Your Legal Rights (GDPR & International Protections)",
+        "sec8_p1": "Under European GDPR and international privacy frameworks, we fully uphold your fundamental data rights:",
+        "sec8_item1": "Right to Information & Access: AselCam holds no centralized user records.",
+        "sec8_item2": "Right to Erasure (To Be Forgotten): Since no data is retained on servers, there are zero databases to purge.",
+        "sec8_item3": "Data Portability: Uninstalling the app permanently purges all local runtime configurations on your device.",
+        "sec9_title": "Security Safeguards and Open Source Auditing",
+        "sec9_p1": "The ultimate guarantee of security is transparency. The desktop client and mobile application source code are publicly available on GitHub under the permissive MIT license.",
+        "sec9_p2": "Security researchers, developers, and users can independently inspect network socket listeners, verify the absence of telemetry, and compile their own binaries directly from source.",
+        "sec10_title": "Contact, Support, and Policy Amendments",
+        "sec10_p1": "Aselens Software reserves the right to update this policy to reflect changes in legal regulations or platform operating systems. Updates will be published on this page with an updated effective date.",
+        "sec10_p2": "For any inquiries, feedback, or security reports, please reach out via our official channels:",
+        "btn_back_home": "Back to AselCam Home",
+        "btn_scroll_top": "Back to Top ↑",
+        "nav_overview": "Overview",
+        "nav_studio": "Studio Viewfinder",
+        "nav_compare": "Compare",
+        "nav_privacy": "Privacy",
+        "nav_specs": "Tech Specs",
+        "nav_downloads": "Download",
+        "nav_github": "GitHub"
+      };
+
+      var langSelect = document.getElementById("lang-select");
+      var storedLang = localStorage.getItem("aselcam_lang") || "tr";
+      
+      function setLanguage(lang) {
+        localStorage.setItem("aselcam_lang", lang);
+        if (langSelect) langSelect.value = lang;
+        document.documentElement.lang = lang;
+        document.documentElement.dir = (lang === "ar") ? "rtl" : "ltr";
+
+        // If English, apply EN_TEXTS
+        if (lang === "en") {
+          document.querySelectorAll("[data-i18n]").forEach(function(el) {
+            var key = el.getAttribute("data-i18n");
+            if (EN_TEXTS[key]) {
+              el.textContent = EN_TEXTS[key];
+            }
+          });
+        } else if (typeof I18N_DATA !== "undefined" && I18N_DATA[lang]) {
+          var dict = I18N_DATA[lang];
+          document.querySelectorAll("[data-i18n]").forEach(function(el) {
+            var key = el.getAttribute("data-i18n");
+            if (dict[key]) {
+              el.textContent = dict[key];
+            }
+          });
+        }
+      }
+
+      if (langSelect) {
+        langSelect.addEventListener("change", function(e) {
+          setLanguage(e.target.value);
+        });
+      }
+
+      // Mobile Menu
+      var btnMenu = document.getElementById("btn-mobile-menu");
+      var drawer = document.getElementById("mobile-nav-drawer");
+      if (btnMenu && drawer) {
+        btnMenu.addEventListener("click", function() {
+          var isOpen = drawer.classList.toggle("open");
+          btnMenu.setAttribute("aria-expanded", isOpen ? "true" : "false");
+        });
+      }
+
+      // Active TOC Tracking
+      var tocLinks = document.querySelectorAll(".toc-link");
+      var sections = document.querySelectorAll(".privacy-section-block");
+      if ("IntersectionObserver" in window && sections.length > 0) {
+        var observer = new IntersectionObserver(function(entries) {
+          entries.forEach(function(entry) {
+            if (entry.isIntersecting) {
+              var id = entry.target.getAttribute("id");
+              tocLinks.forEach(function(link) {
+                if (link.getAttribute("href") === "#" + id) {
+                  link.classList.add("active");
+                } else {
+                  link.classList.remove("active");
+                }
+              });
+            }
+          });
+        }, { rootMargin: "-80px 0px -60% 0px" });
+        sections.forEach(function(sec) { observer.observe(sec); });
+      }
+
+      setLanguage(storedLang);
+    })();
+  </script>
 </body>
 </html>
