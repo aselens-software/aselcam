@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="tr" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title data-i18n="privacy_page_meta_title">Gizlilik Politikası • AselCam</title>
+  <meta name="description" content="AselCam Gizlilik Politikası: Sıfır bulut, sıfır sunucu, %100 yerel kapalı devre video ve ses aktarımı. Verileriniz, görüntünüz ve iletişiminiz yalnızca size aittir.">
+  <link rel="icon" type="image/png" href="assets/aselcam_icon_512.png">
+  <link rel="apple-touch-icon" href="assets/aselcam_icon_512.png">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- =========================================================================
+       1. NAVIGATION BAR (APPLE LIQUID GLASS WITH MOBILE HAMBURGER & DRAWER)
+       ========================================================================= -->
+  <header class="nav-header">
+    <div class="nav-container">
+      <a href="index.html" class="nav-brand" aria-label="AselCam Ana Sayfa">
+        <img src="assets/aselcam_logo_horz.png" alt="AselCam" class="nav-logo">
+      </a>
+
+      <!-- Desktop Navigation Links -->
+      <nav class="nav-desktop-links" aria-label="Main Navigation">
+        <ul class="nav-links">
+          <li>
+            <a href="index.html" class="nav-link">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3L2 12h3v8h6v-6h2v6h6v-8h3L12 3z"/></svg>
+              <span data-i18n="nav_overview">Genel Bakış</span>
+            </a>
+          </li>
+          <li>
+            <a href="index.html#studio" class="nav-link">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3L7.17 5H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2h-3.17L15 3H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/></svg>
+              <span data-i18n="nav_studio">Stüdyo Vizörü</span>
+            </a>
+          </li>
+          <li>
+            <a href="index.html#compare" class="nav-link">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h5v2h2V1h-2v2zm-2 14H5V5h3v12zm11-14h-5v2h5v12h-3v2h3c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg>
+              <span data-i18n="nav_compare">Karşılaştırma</span>
+            </a>
+          </li>
+          <li>
+            <a href="privacy.html" class="nav-link active" style="color: var(--apple-blue);">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
+              <span data-i18n="nav_privacy">Gizlilik</span>
+            </a>
+          </li>
+          <li>
+            <a href="index.html#specs" class="nav-link">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg>
+              <span data-i18n="nav_specs">Teknik Özellikler</span>
+            </a>
+          </li>
+          <li>
+            <a href="index.html#downloads" class="nav-link">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z"/></svg>
+              <span data-i18n="nav_downloads">İndir</span>
+            </a>
+          </li>
+          <li>
+            <a href="https://github.com/aselens-software/aselcam" target="_blank" rel="noopener noreferrer" class="nav-link">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+              <span data-i18n="nav_github">GitHub</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <!-- Nav Actions (Lang Selector + Download Button + Mobile Menu) -->
+      <div class="nav-actions">
+        <!-- 8-Language Selector -->
+        <div class="lang-selector-wrapper">
+          <select id="lang-select" class="lang-select" aria-label="Select Language">
+            <option value="tr">🇹🇷 TR</option>
+            <option value="en">🇬🇧 EN</option>
+            <option value="de">🇩🇪 DE</option>
+            <option value="fr">🇫🇷 FR</option>
+            <option value="es">🇪🇸 ES</option>
+            <option value="ru">🇷🇺 RU</option>
+            <option value="ja">🇯🇵 JA</option>
+            <option value="ar">🇸🇦 AR</option>
+          </select>
+          <span class="lang-chevron" aria-hidden="true">▼</span>
+        </div>
+
+        <!-- Desktop Download CTA -->
+        <a href="index.html#downloads" class="btn btn-primary nav-desktop-btn" data-i18n="nav_downloads">İndir</a>
+
+        <!-- Mobile Hamburger Menu Button -->
+        <button id="btn-mobile-menu" class="btn-mobile-menu" aria-label="Menü" aria-expanded="false" aria-controls="mobile-nav-drawer">
+          <span class="hamburger-bar top" aria-hidden="true"></span>
+          <span class="hamburger-bar bottom" aria-hidden="true"></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Navigation Drawer -->
+    <div id="mobile-nav-drawer" class="mobile-nav-drawer" aria-hidden="true">
+      <div class="mobile-nav-content">
+        <ul class="mobile-nav-links">
+          <li>
+            <a href="index.html" class="mobile-nav-link">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3L2 12h3v8h6v-6h2v6h6v-8h3L12 3z"/></svg>
+              <span data-i18n="nav_overview">Genel Bakış</span>
+            </a>
+          </li>
+          <li>
+            <a href="index.html#studio" class="mobile-nav-link">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3L7.17 5H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2h-3.17L15 3H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/></svg>
+              <span data-i18n="nav_studio">Stüdyo Vizörü</span>
+            </a>
+          </li>
+          <li>
+            <a href="index.html#compare" class="mobile-nav-link">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h5v2h2V1h-2v2zm-2 14H5V5h3v12zm11-14h-5v2h5v12h-3v2h3c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg>
+              <span data-i18n="nav_compare">Karşılaştırma</span>
+            </a>
+          </li>
+          <li>
+            <a href="privacy.html" class="mobile-nav-link" style="color: var(--apple-blue);">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
+              <span data-i18n="nav_privacy">Gizlilik</span>
+            </a>
+          </li>
+          <li>
+            <a href="index.html#specs" class="mobile-nav-link">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg>
+              <span data-i18n="nav_specs">Teknik Özellikler</span>
+            </a>
+          </li>
+          <li>
+            <a href="https://github.com/aselens-software/aselcam" target="_blank" rel="noopener noreferrer" class="mobile-nav-link">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+              <span data-i18n="nav_github">GitHub Repository ↗</span>
+            </a>
+          </li>
+        </ul>
+        <div class="mobile-nav-cta">
+          <a href="index.html#downloads" class="btn btn-primary btn-large btn-mobile-dl" data-i18n="nav_downloads">İndir</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- =========================================================================
+       2. PRIVACY PAGE HERO
+       ========================================================================= -->
+  <main class="privacy-page-wrapper">
+    <div class="privacy-page-header">
+      <div class="privacy-page-badge">
+        <span class="privacy-pulse-dot" aria-hidden="true"></span>
+        <span data-i18n="privacy_page_badge">Resmi Gizlilik & Güvenlik Bildirimi</span>
+      </div>
+
+      <h1 class="privacy-page-title" data-i18n="privacy_page_main_title">AselCam Gizlilik Politikası</h1>
+
+      <p class="privacy-page-subtitle" data-i18n="privacy_page_main_subtitle">
+        Görüntünüz, sesiniz ve iletişiminiz yalnızca size aittir. Sıfır bulut, sıfır harici sunucu, sıfır telemetri ve %100 yerel kapalı devre mimari.
+      </p>
+
+      <div class="privacy-meta-chips">
+        <span class="privacy-chip">
+          <span data-i18n="privacy_meta_updated_label">Son Güncelleme:</span>
+          <strong data-i18n="privacy_meta_updated_val">19 Ekim 2026</strong>
+        </span>
+        <span class="privacy-chip">
+          <span data-i18n="privacy_meta_version_label">Sürüm:</span>
+          <strong>v1.4.7</strong>
+        </span>
+        <span class="privacy-chip">
+          <span data-i18n="privacy_meta_scope_label">Kapsam:</span>
+          <strong data-i18n="privacy_meta_scope_val">Masaüstü & Mobil (Android & iOS)</strong>
+        </span>
+        <span class="privacy-chip">
+          <span data-i18n="privacy_meta_compliance_label">Uyumluluk:</span>
+          <strong>KVKK, GDPR & Google Play Store</strong>
+        </span>
+      </div>
+    </div>
+
+    <!-- =========================================================================
+         3. 4-PILLAR APPLE SUMMARY CARDS
+         ========================================================================= -->
+    <div class="privacy-pillars-grid">
+      <div class="privacy-pillar-card">
+        <div class="pillar-icon-box" aria-hidden="true">☁️</div>
+        <h3 class="pillar-title" data-i18n="pillar_1_title">Sıfır Bulut Bağımlılığı</h3>
+        <p class="pillar-desc" data-i18n="pillar_1_desc">Görüntü ve ses kareleri asla internete veya harici bir ara sunucuya (relay) iletilmez; doğrudan iki cihaz arasında akar.</p>
+      </div>
+
+      <div class="privacy-pillar-card">
+        <div class="pillar-icon-box" aria-hidden="true">🔒</div>
+        <h3 class="pillar-title" data-i18n="pillar_2_title">Sıfır Telemetri & Analitik</h3>
+        <p class="pillar-desc" data-i18n="pillar_2_desc">Kullanıcı hesabı, kayıt zorunluluğu veya arka planda çalışan izleyici kütüphanesi barındırmaz. Kimliğiniz gizli kalır.</p>
+      </div>
+
+      <div class="privacy-pillar-card">
+        <div class="pillar-icon-box" aria-hidden="true">⚡</div>
+        <h3 class="pillar-title" data-i18n="pillar_3_title">Noktadan Noktaya İletişim</h3>
+        <p class="pillar-desc" data-i18n="pillar_3_desc">Doğrudan fiziksel USB kablosu veya yerel Wi-Fi ağınız üzerinden şifreli veya kapalı devre soket bağlantısı kullanılır.</p>
+      </div>
+
+      <div class="privacy-pillar-card">
+        <div class="pillar-icon-box" aria-hidden="true">🔓</div>
+        <h3 class="pillar-title" data-i18n="pillar_4_title">Açık Kaynak & Şeffaflık</h3>
+        <p class="pillar-desc" data-i18n="pillar_4_desc">AselCam'in ağ soketleri, enkoderleri ve kamera kontrol kodları GitHub üzerinde herkesin bağımsız denetimine açıktır.</p>
+      </div>
+    </div>
+
+    <!-- =========================================================================
+         4. TWO-COLUMN LEGAL DOCUMENT (TOC SIDEBAR + STRUCTURED CONTENT)
+         ========================================================================= -->
+    <div class="privacy-doc-layout">
+      <!-- Sticky Sidebar Table of Contents -->
+      <aside class="privacy-toc-sidebar" aria-label="İçindekiler">
+        <div class="toc-title" data-i18n="toc_heading">İçindekiler</div>
+        <nav>
+          <ul class="toc-links">
+            <li><a href="#section-1" class="toc-link" data-i18n="toc_1">1. Temel İlke ve Sıfır Veri Mimarisi</a></li>
+            <li><a href="#section-2" class="toc-link" data-i18n="toc_2">2. İşlenen Veriler ve Kalıcılık Karşıtlığı</a></li>
+            <li><a href="#section-3" class="toc-link" data-i18n="toc_3">3. Donanım İzinleri ve Kullanım Amaçları</a></li>
+            <li><a href="#section-4" class="toc-link" data-i18n="toc_4">4. İletişim Protokolleri ve Ağ Güvenliği</a></li>
+            <li><a href="#section-5" class="toc-link" data-i18n="toc_5">5. Mobil Uygulamalar ve Google AdMob</a></li>
+            <li><a href="#section-6" class="toc-link" data-i18n="toc_6">6. Üçüncü Taraf Entegrasyonları ve Linkler</a></li>
+            <li><a href="#section-7" class="toc-link" data-i18n="toc_7">7. Çocukların Gizliliği (COPPA & GDPR)</a></li>
+            <li><a href="#section-8" class="toc-link" data-i18n="toc_8">8. Yasal Haklarınız (KVKK & GDPR Kapsamı)</a></li>
+            <li><a href="#section-9" class="toc-link" data-i18n="toc_9">9. Güvenlik Tedbirleri ve Açık Kaynak</a></li>
+            <li><a href="#section-10" class="toc-link" data-i18n="toc_10">10. İletişim ve Politika Güncellemeleri</a></li>
+          </ul>
+        </nav>
+      </aside>
+
+      <!-- Main Structured Legal Content -->
+      <article class="privacy-doc-content">
+        
+        <!-- SECTION 1 -->
+        <section id="section-1" class="privacy-section-block">
+          <div class="privacy-section-num">Bölüm 01</div>
+          <h2 class="privacy-section-heading" data-i18n="sec1_title">Temel İlke ve Sıfır Veri Toplama Mimarisi</h2>
+          <p class="privacy-text" data-i18n="sec1_p1">
+            AselCam (ve geliştiricisi Aselens Software), kullanıcı mahremiyetini bir pazarlama ifadesi olarak değil, yazılımın temel mimari yapı taşı olarak kabul eder. AselCam, modern web kameralarının ve bulut tabanlı video akış çözümlerinin getirdiği gizlilik risklerini ortadan kaldırmak üzere <strong>"sıfır veri toplama" (zero-data-collection)</strong> prensibiyle sıfırdan tasarlanmıştır.
+          </p>
+          <p class="privacy-text" data-i18n="sec1_p2">
+            Yazılımımızın hiçbir bileşeninde; merkezi bir kullanıcı veri tabanı, hesap yönetim sistemi, kimlik doğrulama sunucusu veya harici bulut ara aktarım (relay/turn) servisi bulunmaz. AselCam'i çalıştırmak için adınızı, e-posta adresinizi, telefon numaranızı veya herhangi bir kişisel verinizi girmeniz gerekmez.
+          </p>
+          <div class="privacy-callout emerald">
+            <div class="privacy-callout-title">
+              <span aria-hidden="true">🛡️</span> <span data-i18n="sec1_callout_title">Aselens Software Temel Taahhüdü:</span>
+            </div>
+            <div class="privacy-callout-text" data-i18n="sec1_callout_text">
+              Kameranızdan veya mikrofonunuzdan geçen tek bir görüntü karesi, piksel veya ses dalgası dahi Aselens Software veya herhangi bir harici bulut sunucusuna asla iletilmez, kopyalanmaz veya saklanmaz.
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 2 -->
+        <section id="section-2" class="privacy-section-block">
+          <div class="privacy-section-num">Bölüm 02</div>
+          <h2 class="privacy-section-heading" data-i18n="sec2_title">İşlenen Veri Türleri ve Kalıcılık Karşıtlığı (Zero-Persistence)</h2>
+          <p class="privacy-text" data-i18n="sec2_p1">
+            AselCam, telefonunuzu yüksek kaliteli bir masaüstü web kamerasına dönüştürmek amacıyla yalnızca anlık akışın teknik olarak gerektirdiği donanım sinyallerini işler:
+          </p>
+          <ul class="privacy-list">
+            <li class="privacy-list-item">
+              <strong data-i18n="sec2_item1_title">Görüntü Verisi (Kamera Akışı):</strong>
+              <span data-i18n="sec2_item1_desc">Telefonun optik kamera sensöründen alınan ham kareler (YUV420/NV21 veya CVPixelBuffer), cihazın yerel donanım çipinde (Android MediaCodec veya Apple VideoToolbox) anında H.264 video paketlerine dönüştürülür ve doğrudan bilgisayarınızdaki sokete fırlatılır.</span>
+            </li>
+            <li class="privacy-list-item">
+              <strong data-i18n="sec2_item2_title">Ses Verisi (Mikrofon Akışı):</strong>
+              <span data-i18n="sec2_item2_desc">Telefon mikrofonundan alınan 24 kHz mono/stereo PCM ses örnekleri, gecikmesiz olarak kodlanıp doğrudan masaüstü alıcısına iletilir.</span>
+            </li>
+            <li class="privacy-list-item">
+              <strong data-i18n="sec2_item3_title">Kamera Kontrol Parametreleri:</strong>
+              <span data-i18n="sec2_item3_desc">Renk sıcaklığı (kelvin), parlaklık, kontrast, doygunluk, yakınlaştırma (zoom), otomatik odaklama ve flaş komutları gibi JSON-RPC biçimindeki ayarlar yalnızca iki cihaz arasında anlık olarak uygulanır.</span>
+            </li>
+          </ul>
+          <p class="privacy-text" data-i18n="sec2_p2">
+            <strong>Kalıcılık Karşıtlığı (Zero-Persistence):</strong> Bu verilerin hiçbiri telefonun yerel depolama alanına (hafızasına), SD kartına ya da bilgisayarın sabit diskine kaydedilmez. Veriler yalnızca RAM'deki geçici döngüsel tamponlarda (volatile ring buffers) birkaç milisaniye tutulur ve bilgisayardaki sanal kamera sürücüsüne sunulduğu anda RAM'den kalıcı olarak silinir. Uygulama kapatıldığında geride hiçbir görüntü veya ses izi kalmaz.
+          </p>
+        </section>
+
+        <!-- SECTION 3 -->
+        <section id="section-3" class="privacy-section-block">
+          <div class="privacy-section-num">Bölüm 03</div>
+          <h2 class="privacy-section-heading" data-i18n="sec3_title">Donanım İzinleri ve Kullanım Amaçları</h2>
+          <p class="privacy-text" data-i18n="sec3_p1">
+            AselCam mobil uygulaması (Android ve iOS), yalnızca temel işlevlerini yerine getirebilmek için işletim sisteminden asgari düzeyde donanım izni talep eder:
+          </p>
+
+          <div class="privacy-table-wrapper">
+            <table class="privacy-table">
+              <thead>
+                <tr>
+                  <th data-i18n="th_perm">İzin / API</th>
+                  <th data-i18n="th_platform">Platform</th>
+                  <th data-i18n="th_purpose">Kullanım Amacı</th>
+                  <th data-i18n="th_storage">Kalıcı Depolama?</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>CAMERA</code> / <code>NSCameraUsageDescription</code></td>
+                  <td>Android / iOS</td>
+                  <td data-i18n="perm_camera_desc">Telefonun optik kamerasını açarak masaüstüne canlı video akışı sağlamak.</td>
+                  <td><span class="tag-badge tag-emerald" data-i18n="tag_no_storage">KAYDEDİLMEZ (Sıfır)</span></td>
+                </tr>
+                <tr>
+                  <td><code>RECORD_AUDIO</code> / <code>NSMicrophoneUsageDescription</code></td>
+                  <td>Android / iOS</td>
+                  <td data-i18n="perm_mic_desc">Kablosuz stüdyo mikrofonu işlevi için mikrofon girişini bilgisayara iletmek.</td>
+                  <td><span class="tag-badge tag-emerald" data-i18n="tag_no_storage">KAYDEDİLMEZ (Sıfır)</span></td>
+                </tr>
+                <tr>
+                  <td><code>FOREGROUND_SERVICE</code></td>
+                  <td>Android</td>
+                  <td data-i18n="perm_fg_desc">Uygulama arka plana alındığında veya ekran karartıldığında canlı yayının kesilmesini önlemek.</td>
+                  <td><span class="tag-badge tag-blue" data-i18n="tag_service_only">YALNIZCA SERVİS</span></td>
+                </tr>
+                <tr>
+                  <td><code>ACCESS_WIFI_STATE</code> / <code>INTERNET</code></td>
+                  <td>Android / iOS</td>
+                  <td data-i18n="perm_net_desc">Yerel ağdaki (Wi-Fi) masaüstü AselCam istemcisini bulmak ve soket dinleyicisi açmak.</td>
+                  <td><span class="tag-badge tag-emerald" data-i18n="tag_no_storage">KAYDEDİLMEZ (Sıfır)</span></td>
+                </tr>
+                <tr>
+                  <td><code>WAKE_LOCK</code> / <code>FLASHLIGHT</code></td>
+                  <td>Android</td>
+                  <td data-i18n="perm_wake_desc">Yayın sırasında cihazın uykuya geçmesini engellemek ve stüdyo aydınlatması için flaşı açmak.</td>
+                  <td><span class="tag-badge tag-blue" data-i18n="tag_runtime">ÇALIŞMA ZAMANI</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="privacy-text" data-i18n="sec3_p2">
+            AselCam; Konum (GPS), Rehber (Kişiler), SMS, Depolama (Fotoğraf galerisi/dosyalar) veya Biyometrik kimlik doğrulama gibi web kamerası işleviyle ilgisi olmayan hiçbir izni talep etmez ve bunlara asla erişmez.
+          </p>
+        </section>
+
+        <!-- SECTION 4 -->
+        <section id="section-4" class="privacy-section-block">
+          <div class="privacy-section-num">Bölüm 04</div>
+          <h2 class="privacy-section-heading" data-i18n="sec4_title">İletişim Protokolleri ve Ağ Güvenliği</h2>
+          <p class="privacy-text" data-i18n="sec4_p1">
+            AselCam istemcisi (bilgisayar) ile vericisi (telefon) arasındaki veri aktarımı iki alternatif fiziksel kanal üzerinden gerçekleştirilir:
+          </p>
+          <ul class="privacy-list">
+            <li class="privacy-list-item">
+              <strong data-i18n="sec4_item1_title">Doğrudan USB Kablosu Bağlantısı (Önerilen):</strong>
+              <span data-i18n="sec4_item1_desc">Android'de ADB (Android Debug Bridge) port tünelleme, iOS'ta usbmuxd yerel soket köprüsü kullanılır. Veri akışı hiçbir ağ kartından geçmez; doğrudan anakart USB 3.0/3.2 veri yolu üzerinden aktarılır. Bu yöntem, harici ağlardan ve dinleme girişimlerinden %100 fiziksel olarak yalıtılmıştır.</span>
+            </li>
+            <li class="privacy-list-item">
+              <strong data-i18n="sec4_item2_title">Yerel Ağ (Wi-Fi LAN) Bağlantısı:</strong>
+              <span data-i18n="sec4_item2_desc">Telefonunuz yerel ağınızda (örneğin 192.168.1.X) TCP 4747 (video/ses akışı) ve TCP 4748 (kamera kontrol JSON-RPC) bağlantı noktalarını dinler. Bu paketler yerel yönlendiricinizin (router) dışına çıkmaz ve internet çıkışı (WAN) kullanmaz.</span>
+            </li>
+          </ul>
+          <div class="privacy-callout">
+            <div class="privacy-callout-title">
+              <span aria-hidden="true">💡</span> <span data-i18n="sec4_callout_title">Güvenlik Önerisi:</span>
+            </div>
+            <div class="privacy-callout-text" data-i18n="sec4_callout_text">
+              Ortak ya da halka açık (otel, kafe vb.) Wi-Fi ağlarında bulunurken, yabancı cihazların yerel portlara erişimini engellemek için doğrudan USB kablosu modunu tercih etmeniz önerilir.
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 5 -->
+        <section id="section-5" class="privacy-section-block">
+          <div class="privacy-section-num">Bölüm 05</div>
+          <h2 class="privacy-section-heading" data-i18n="sec5_title">Mobil Uygulamalar ve Reklam Politikası (Google AdMob SDK Bildirimi)</h2>
+          <p class="privacy-text" data-i18n="sec5_p1">
+            AselCam açık kaynaklı ve ücretsiz bir projedir. Mobil uygulamaların (Android ve iOS) geliştirme, bakım, lisanslama ve altyapı sürdürülebilirliğini sağlamak adına mobil uygulamalarımızda <strong>Google AdMob SDK</strong> kullanılmaktadır.
+          </p>
+          <p class="privacy-text" data-i18n="sec5_p2">
+            Google AdMob entegrasyonumuz aşağıdaki şeffaf kurallar çerçevesinde çalışır:
+          </p>
+          <ul class="privacy-list">
+            <li class="privacy-list-item">
+              <strong data-i18n="sec5_item1_title">Banner Reklamlar:</strong>
+              <span data-i18n="sec5_item1_desc">Uygulama ana ekranının alt kısmında yer alan standart reklam bandıdır. Yayın deneyiminizi veya kamera kontrollerinizi engellemez.</span>
+            </li>
+            <li class="privacy-list-item">
+              <strong data-i18n="sec5_item2_title">Geçiş Reklamları (Interstitial):</strong>
+              <span data-i18n="sec5_item2_desc">Kullanıcı "Yayını Başlat" düğmesine dokunduğunda gösterilen tam ekran geçiş reklamıdır. Canlı yayın devam ederken asla beklenmedik bir reklam penceresi açılmaz.</span>
+            </li>
+            <li class="privacy-list-item">
+              <strong data-i18n="sec5_item3_title">Google Tarafından İşlenen Reklam Verileri:</strong>
+              <span data-i18n="sec5_item3_desc">Google AdMob, reklam sunumu, sahtekarlık tespiti ve raporlama amacıyla cihazınızın Reklam Kimliğini (Android Reklam Kimliği - GAID veya iOS IDFA), IP adresini ve genel cihaz model bilgilerini işleyebilir. Bu veriler Aselens Software sunucularına aktarılmaz; doğrudan Google gizlilik altyapısı kapsamında yönetilir.</span>
+            </li>
+          </ul>
+          <p class="privacy-text" data-i18n="sec5_p3">
+            Kullanıcılar cihazlarının Ayarlar menüsünden (Android: <em>Ayarlar ➔ Google ➔ Reklamlar</em>; iOS: <em>Ayarlar ➔ Gizlilik ve Güvenlik ➔ Takip</em>) kişiselleştirilmiş reklamları diledikleri zaman sınırlayabilir veya reklam kimliklerini sıfırlayabilirler. Google'ın veri işleme politikaları hakkında daha fazla bilgiye <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" style="color: var(--apple-blue);">Google Gizlilik ve Şartlar</a> sayfasından ulaşabilirsiniz.
+          </p>
+        </section>
+
+        <!-- SECTION 6 -->
+        <section id="section-6" class="privacy-section-block">
+          <div class="privacy-section-num">Bölüm 06</div>
+          <h2 class="privacy-section-heading" data-i18n="sec6_title">Üçüncü Taraf Entegrasyonları ve Harici Bağlantılar</h2>
+          <p class="privacy-text" data-i18n="sec6_p1">
+            AselCam web sitesi ve masaüstü yazılımı üçüncü taraf izleyiciler, çerezler veya web işaretçileri (beacons) içermez. Sitemizde ve uygulamamızda yalnızca aşağıdaki güvenli ve şeffaf harici bağlantılar yer alır:
+          </p>
+          <ul class="privacy-list">
+            <li class="privacy-list-item">
+              <strong data-i18n="sec6_item1_title">GitHub Sürümleri (Releases):</strong>
+              <span data-i18n="sec6_item1_desc">İndirme bağlantıları doğrudan GitHub altyapısında barındırılan resmi derleme paketlerine yönlendirir. İndirme trafiği GitHub gizlilik politikasına tabidir.</span>
+            </li>
+            <li class="privacy-list-item">
+              <strong data-i18n="sec6_item2_title">Buy Me a Coffee:</strong>
+              <span data-i18n="sec6_item2_desc">Projeye gönüllü bağış yapmak isteyen kullanıcılar için harici Buy Me a Coffee bağlantısı sunulmuştur. Bu butona tıklandığında üçüncü taraf ödeme sağlayıcısının gizlilik şartları geçerli olur.</span>
+            </li>
+          </ul>
+        </section>
+
+        <!-- SECTION 7 -->
+        <section id="section-7" class="privacy-section-block">
+          <div class="privacy-section-num">Bölüm 07</div>
+          <h2 class="privacy-section-heading" data-i18n="sec7_title">Çocukların Gizliliği (COPPA ve GDPR Uyumluluğu)</h2>
+          <p class="privacy-text" data-i18n="sec7_p1">
+            AselCam, genel kitleye yönelik bir kamera aracıdır ve 13 yaşın (veya Avrupa Birliği ülkelerinde 16 yaşın) altındaki çocuklardan bilerek herhangi bir kişisel veri toplamaz. Uygulamamız hesap kaydı barındırmadığı ve sunucu tabanlı veri toplamadığı için çocuklara ait herhangi bir veriyi saklama ihtimali bulunmamaktadır.
+          </p>
+          <p class="privacy-text" data-i18n="sec7_p2">
+            Bir ebeveyn veya yasal vasi olarak çocuğunuzun üçüncü taraf reklam ağları aracılığıyla veri paylaştığını düşünüyorsanız, lütfen bizimle derhal iletişime geçin.
+          </p>
+        </section>
+
+        <!-- SECTION 8 -->
+        <section id="section-8" class="privacy-section-block">
+          <div class="privacy-section-num">Bölüm 08</div>
+          <h2 class="privacy-section-heading" data-i18n="sec8_title">Yasal Haklarınız (KVKK ve GDPR Kapsamı)</h2>
+          <p class="privacy-text" data-i18n="sec8_p1">
+            Türkiye Cumhuriyeti 6698 sayılı <strong>Kişisel Verilerin Korunması Kanunu (KVKK)</strong> ve Avrupa Birliği <strong>Genel Veri Koruma Tüzüğü (GDPR)</strong> kapsamında tüm kullanıcılarımızın temel haklarına tam saygı gösteriyoruz:
+          </p>
+          <ul class="privacy-list">
+            <li class="privacy-list-item"><strong data-i18n="sec8_item1">Bilgi Edinme ve Erişim Hakkı:</strong> AselCam sunucularında adınıza tutulan bir veri kaydı bulunmamaktadır.</li>
+            <li class="privacy-list-item"><strong data-i18n="sec8_item2">Düzeltme ve Silme (Unutulma) Hakkı:</strong> Sunucularımızda hiçbir veriniz depolanmadığı için silinecek veya düzeltilecek merkezi bir veri tabanı kaydı dahi yoktur.</li>
+            <li class="privacy-list-item"><strong data-i18n="sec8_item3">Veri Taşınabilirliği:</strong> Yazılımı cihazınızdan sildiğinizde, cihazınızdaki tüm yerel ayarlar ve izinler derhal sonlandırılır.</li>
+          </ul>
+        </section>
+
+        <!-- SECTION 9 -->
+        <section id="section-9" class="privacy-section-block">
+          <div class="privacy-section-num">Bölüm 09</div>
+          <h2 class="privacy-section-heading" data-i18n="sec9_title">Güvenlik Tedbirleri ve Açık Kaynak Denetimi</h2>
+          <p class="privacy-text" data-i18n="sec9_p1">
+            Güvenliğin en büyük teminatı gizlilik değil, şeffaflıktır. AselCam projesinin masaüstü istemcisi (Python, Qt, OpenCV, v4l2loopback/DirectShow/CoreMedia köprüsü) ve mobil uygulamalarının kaynak kodları kamuya açık olarak GitHub üzerinde yayınlanmaktadır.
+          </p>
+          <p class="privacy-text" data-i18n="sec9_p2">
+            Güvenlik uzmanları, bağımsız araştırmacılar ve kullanıcılar; ağ soketlerini, port dinleyicilerini, enkoder mantığını ve bellek yönetimini diledikleri zaman kaynak kod seviyesinde inceleyebilir, kendi ikili dosyalarını derleyebilir ve ağ paketlerini Wireshark benzeri analiz araçlarıyla bağımsız olarak doğrulayabilir.
+          </p>
+        </section>
+
+        <!-- SECTION 10 -->
+        <section id="section-10" class="privacy-section-block">
+          <div class="privacy-section-num">Bölüm 10</div>
+          <h2 class="privacy-section-heading" data-i18n="sec10_title">İletişim, Destek ve Politika Güncellemeleri</h2>
+          <p class="privacy-text" data-i18n="sec10_p1">
+            Aselens Software, işletim sistemi gereksinimleri veya yasal mevzuatlardaki değişiklikler doğrultusunda bu Gizlilik Politikasını zaman zaman güncelleyebilir. Güncellemeler bu sayfada yürürlük tarihiyle birlikte yayınlanacaktır.
+          </p>
+          <p class="privacy-text" data-i18n="sec10_p2">
+            Bu politika veya gizlilik uygulamalarımız hakkında sorularınız, önerileriniz veya bildirimleriniz için bize dilediğiniz zaman ulaşabilirsiniz:
+          </p>
+          <ul class="privacy-list">
+            <li class="privacy-list-item"><strong>Geliştirici:</strong> Aselens Software</li>
+            <li class="privacy-list-item"><strong>Web Sitesi:</strong> <a href="https://aselens.com" target="_blank" rel="noopener noreferrer" style="color: var(--apple-blue);">https://aselens.com ↗</a></li>
+            <li class="privacy-list-item"><strong>GitHub Deposu:</strong> <a href="https://github.com/aselens-software/aselcam" target="_blank" rel="noopener noreferrer" style="color: var(--apple-blue);">aselens-software/aselcam ↗</a></li>
+            <li class="privacy-list-item"><strong>Sorun & Hata Bildirimi:</strong> <a href="https://github.com/aselens-software/aselcam/issues" target="_blank" rel="noopener noreferrer" style="color: var(--apple-blue);">GitHub Issues ↗</a></li>
+          </ul>
+
+          <div class="privacy-bottom-actions">
+            <a href="index.html" class="btn-back-home">
+              <span aria-hidden="true">←</span> <span data-i18n="btn_back_home">AselCam Ana Sayfasına Dön</span>
+            </a>
+            <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+              <a href="index.html#downloads" class="btn btn-primary" data-i18n="nav_downloads">İndir</a>
+              <button type="button" class="btn btn-secondary" onclick="window.scrollTo({top: 0, behavior: 'smooth'});" data-i18n="btn_scroll_top">Başa Dön ↑</button>
+            </div>
+          </div>
+        </section>
+
+      </article>
+    </div>
+  </main>
+
+  <!-- =========================================================================
+       5. FOOTER
+       ========================================================================= -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-columns-grid">
+        <!-- Col 1: Brand & Identity -->
+        <div class="footer-brand-col">
+          <div class="footer-logo-row">
+            <img src="assets/aselcam_logo_horz.png" alt="AselCam" class="footer-logo-img">
+          </div>
+          <p class="footer-brand-desc" data-i18n="footer_brand_desc">Telefonunuzun optik donanımını sıfır gecikmeli profesyonel stüdyo kamerasına dönüştüren yeni nesil açık kaynaklı masaüstü video köprüsü.</p>
+          <div class="footer-version-tag">
+            <span class="version-dot"></span>
+            <span data-i18n="footer_release_tag">v1.4.7 Yayında • Sıfır Bulut</span>
+          </div>
+        </div>
+
+        <!-- Col 2: Product & Features -->
+        <div>
+          <h4 class="footer-column-title" data-i18n="footer_col_product">Ürün</h4>
+          <ul class="footer-links-list">
+            <li class="footer-link-item"><a href="index.html#overview" data-i18n="nav_overview">Genel Bakış</a></li>
+            <li class="footer-link-item"><a href="index.html#studio" data-i18n="nav_studio">Stüdyo Vizörü</a></li>
+            <li class="footer-link-item"><a href="index.html#compare" data-i18n="nav_compare">Karşılaştırma</a></li>
+            <li class="footer-link-item"><a href="index.html#specs" data-i18n="nav_specs">Teknik Özellikler</a></li>
+            <li class="footer-link-item"><a href="index.html#downloads" data-i18n="nav_downloads">İndirme Seçenekleri</a></li>
+          </ul>
+        </div>
+
+        <!-- Col 3: Platforms & Open Source -->
+        <div>
+          <h4 class="footer-column-title" data-i18n="footer_col_community">Açık Kaynak</h4>
+          <ul class="footer-links-list">
+            <li class="footer-link-item"><a href="https://github.com/aselens-software/aselcam" target="_blank" rel="noopener noreferrer">GitHub Deposu ↗</a></li>
+            <li class="footer-link-item"><a href="https://github.com/aselens-software/aselcam/releases" target="_blank" rel="noopener noreferrer" data-i18n="footer_releases">Sürüm Notları (v1.4.7)</a></li>
+            <li class="footer-link-item"><a href="https://github.com/aselens-software/aselcam/issues" target="_blank" rel="noopener noreferrer" data-i18n="footer_issues">Sorun Bildir (Issues)</a></li>
+            <li class="footer-link-item"><a href="https://github.com/aselens-software/aselcam/blob/main/LICENSE" target="_blank" rel="noopener noreferrer" data-i18n="footer_license">MIT Lisansı</a></li>
+            <li class="footer-link-item"><a href="https://www.buymeacoffee.com/aselens" target="_blank" rel="noopener noreferrer" style="color: #FFDD00; font-weight: 500;">Buy Me a Coffee ☕</a></li>
+          </ul>
+        </div>
+
+        <!-- Col 4: Corporate & Legal -->
+        <div>
+          <h4 class="footer-column-title" data-i18n="footer_col_legal">Kurumsal & Yasal</h4>
+          <ul class="footer-links-list">
+            <li class="footer-link-item">
+              <a href="privacy.html" style="color: var(--apple-blue); font-weight: 600;" data-i18n="footer_privacy_link">Gizlilik Politikası (Ayrı Sayfa)</a>
+            </li>
+            <li class="footer-link-item">
+              <a href="https://aselens.com" target="_blank" rel="noopener noreferrer">Aselens Software ↗</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom-row">
+        <div>
+          <a href="https://aselens.com" target="_blank" rel="noopener noreferrer" class="footer-developed-link">
+            <span data-i18n="footer_developed">Aselens Software tarafından geliştirildi</span>
+            <span aria-hidden="true">↗</span>
+          </a>
+        </div>
+
+        <p class="footer-meta" data-i18n="footer_rights">Tüm hakları saklıdır. Açık kaynak MIT lisansı ile sunulmaktadır.</p>
+        <p class="footer-privacy-note" data-i18n="footer_privacy_banner">Gizlilik Bildirimi: Hiçbir kullanıcı verisi toplanmaz, sunucu kullanılmaz, iletişim tamamen yerel ağınızda gerçekleşir.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/i18n.js"></script>
+  <script src="js/privacy.js"></script>
+</body>
+</html>
