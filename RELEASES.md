@@ -8,8 +8,8 @@ All release packages are pre-built, tested, and ready to share or deploy across 
 
 | Platform | Target OS | File Name | Size | SHA256 Checksum |
 | :--- | :--- | :--- | :--- | :--- |
-| **🪟 Windows** | Windows 10 / 11 (64-bit) | [`AselCam-v1.4.7-Windows-x64.zip`](releases/windows/AselCam-v1.4.7-Windows-x64.zip) | **98 MB** | `a16db7883cc61cbf3f37f92dde01eeb6929866735d85ad346fb05747b56cc088` |
-| **🍎 macOS** | macOS 11+ (Intel & Apple Silicon) | [`AselCam-v1.4.7-macOS.zip`](releases/macos/AselCam-v1.4.7-macOS.zip) | **1.4 MB** | `632238b51407640171ccdc2a32e5f68331ebefab243594b3c953251302ecfbba` |
+| **🪟 Windows** | Windows 10 / 11 (64-bit) | [`AselCam-v1.4.7-Windows-x64.zip`](releases/windows/AselCam-v1.4.7-Windows-x64.zip) | **95 MB** | `c891e1b79bc6644eb79dc63b6f8369ad7c272a1b1853fc2888c2bf2223752931` |
+| **🍎 macOS** | macOS 11+ (Intel & Apple Silicon) | [`AselCam-v1.4.7-macOS.zip`](releases/macos/AselCam-v1.4.7-macOS.zip) | **1.6 MB** | `db960b4b5c5d438ab79815c06de5728a681a5f88c6edda42666cbbb32883d223` |
 | **📱 iOS** | iOS 15.0+ (Sideload / AltStore) | [`AselCam-v1.4.7-iOS.ipa`](releases/ios/AselCam-v1.4.7-iOS.ipa) | **263 KB** | `ce681243acc9770b9c6b547df63dd1d058ba4e95144f7b9904b4a3fa741dc0ea` |
 | **🛠️ iOS** | iOS 15.0+ (Xcode Source Project) | [`AselCam-v1.4.7-iOS-Xcode.zip`](releases/ios/AselCam-v1.4.7-iOS-Xcode.zip) | **283 KB** | `5170f940e88db289d7873fd9ca73c6f52cb50e6cea4ca3631450cb9894103eb2` |
 | **🤖 Android** | Android 8.0 to 15+ | [`AselCam-v1.4.7-Android.apk`](releases/android/AselCam-v1.4.7-Android.apk) | **13 MB** | `eb566cf0c9b231ea8ca67ceee27f9e54309eacd1482a18f4081dfe50da1bbc6b` |
@@ -56,8 +56,8 @@ All release packages are pre-built, tested, and ready to share or deploy across 
 ### ⚡ Core Architecture, Concurrency & Hardware
 - **Zero-Latency Video Pipeline**: MediaCodec (Android) & VideoToolbox (iOS) hardware encoders paired with FFmpeg 9.0.2 hardware-accelerated decoding.
 - **Concurrency Deadlock Fix**: Resolved frame freezing when simultaneous control commands were dispatched concurrently from PC and mobile.
-- **PipeWire & PulseAudio Virtual Mic**: Automatic creation of `module-null-sink` and `module-remap-source` virtual microphone devices with 24 kHz linear PCM pass-through.
 - **V4L2 Loopback Feeder**: Continuous background feed keeping `/dev/video10` ready for instant consumption by Discord, Zoom, OBS, and Google Meet.
+- **Direct Virtual Camera & Audio (Windows & macOS)**: Fully direct, standalone virtual camera and microphone creation without needing OBS Studio or third-party apps. On Windows, DirectShow virtual camera filters and signed Virtual Audio Drivers are automatically registered on startup. On macOS, CoreMediaIO DAL virtual camera plugin and BlackHole CoreAudio drivers are automatically initialized upon launching AselCam.
 
 ---
 

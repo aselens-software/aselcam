@@ -35,7 +35,16 @@ if [ ! -d "$VENV_DIR" ]; then
     "$VENV_DIR/bin/pip" install -q -r "$RES_DIR/requirements.txt"
 fi
 
-# 3. Launch AselCam Studio
+# 3. Automatically configure Direct Virtual Camera Driver in user DAL
+USER_DAL="$HOME/Library/CoreMediaIO/Plug-Ins/DAL"
+DRIVER_SOURCE="$RES_DIR/aselcam/drivers/macos/obs-mac-virtualcam.plugin"
+if [ -d "$DRIVER_SOURCE" ] && [ ! -d "$USER_DAL/obs-mac-virtualcam.plugin" ]; then
+    mkdir -p "$USER_DAL"
+    cp -R "$DRIVER_SOURCE" "$USER_DAL/" 2>/dev/null || true
+    xattr -cr "$USER_DAL/obs-mac-virtualcam.plugin" 2>/dev/null || true
+fi
+
+# 4. Launch AselCam Studio
 export PYTHONPATH="$RES_DIR:$PYTHONPATH"
 cd "$RES_DIR"
 exec "$VENV_DIR/bin/python3" -m aselcam.main "$@"

@@ -111,23 +111,23 @@ document.addEventListener("DOMContentLoaded", () => {
       return {
         name: "macOS",
         type: "desktop",
-        file: "https://github.com/aselens-software/aselcam/releases/download/v1.4.7/AselCam-v1.4.7-macOS.zip",
-        sub: "Apple Silicon & Intel • 1.4 MB",
+        file: "/releases/macos/AselCam-v1.4.7-macOS.zip?v=1.4.7.1",
+        sub: "Apple Silicon & Intel • 1.6 MB",
         icon: "🍎"
       };
     } else if (/Windows/i.test(ua)) {
       return {
         name: "Windows",
         type: "desktop",
-        file: "https://github.com/aselens-software/aselcam/releases/download/v1.4.7/AselCam-v1.4.7-Windows-x64.zip",
-        sub: "Windows 10 / 11 (64-bit) • 98 MB",
+        file: "/releases/windows/AselCam-v1.4.7-Windows-x64.zip?v=1.4.7.1",
+        sub: "Windows 10 / 11 (64-bit) • 95 MB",
         icon: "🪟"
       };
     } else if (/Android/i.test(ua)) {
       return {
         name: "Android",
         type: "mobile",
-        file: "https://github.com/aselens-software/aselcam/releases/download/v1.4.7/AselCam-v1.4.7-Android.apk",
+        file: "/releases/android/AselCam-v1.4.7-Android.apk?v=1.4.7.1",
         sub: "Android 8.0 — 15+ • 13 MB",
         icon: "🤖"
       };
@@ -135,7 +135,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return {
         name: "iOS",
         type: "mobile",
-        file: "https://github.com/aselens-software/aselcam/releases/download/v1.4.7/AselCam-v1.4.7-iOS.ipa",
+        file: "/releases/ios/AselCam-v1.4.7-iOS.ipa?v=1.4.7.1",
         sub: "iOS 15.0+ Sideload • 263 KB",
         icon: "📱"
       };

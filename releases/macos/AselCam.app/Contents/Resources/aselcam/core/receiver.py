@@ -1,3 +1,5 @@
+import os
+import sys
 import socket
 import struct
 import subprocess
@@ -26,6 +28,42 @@ TYPE_CODEC_CONFIG = 0x04
 
 HEADER_FORMAT = ">4sB B Q I" # magic(4), type(1), flags(1), timestamp(8), length(4)
 HEADER_SIZE = 18
+
+def find_ffmpeg_binary() -> str:
+    """Locates the FFmpeg binary across packaged and development environments."""
+    exe_dir = os.path.dirname(sys.executable)
+    src_dir = os.path.dirname(os.path.abspath(__file__))
+    candidates = [
+        os.path.join(exe_dir, "ffmpeg.exe"),
+        os.path.join(exe_dir, "_internal", "ffmpeg.exe"),
+        os.path.join(exe_dir, "_internal", "aselcam", "bin", "ffmpeg.exe"),
+        os.path.join(exe_dir, "bin", "ffmpeg.exe"),
+        os.path.join(src_dir, "..", "bin", "ffmpeg.exe"),
+        os.path.join(src_dir, "bin", "ffmpeg.exe"),
+        os.path.join(exe_dir, "ffmpeg"),
+        os.path.join(exe_dir, "_internal", "ffmpeg"),
+        os.path.join(src_dir, "..", "bin", "ffmpeg"),
+    ]
+
+    for c in candidates:
+        if os.path.isfile(c):
+            return os.path.abspath(c)
+
+    try:
+        import imageio_ffmpeg
+        exe = imageio_ffmpeg.get_ffmpeg_exe()
+        if exe and os.path.isfile(exe):
+            return exe
+    except Exception:
+        pass
+
+    import shutil
+    sys_path = shutil.which("ffmpeg")
+    if sys_path:
+        return sys_path
+
+    return "ffmpeg"
+
 
 class StreamReceiver:
     def __init__(
@@ -109,8 +147,9 @@ class StreamReceiver:
             self.current_height = height
             self.current_codec = codec.lower()
             input_format = "hevc" if self.current_codec in ("h265", "hevc") else "h264"
+            ffmpeg_bin = find_ffmpeg_binary()
             cmd = [
-                "ffmpeg",
+                ffmpeg_bin,
                 "-v", "warning",
                 "-flags", "low_delay",
                 "-probesize", "32768",
@@ -122,15 +161,20 @@ class StreamReceiver:
                 "-pix_fmt", "rgb24",
                 "pipe:1"
             ]
+            creationflags = 0
+            if sys.platform.startswith("win"):
+                creationflags = getattr(subprocess, "CREATE_NO_WINDOW", 0x08000000)
             try:
                 proc = subprocess.Popen(
                     cmd,
                     stdin=subprocess.PIPE,
                     stdout=subprocess.PIPE,
                     stderr=subprocess.DEVNULL,
-                    bufsize=0
+                    bufsize=0,
+                    creationflags=creationflags
                 )
                 self._ffmpeg_proc = proc
+                print(f"[Receiver] FFmpeg decoder başlatıldı: {ffmpeg_bin} ({input_format} -> {width}x{height} RGB24)")
                 if self._last_codec_config and proc.stdin:
                     try:
                         proc.stdin.write(self._last_codec_config)

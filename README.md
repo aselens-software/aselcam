@@ -52,8 +52,8 @@ Whether connecting over high-speed USB (ADB / Lightning / USB-C) or local Wi-Fi,
 - **⚡ Sub-10ms Glass-to-Glass Latency**: Zero-copy pipeline with hardware-accelerated encoding (`MediaCodec` on Android, `VideoToolbox` on iOS) and FFmpeg / hardware-accelerated decoding.
 - **🖥️ True Cross-Platform Desktop**:
   - **Linux**: Kernel-level V4L2 loopback (`/dev/video10`) + PipeWire / PulseAudio virtual microphone sink (`module-null-sink` & `module-remap-source`).
-  - **Windows**: DirectShow & OBS Virtual Camera integration via `pyvirtualcam`.
-  - **macOS**: CoreMedia virtual camera backend.
+  - **Windows**: Native DirectShow Virtual Camera & Signed Virtual Audio drivers with automatic self-installation (no third-party apps needed).
+  - **macOS**: Native CoreMediaIO DAL Virtual Camera & CoreAudio Virtual Microphone with automatic user-space self-installation.
 - **📱 Native Mobile Clients**:
   - **Android**: Modern Kotlin 2.0 app with Camera2 / CameraX NDK, hardware encoder, and foreground streaming service.
   - **iOS**: Pure Swift / SwiftUI app with AVFoundation, VideoToolbox, and ReplayKit screen capture.
@@ -112,8 +112,8 @@ Whether connecting over high-speed USB (ADB / Lightning / USB-C) or local Wi-Fi,
 | OS | Virtual Video Output | Virtual Audio Sink | Connection Modes | Hardware Acceleration |
 | :--- | :--- | :--- | :--- | :--- |
 | **Linux** (Ubuntu, Arch, Fedora, Debian) | Native V4L2 Loopback (`/dev/video10`) | PipeWire & PulseAudio Null-Sink | USB (ADB) & Wi-Fi | VA-API / VDPAU / CUDA |
-| **Windows** (10, 11) | DirectShow / OBS Virtual Cam | Virtual Audio Cable / Direct | USB (ADB) & Wi-Fi | NVDEC / D3D11VA / QSV |
-| **macOS** (12+ Monterey, Ventura, Sonoma) | CoreMedia Virtual Camera | BlackHole / Loopback | USB & Wi-Fi | VideoToolbox / Metal |
+| **Windows** (10, 11) | Direct DirectShow Virtual Camera | Direct Virtual Audio Driver (PnPUtil) | USB (ADB) & Wi-Fi | NVDEC / D3D11VA / QSV |
+| **macOS** (12+ Monterey, Ventura, Sonoma, Sequoia) | Direct CoreMediaIO DAL Plugin | Direct CoreAudio Virtual Mic | USB & Wi-Fi | VideoToolbox / Metal |
 | **Android** (8.0+ Oreo to 15+) | N/A (Sender) | Built-in Mic / Headset | USB & Wi-Fi | MediaCodec (H.264 / HEVC) |
 | **iOS** (15.0+ iPhone & iPad) | N/A (Sender) | Built-in Mic / Headset | USB & Wi-Fi | VideoToolbox (H.264) |
 

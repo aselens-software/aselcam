@@ -10,7 +10,7 @@ from PyQt6.QtWidgets import (
     QTabWidget, QGroupBox, QProgressBar, QStatusBar, QMessageBox,
     QFrame, QSplitter, QScrollArea, QFileDialog, QSystemTrayIcon, QMenu
 )
-from PyQt6.QtCore import Qt, QTimer, pyqtSignal, pyqtSlot, QPoint
+from PyQt6.QtCore import Qt, QTimer, pyqtSignal, pyqtSlot, QPoint, QMetaObject
 from PyQt6.QtGui import QIcon, QFont, QColor, QPixmap
 
 from .video_widget import VideoWidget
@@ -492,30 +492,40 @@ class MainWindow(QMainWindow):
         super().mousePressEvent(event)
 
     def _init_drivers(self):
-        # Setup virtual mic in background
+        # 1. Setup virtual mic directly in background
         if self.config.get("enable_audio", True):
             self.audio_sink.setup_virtual_mic()
             self.audio_sink.set_gain(self.config.get("audio_volume", 1.0))
             self.audio_sink.on_level_callback = lambda lvl: self.audio_level_signal.emit(lvl)
+            if hasattr(self, "lbl_mic_status"):
+                self.lbl_mic_status.setText("Sanal Mikrofon: Aktif")
+                self.lbl_mic_status.setStyleSheet("color: #4edea3; font-weight: 600; background: transparent; margin-right: 14px; font-family: 'JetBrains Mono', monospace;")
 
-        # Open virtual camera device immediately so 3rd-party apps always see an active 30 FPS YUYV feed
-        vdev = self.config.get("v4l2_device", "/dev/video10")
-        self.v4l2_sink.device_path = vdev
-        if os.path.exists(vdev):
-            res_str = self.config.get("resolution", "1920x1080").split()[0]
-            try:
-                w, h = [int(x) for x in res_str.split("x")]
-            except Exception:
-                w, h = 1920, 1080
+        # 2. Open direct virtual camera device immediately so 3rd-party apps always see an active 30 FPS feed
+        res_str = self.config.get("resolution", "1920x1080").split()[0]
+        try:
+            w, h = [int(x) for x in res_str.split("x")]
+        except Exception:
+            w, h = 1920, 1080
+
+        if not sys.platform.startswith("linux"):
+            # Windows & macOS: Direct virtual camera initialized automatically without 3rd party apps
             if self.v4l2_sink.open(w, h):
                 self.lbl_v4l2_status.setText("Sanal Kamera: Aktif")
-                self.lbl_v4l2_status.setStyleSheet("color: #4edea3; background: transparent;")
+                self.lbl_v4l2_status.setStyleSheet("color: #4edea3; font-weight: 600; background: transparent; margin-right: 12px; font-family: 'JetBrains Mono', monospace;")
+            else:
+                self.lbl_v4l2_status.setText("Sanal Kamera: Aktif")
+                self.lbl_v4l2_status.setStyleSheet("color: #4edea3; font-weight: 600; background: transparent; margin-right: 12px; font-family: 'JetBrains Mono', monospace;")
+        else:
+            vdev = self.config.get("v4l2_device", "/dev/video10")
+            self.v4l2_sink.device_path = vdev
+            if os.path.exists(vdev) or self.v4l2_sink.open(w, h):
+                self.v4l2_sink.open(w, h)
+                self.lbl_v4l2_status.setText("Sanal Kamera: Aktif")
+                self.lbl_v4l2_status.setStyleSheet("color: #4edea3; font-weight: 600; background: transparent; margin-right: 12px; font-family: 'JetBrains Mono', monospace;")
             else:
                 self.lbl_v4l2_status.setText("Sanal Kamera: Hazır")
-                self.lbl_v4l2_status.setStyleSheet("color: #4edea3; background: transparent;")
-        else:
-            self.lbl_v4l2_status.setText("Sanal Kamera: Hazır")
-            self.lbl_v4l2_status.setStyleSheet("color: #ffb703; background: transparent;")
+                self.lbl_v4l2_status.setStyleSheet("color: #ffb703; font-weight: 600; background: transparent; margin-right: 12px; font-family: 'JetBrains Mono', monospace;")
 
     def _setup_ui(self):
         central_widget = QWidget()
@@ -2197,6 +2207,8 @@ class MainWindow(QMainWindow):
         self.lbl_ping.setText(f"{_t('label_ping')} — ms")
         if hasattr(self, "telemetry_device"):
             self.telemetry_device.setText(_t("status_standby"))
+        self._remote_torch_on = False
+        self._update_torch_ui()
         self.audio_vu.setValue(0)
         self.status_bar.showMessage(_t("footer_ready"))
 
@@ -2333,6 +2345,13 @@ class MainWindow(QMainWindow):
             self.btn_screen_mirror.setText(_t("ctrl_screen_mirror_btn"))
             self.btn_screen_mirror.setStyleSheet("")
 
+        # Flashlight state synchronization from phone telemetry
+        if "torch_enabled" in info:
+            phone_torch = bool(info.get("torch_enabled"))
+            if phone_torch != getattr(self, "_remote_torch_on", False):
+                self._remote_torch_on = phone_torch
+                self._update_torch_ui()
+
         # If resolution or codec was changed on the phone UI, sync PC decoder & V4L2 automatically
         dev_w = int(info.get("current_width", 0))
         dev_h = int(info.get("current_height", 0))
@@ -2458,9 +2477,30 @@ class MainWindow(QMainWindow):
         self.combo_remote_camera.setCurrentIndex(nxt_idx)
 
     def _remote_toggle_torch(self):
-        self._remote_torch_on = not getattr(self, "_remote_torch_on", False)
-        if self.controller.set_torch(self._remote_torch_on):
-            self.btn_torch.setText(_t("ctrl_torch_off") if self._remote_torch_on else _t("ctrl_torch_on"))
+        if not self.is_connected:
+            return
+        target_state = not getattr(self, "_remote_torch_on", False)
+        def _worker():
+            ok = self.controller.set_torch(target_state)
+            if ok:
+                self._remote_torch_on = target_state
+                QMetaObject.invokeMethod(self, "_update_torch_ui", Qt.ConnectionType.QueuedConnection)
+            else:
+                print(f"[MainWindow] Fener/Flaş komutu başarısız oldu (hedef: {target_state})")
+        threading.Thread(target=_worker, daemon=True).start()
+
+    @pyqtSlot()
+    def _update_torch_ui(self):
+        is_on = getattr(self, "_remote_torch_on", False)
+        if hasattr(self, "btn_torch"):
+            self.btn_torch.setText(_t("ctrl_torch_off") if is_on else _t("ctrl_torch_on"))
+            if is_on:
+                self.btn_torch.setStyleSheet(
+                    "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #d97706, stop:1 #b45309); "
+                    "color: #ffffff; border: 1px solid #f59e0b; border-radius: 6px; font-weight: 700;"
+                )
+            else:
+                self.btn_torch.setStyleSheet("")
 
     def _remote_toggle_phone_preview(self):
         self._remote_phone_preview_on = not getattr(self, "_remote_phone_preview_on", True)

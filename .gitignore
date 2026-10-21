@@ -34,3 +34,6 @@ DerivedData/
 # OS generated
 .DS_Store
 Thumbs.db
+
+# Build releases extracted dirs
+releases/windows/AselCam/

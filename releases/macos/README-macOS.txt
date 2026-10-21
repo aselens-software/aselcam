@@ -10,10 +10,22 @@ SYSTEM REQUIREMENTS:
 HOW TO RUN:
 Option 1:
 Double-click "Install_macOS.command" to automatically configure security
-permissions and launch AselCam Studio.
+permissions, install direct virtual drivers, and launch AselCam Studio.
 
 Option 2:
 Drag "AselCam.app" to your "/Applications" folder and double-click it.
+The application automatically completes the setup upon launch.
+
+DIRECT VIRTUAL CAMERA & MICROPHONE (AUTOMATED SETUP):
+When AselCam launches, it automatically sets up and activates its direct
+virtual camera and microphone devices:
+- Virtual Camera: Direct CoreMedia DAL plugin installed automatically to
+  your user Library (~/Library/CoreMediaIO/Plug-Ins/DAL). Recognized immediately
+  by Zoom, Discord, Google Meet, Microsoft Teams, FaceTime, and browsers.
+- Virtual Microphone: Direct audio driver that routes your smartphone's
+  studio microphone with ultra-low latency directly into all voice chat
+  and meeting applications.
+- Zero configuration needed: Setup completes automatically on launch! No OBS Studio required.
 
 GATEKEEPER SECURITY NOTE:
 Because this application is distributed outside the Mac App Store, macOS
@@ -23,9 +35,4 @@ To allow it:
    -OR-
 2. Open Terminal and run:
    xattr -cr /Applications/AselCam.app
-
-AUDIO SETUP (OPTIONAL VIRTUAL MICROPHONE):
-To use your phone's microphone in Zoom, Discord, or Teams on macOS,
-install BlackHole (free virtual audio driver):
-  brew install blackhole-2ch
 ========================================================================

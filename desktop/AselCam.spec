@@ -4,9 +4,9 @@
 a = Analysis(
     ['aselcam/main.py'],
     pathex=[],
-    binaries=[],
+    binaries=[('aselcam/bin/ffmpeg.exe', '.')],
     datas=[('aselcam', 'aselcam')],
-    hiddenimports=['PyQt6', 'numpy', 'pyvirtualcam', 'PIL', 'cv2'],
+    hiddenimports=['PyQt6', 'numpy', 'pyvirtualcam', 'PIL', 'cv2', 'imageio_ffmpeg'],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
@@ -32,6 +32,7 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
+    icon='aselcam/assets/aselcam_icon.ico',
 )
 coll = COLLECT(
     exe,

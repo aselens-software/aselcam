@@ -11,7 +11,7 @@ android {
         applicationId = "com.aselens.aselcam"
         minSdk = 26
         targetSdk = 36
-        versionCode = 147
+        versionCode = 148
         versionName = "1.4.7"
     }
 

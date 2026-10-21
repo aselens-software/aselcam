@@ -256,27 +256,12 @@ fun AselCamApp(
         Toast.makeText(context, "$label ${MobileI18n.tr("copied")}", Toast.LENGTH_SHORT).show()
     }
 
-    // Synchronize preview surface and auto-start streaming when ready
-    LaunchedEffect(service, surfaceHolder, hasCameraPermission) {
+    // Synchronize preview surface when ready
+    LaunchedEffect(service, surfaceHolder) {
         val srv = service ?: return@LaunchedEffect
         val holder = surfaceHolder
         if (holder != null && holder.surface.isValid) {
             srv.setPreviewSurface(holder.surface)
-        }
-        if (hasCameraPermission && !srv.isStreaming.value && !srv.userStoppedManually) {
-            val parts = selectedResolution.split("x")
-            val w = parts.getOrNull(0)?.toIntOrNull() ?: 1920
-            val h = parts.getOrNull(1)?.toIntOrNull() ?: 1080
-            val br = (maxOf(2f, selectedBitrateMbps) * 1_000_000).toInt()
-            srv.startStreaming(
-                cameraId = selectedCameraId,
-                width = w,
-                height = h,
-                fps = selectedFps,
-                bitrate = br,
-                codec = selectedCodec,
-                previewSurface = if (isPreviewEnabled && holder?.surface?.isValid == true) holder.surface else null
-            )
         }
     }
 

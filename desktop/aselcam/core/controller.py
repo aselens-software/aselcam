@@ -12,6 +12,7 @@ class PhoneController:
         self._lock = threading.Lock()
         self.is_connected = False
         self.last_ping_ms: float = 0.0
+        self._recv_buf = b""
 
     def connect(self, timeout: float = 3.0) -> bool:
         with self._lock:
@@ -26,6 +27,7 @@ class PhoneController:
             s.connect((self.host, self.port))
             self._socket = s
             self.is_connected = True
+            self._recv_buf = b""
             return True
         except Exception as e:
             print(f"[Controller] Bağlantı hatası ({self.host}:{self.port}): {e}")
@@ -34,12 +36,29 @@ class PhoneController:
 
     def _disconnect_unlocked(self):
         self.is_connected = False
+        self._recv_buf = b""
         if self._socket:
             try:
                 self._socket.close()
             except Exception:
                 pass
             self._socket = None
+
+    def _read_json_response(self, timeout: float = 3.0) -> Optional[Dict[str, Any]]:
+        if not self._socket:
+            return None
+        self._socket.settimeout(timeout)
+        while b"\n" not in self._recv_buf:
+            chunk = self._socket.recv(4096)
+            if not chunk:
+                raise ConnectionError("Bağlantı kapandı")
+            self._recv_buf += chunk
+
+        raw_line, self._recv_buf = self._recv_buf.split(b"\n", 1)
+        line = raw_line.decode("utf-8", errors="ignore").strip()
+        if line:
+            return json.loads(line)
+        return None
 
     def send_command(self, cmd_dict: Dict[str, Any], timeout: float = 3.0) -> Optional[Dict[str, Any]]:
         with self._lock:
@@ -50,24 +69,12 @@ class PhoneController:
 
                 try:
                     assert self._socket is not None
-                    self._socket.settimeout(timeout)
                     payload = json.dumps(cmd_dict) + "\n"
                     self._socket.sendall(payload.encode("utf-8"))
-
-                    # Read response line
-                    buffer = b""
-                    while not buffer.endswith(b"\n"):
-                        chunk = self._socket.recv(4096)
-                        if not chunk:
-                            raise ConnectionError("Bağlantı kapandı")
-                        buffer += chunk
-
-                    line = buffer.decode("utf-8").strip()
-                    if line:
-                        return json.loads(line)
-                    return None
+                    return self._read_json_response(timeout=timeout)
                 except Exception as e:
-                    print(f"[Controller] Komut gönderim uyarısı (deneme {attempt + 1}): {e}")
+                    cmd_name = cmd_dict.get("cmd", "unknown")
+                    print(f"[Controller] Komut gönderim uyarısı ({cmd_name}, deneme {attempt + 1}): {e}")
                     self._disconnect_unlocked()
                     if attempt == 0:
                         time.sleep(0.1)

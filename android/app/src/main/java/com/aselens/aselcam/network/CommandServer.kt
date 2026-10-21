@@ -123,7 +123,7 @@ class CommandServer(
                     res.put("status", "ok")
                 }
                 "set_torch" -> {
-                    val enabled = req.getBoolean("enabled")
+                    val enabled = if (req.has("enabled")) (req.optBoolean("enabled", false) || req.optString("enabled").lowercase() == "true" || req.optInt("enabled", 0) == 1) else false
                     listener.onSetTorch(enabled)
                     res.put("status", "ok")
                 }
