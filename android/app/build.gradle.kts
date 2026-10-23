@@ -11,8 +11,8 @@ android {
         applicationId = "com.aselens.aselcam"
         minSdk = 26
         targetSdk = 36
-        versionCode = 148
-        versionName = "1.4.7"
+        versionCode = 149
+        versionName = "1.4.9"
     }
 
     val releaseKeystore = file("../aselcam-release.keystore")
@@ -29,7 +29,8 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             signingConfig = if (releaseKeystore.exists()) signingConfigs.getByName("release") else signingConfigs.getByName("debug")
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
@@ -68,6 +69,7 @@ dependencies {
     implementation(composeBom)
 
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.fragment.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.activity.compose)
