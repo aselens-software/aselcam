@@ -41,6 +41,7 @@ class CameraStreamService : Service(), CommandListener {
     private val TAG = "AselCam_Service"
     private val NOTIFICATION_ID = 47471
     private val CHANNEL_ID = "aselcam_stream_channel"
+    private val CHANNEL_ID_ALERTS = "aselcam_alerts_channel"
 
     private val binder = LocalBinder()
 
@@ -165,7 +166,7 @@ class CameraStreamService : Service(), CommandListener {
 
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
+            val streamChannel = NotificationChannel(
                 CHANNEL_ID,
                 getString(R.string.channel_name),
                 NotificationManager.IMPORTANCE_LOW
@@ -173,8 +174,18 @@ class CameraStreamService : Service(), CommandListener {
                 description = getString(R.string.channel_desc)
                 setShowBadge(false)
             }
+            val alertsChannel = NotificationChannel(
+                CHANNEL_ID_ALERTS,
+                "AselCam Bildirimleri",
+                NotificationManager.IMPORTANCE_HIGH
+            ).apply {
+                description = "Uzaktan kontrol ve ekran paylaşımı istek bildirimleri"
+                setShowBadge(true)
+                enableVibration(true)
+            }
             val manager = getSystemService(NotificationManager::class.java)
-            manager.createNotificationChannel(channel)
+            manager.createNotificationChannel(streamChannel)
+            manager.createNotificationChannel(alertsChannel)
         }
     }
 
@@ -195,15 +206,42 @@ class CameraStreamService : Service(), CommandListener {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
+        val isMirror = isScreenMirroringGlobal.value
+        val title = if (isMirror) "AselCam Ekran Paylaşımı" else "AselCam Canlı Akış"
+        val desc = if (isMirror) "Telefon ekranı yayında (4747 / 4748)" else "Kamera ve mikrofon yayında (4747 / 4748)"
+
         return NotificationCompat.Builder(this, CHANNEL_ID)
-            .setContentTitle("AselCam Canlı Akış")
-            .setContentText("Kamera ve mikrofon yayında (4747 / 4748)")
+            .setContentTitle(title)
+            .setContentText(desc)
             .setSmallIcon(R.drawable.ic_launcher)
             .setContentIntent(pendingIntent)
             .setOngoing(true)
             .addAction(R.drawable.ic_launcher, getString(R.string.stop_service), stopPendingIntent)
             .setPriority(NotificationCompat.PRIORITY_LOW)
             .build()
+    }
+
+    private fun showScreenMirrorRequestNotification(launchIntent: Intent) {
+        val pendingIntent = PendingIntent.getActivity(
+            this,
+            47472,
+            launchIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+        val notification = NotificationCompat.Builder(this, CHANNEL_ID_ALERTS)
+            .setContentTitle("Ekran Paylaşımı İsteği")
+            .setContentText("Bilgisayardan ekran paylaşımı istendi. Başlatmak için dokunun.")
+            .setSmallIcon(R.drawable.ic_launcher)
+            .setContentIntent(pendingIntent)
+            .setFullScreenIntent(pendingIntent, true)
+            .setAutoCancel(true)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setDefaults(NotificationCompat.DEFAULT_ALL)
+            .addAction(R.drawable.ic_launcher, "Başlat", pendingIntent)
+            .build()
+
+        val manager = getSystemService(NotificationManager::class.java)
+        manager.notify(47472, notification)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -214,6 +252,37 @@ class CameraStreamService : Service(), CommandListener {
             return START_NOT_STICKY
         }
         return START_STICKY
+    }
+
+    override fun onTaskRemoved(rootIntent: Intent?) {
+        super.onTaskRemoved(rootIntent)
+        if (_isStreaming.value || isScreenMirroringGlobal.value) {
+            Log.i(TAG, "AselCam task removed from recents, keeping foreground streaming service alive")
+            try {
+                val notification = buildNotification()
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    val type = if (isScreenMirroringGlobal.value) {
+                        var t = 0
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                            t = t or ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PROJECTION
+                        }
+                        if (!isMutedGlobal.value) {
+                            t = t or ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE
+                        }
+                        if (t != 0) t else ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PROJECTION
+                    } else {
+                        ServiceInfo.FOREGROUND_SERVICE_TYPE_CAMERA or ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE
+                    }
+                    startForeground(NOTIFICATION_ID, notification, type)
+                } else {
+                    startForeground(NOTIFICATION_ID, notification)
+                }
+            } catch (e: Exception) {
+                Log.w(TAG, "Error refreshing foreground notification onTaskRemoved: ${e.message}")
+            }
+        } else {
+            stopSelf()
+        }
     }
 
     fun startStreaming(
@@ -672,15 +741,27 @@ class CameraStreamService : Service(), CommandListener {
         if (isScreenMirroringGlobal.value) return true
         Log.i(TAG, "Starting screen mirroring...")
 
-        // Promote foreground service to include mediaProjection on Android 14+ (API 34+)
+        // Promote foreground service to mediaProjection on Android 14+ (API 34+)
+        // IMPORTANT: We do NOT include FOREGROUND_SERVICE_TYPE_CAMERA here!
+        // Camera is stopped during screen mirror, and keeping camera foreground type
+        // in background triggers Android 14+ while-in-use camera background violations.
         try {
             val notification = buildNotification()
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                var type = ServiceInfo.FOREGROUND_SERVICE_TYPE_CAMERA or ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE
+                var type = 0
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
                     type = type or ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PROJECTION
                 }
-                startForeground(NOTIFICATION_ID, notification, type)
+                if (!isMutedGlobal.value) {
+                    type = type or ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE
+                }
+                if (type != 0) {
+                    startForeground(NOTIFICATION_ID, notification, type)
+                } else {
+                    startForeground(NOTIFICATION_ID, notification)
+                }
+            } else {
+                startForeground(NOTIFICATION_ID, notification)
             }
         } catch (e: Exception) {
             Log.w(TAG, "Error updating foreground service type: ${e.message}")
@@ -837,11 +918,25 @@ class CameraStreamService : Service(), CommandListener {
     override fun onSetScreenMirror(enabled: Boolean) {
         Log.i(TAG, "onSetScreenMirror: enabled=$enabled")
         if (enabled) {
-            val intent = Intent(this, MainActivity::class.java).apply {
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP
-                putExtra(MainActivity.EXTRA_REQUEST_SCREEN_CAPTURE, true)
+            val activity = MainActivity.currentInstance
+            if (activity != null && MainActivity.isResumed) {
+                // If MainActivity is in foreground, directly request screen capture without BAL restriction
+                activity.runOnUiThread {
+                    activity.requestScreenCapture()
+                }
+            } else {
+                // If in background, try launch intent AND fire high-priority notification with FullScreenIntent
+                val intent = Intent(this, MainActivity::class.java).apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP
+                    putExtra(MainActivity.EXTRA_REQUEST_SCREEN_CAPTURE, true)
+                }
+                try {
+                    startActivity(intent)
+                } catch (e: Exception) {
+                    Log.w(TAG, "Direct startActivity blocked: ${e.message}")
+                }
+                showScreenMirrorRequestNotification(intent)
             }
-            startActivity(intent)
         } else {
             stopScreenMirroring()
         }

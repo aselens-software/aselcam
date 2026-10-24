@@ -2520,6 +2520,10 @@ class MainWindow(QMainWindow):
         self.is_screen_mirror_active = new_state
         def task():
             self.controller.set_screen_mirror(new_state)
+            time.sleep(0.4)
+            self._poll_telemetry()
+            time.sleep(1.0)
+            self._poll_telemetry()
         threading.Thread(target=task, daemon=True).start()
         self.btn_screen_mirror.setText(_t("ctrl_back_to_cam_btn") if new_state else _t("ctrl_screen_mirror_btn"))
 

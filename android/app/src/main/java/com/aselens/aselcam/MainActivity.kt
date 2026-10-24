@@ -9,6 +9,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.content.pm.PackageManager
+import android.media.projection.MediaProjectionConfig
 import android.media.projection.MediaProjectionManager
 import android.os.Build
 import android.os.Bundle
@@ -194,10 +195,27 @@ class MainActivity : ComponentActivity() {
 
     fun requestScreenCapture() {
         try {
-            screenCaptureLauncher.launch(projectionManager.createScreenCaptureIntent())
+            val captureIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                val config = MediaProjectionConfig.createConfigForDefaultDisplay()
+                projectionManager.createScreenCaptureIntent(config)
+            } else {
+                projectionManager.createScreenCaptureIntent()
+            }
+            screenCaptureLauncher.launch(captureIntent)
         } catch (e: Exception) {
             Toast.makeText(this, "Ekran izni isteği başlatılamadı: ${e.message}", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        currentInstance = this
+        isResumed = true
+    }
+
+    override fun onPause() {
+        isResumed = false
+        super.onPause()
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -208,11 +226,15 @@ class MainActivity : ComponentActivity() {
 
     private fun handleIntentExtras(intent: Intent?) {
         if (intent?.getBooleanExtra(EXTRA_REQUEST_SCREEN_CAPTURE, false) == true) {
+            intent.removeExtra(EXTRA_REQUEST_SCREEN_CAPTURE)
             requestScreenCapture()
         }
     }
 
     override fun onDestroy() {
+        if (currentInstance === this) {
+            currentInstance = null
+        }
         if (isBound) {
             unbindService(serviceConnection)
             isBound = false
@@ -222,6 +244,10 @@ class MainActivity : ComponentActivity() {
 
     companion object {
         const val EXTRA_REQUEST_SCREEN_CAPTURE = "extra_request_screen_capture"
+        @Volatile
+        var currentInstance: MainActivity? = null
+        @Volatile
+        var isResumed: Boolean = false
     }
 }
 
