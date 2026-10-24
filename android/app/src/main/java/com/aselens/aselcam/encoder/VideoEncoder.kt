@@ -257,7 +257,6 @@ class VideoEncoder(
                             } else {
                                 payload
                             }
-
                             val packet = Protocol.createPacket(
                                 videoType,
                                 if (isKeyframe) Protocol.FLAG_KEYFRAME else Protocol.FLAG_NONE,

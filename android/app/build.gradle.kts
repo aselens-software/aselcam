@@ -29,7 +29,8 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             signingConfig = if (releaseKeystore.exists()) signingConfigs.getByName("release") else signingConfigs.getByName("debug")
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
@@ -81,4 +82,11 @@ dependencies {
     implementation(libs.play.services.ads)
 
     debugImplementation(libs.androidx.compose.ui.tooling)
+}
+
+configurations.all {
+    resolutionStrategy {
+        force("androidx.fragment:fragment:1.8.6")
+        force("androidx.fragment:fragment-ktx:1.8.6")
+    }
 }

@@ -9,7 +9,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.content.pm.PackageManager
-import android.media.projection.MediaProjectionConfig
 import android.media.projection.MediaProjectionManager
 import android.os.Build
 import android.os.Bundle
@@ -110,12 +109,8 @@ class MainActivity : ComponentActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
-        try {
-            enableEdgeToEdge()
-        } catch (_: Throwable) {
-            // Graceful fallback if window/decorView cannot apply edge-to-edge
-        }
 
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         hasCameraPermission = ContextCompat.checkSelfPermission(
@@ -127,11 +122,7 @@ class MainActivity : ComponentActivity() {
         AdMobManager.initialize(this)
 
         val serviceIntent = Intent(this, CameraStreamService::class.java)
-        try {
-            startService(serviceIntent)
-        } catch (_: Throwable) {
-            // Fallback for background service start restrictions
-        }
+        startService(serviceIntent)
         bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE)
         handleIntentExtras(intent)
 
@@ -195,31 +186,10 @@ class MainActivity : ComponentActivity() {
 
     fun requestScreenCapture() {
         try {
-            val captureIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-                try {
-                    val config = MediaProjectionConfig.createConfigForDefaultDisplay()
-                    projectionManager.createScreenCaptureIntent(config)
-                } catch (_: Throwable) {
-                    projectionManager.createScreenCaptureIntent()
-                }
-            } else {
-                projectionManager.createScreenCaptureIntent()
-            }
-            screenCaptureLauncher.launch(captureIntent)
+            screenCaptureLauncher.launch(projectionManager.createScreenCaptureIntent())
         } catch (e: Exception) {
             Toast.makeText(this, "Ekran izni isteği başlatılamadı: ${e.message}", Toast.LENGTH_SHORT).show()
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        currentInstance = this
-        isResumed = true
-    }
-
-    override fun onPause() {
-        isResumed = false
-        super.onPause()
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -230,15 +200,11 @@ class MainActivity : ComponentActivity() {
 
     private fun handleIntentExtras(intent: Intent?) {
         if (intent?.getBooleanExtra(EXTRA_REQUEST_SCREEN_CAPTURE, false) == true) {
-            intent.removeExtra(EXTRA_REQUEST_SCREEN_CAPTURE)
             requestScreenCapture()
         }
     }
 
     override fun onDestroy() {
-        if (currentInstance === this) {
-            currentInstance = null
-        }
         if (isBound) {
             unbindService(serviceConnection)
             isBound = false
@@ -248,10 +214,6 @@ class MainActivity : ComponentActivity() {
 
     companion object {
         const val EXTRA_REQUEST_SCREEN_CAPTURE = "extra_request_screen_capture"
-        @Volatile
-        var currentInstance: MainActivity? = null
-        @Volatile
-        var isResumed: Boolean = false
     }
 }
 

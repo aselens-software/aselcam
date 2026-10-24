@@ -41,7 +41,6 @@ class CameraStreamService : Service(), CommandListener {
     private val TAG = "AselCam_Service"
     private val NOTIFICATION_ID = 47471
     private val CHANNEL_ID = "aselcam_stream_channel"
-    private val CHANNEL_ID_ALERTS = "aselcam_alerts_channel"
 
     private val binder = LocalBinder()
 
@@ -119,44 +118,24 @@ class CameraStreamService : Service(), CommandListener {
             orientationListener?.enable()
         }
 
-        try {
-            commandServer.start()
-            streamServer.start()
-        } catch (e: Throwable) {
-            Log.e(TAG, "Failed to start local servers: ${e.message}", e)
-        }
+        commandServer.start()
+        streamServer.start()
         instance = this
         acquireLocks()
         createNotificationChannel()
     }
 
     private fun acquireLocks() {
-        try {
-            if (wakeLock == null) {
-                val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
-                wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "AselCam:StreamingWakeLock").apply {
-                    setReferenceCounted(false)
-                }
-            }
-            if (wakeLock?.isHeld != true) {
-                wakeLock?.acquire(24 * 60 * 60 * 1000L) // 24 hours max
-            }
-        } catch (e: Throwable) {
-            Log.w(TAG, "Could not acquire wake lock: ${e.message}")
+        val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
+        wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "AselCam:StreamingWakeLock").apply {
+            setReferenceCounted(false)
+            acquire(12 * 60 * 60 * 1000L) // 12 hours max
         }
 
-        try {
-            if (wifiLock == null) {
-                val wifiManager = applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
-                wifiLock = wifiManager.createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF, "AselCam:StreamingWifiLock").apply {
-                    setReferenceCounted(false)
-                }
-            }
-            if (wifiLock?.isHeld != true) {
-                wifiLock?.acquire()
-            }
-        } catch (e: Throwable) {
-            Log.w(TAG, "Could not acquire wifi lock: ${e.message}")
+        val wifiManager = applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
+        wifiLock = wifiManager.createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF, "AselCam:StreamingWifiLock").apply {
+            setReferenceCounted(false)
+            acquire()
         }
     }
 
@@ -174,7 +153,7 @@ class CameraStreamService : Service(), CommandListener {
 
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val streamChannel = NotificationChannel(
+            val channel = NotificationChannel(
                 CHANNEL_ID,
                 getString(R.string.channel_name),
                 NotificationManager.IMPORTANCE_LOW
@@ -182,18 +161,8 @@ class CameraStreamService : Service(), CommandListener {
                 description = getString(R.string.channel_desc)
                 setShowBadge(false)
             }
-            val alertsChannel = NotificationChannel(
-                CHANNEL_ID_ALERTS,
-                "AselCam Bildirimleri",
-                NotificationManager.IMPORTANCE_HIGH
-            ).apply {
-                description = "Uzaktan kontrol ve ekran paylaşımı istek bildirimleri"
-                setShowBadge(true)
-                enableVibration(true)
-            }
             val manager = getSystemService(NotificationManager::class.java)
-            manager.createNotificationChannel(streamChannel)
-            manager.createNotificationChannel(alertsChannel)
+            manager.createNotificationChannel(channel)
         }
     }
 
@@ -214,42 +183,15 @@ class CameraStreamService : Service(), CommandListener {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        val isMirror = isScreenMirroringGlobal.value
-        val title = if (isMirror) "AselCam Ekran Paylaşımı" else "AselCam Canlı Akış"
-        val desc = if (isMirror) "Telefon ekranı yayında (4747 / 4748)" else "Kamera ve mikrofon yayında (4747 / 4748)"
-
         return NotificationCompat.Builder(this, CHANNEL_ID)
-            .setContentTitle(title)
-            .setContentText(desc)
+            .setContentTitle("AselCam Canlı Akış")
+            .setContentText("Kamera ve mikrofon yayında (4747 / 4748)")
             .setSmallIcon(R.drawable.ic_launcher)
             .setContentIntent(pendingIntent)
             .setOngoing(true)
             .addAction(R.drawable.ic_launcher, getString(R.string.stop_service), stopPendingIntent)
             .setPriority(NotificationCompat.PRIORITY_LOW)
             .build()
-    }
-
-    private fun showScreenMirrorRequestNotification(launchIntent: Intent) {
-        val pendingIntent = PendingIntent.getActivity(
-            this,
-            47472,
-            launchIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
-        val notification = NotificationCompat.Builder(this, CHANNEL_ID_ALERTS)
-            .setContentTitle("Ekran Paylaşımı İsteği")
-            .setContentText("Bilgisayardan ekran paylaşımı istendi. Başlatmak için dokunun.")
-            .setSmallIcon(R.drawable.ic_launcher)
-            .setContentIntent(pendingIntent)
-            .setFullScreenIntent(pendingIntent, true)
-            .setAutoCancel(true)
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setDefaults(NotificationCompat.DEFAULT_ALL)
-            .addAction(R.drawable.ic_launcher, "Başlat", pendingIntent)
-            .build()
-
-        val manager = getSystemService(NotificationManager::class.java)
-        manager.notify(47472, notification)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -260,16 +202,6 @@ class CameraStreamService : Service(), CommandListener {
             return START_NOT_STICKY
         }
         return START_STICKY
-    }
-
-    override fun onTaskRemoved(rootIntent: Intent?) {
-        super.onTaskRemoved(rootIntent)
-        if (_isStreaming.value || isScreenMirroringGlobal.value) {
-            Log.i(TAG, "AselCam task removed from recents, keeping foreground streaming service alive")
-            acquireLocks()
-        } else {
-            stopSelf()
-        }
     }
 
     fun startStreaming(
@@ -283,8 +215,7 @@ class CameraStreamService : Service(), CommandListener {
     ) {
         synchronized(pipelineLock) {
             if (_isStreaming.value) return
-            userStoppedManually = false
-            acquireLocks()
+        userStoppedManually = false
 
         Log.i(TAG, "Starting streaming: cam=$cameraId, ${width}x${height} @ ${fps}fps, bitrate=$bitrate, cameraEnabled=${isCameraEnabledGlobal.value}")
 
@@ -729,8 +660,6 @@ class CameraStreamService : Service(), CommandListener {
         if (isScreenMirroringGlobal.value) return true
         Log.i(TAG, "Starting screen mirroring...")
 
-        acquireLocks()
-
         // Promote foreground service to include mediaProjection on Android 14+ (API 34+)
         try {
             val notification = buildNotification()
@@ -740,8 +669,6 @@ class CameraStreamService : Service(), CommandListener {
                     type = type or ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PROJECTION
                 }
                 startForeground(NOTIFICATION_ID, notification, type)
-            } else {
-                startForeground(NOTIFICATION_ID, notification)
             }
         } catch (e: Exception) {
             Log.w(TAG, "Error updating foreground service type: ${e.message}")
@@ -898,25 +825,11 @@ class CameraStreamService : Service(), CommandListener {
     override fun onSetScreenMirror(enabled: Boolean) {
         Log.i(TAG, "onSetScreenMirror: enabled=$enabled")
         if (enabled) {
-            val activity = MainActivity.currentInstance
-            if (activity != null && MainActivity.isResumed) {
-                // If MainActivity is in foreground, directly request screen capture without BAL restriction
-                activity.runOnUiThread {
-                    activity.requestScreenCapture()
-                }
-            } else {
-                // If in background, try launch intent AND fire high-priority notification with FullScreenIntent
-                val intent = Intent(this, MainActivity::class.java).apply {
-                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP
-                    putExtra(MainActivity.EXTRA_REQUEST_SCREEN_CAPTURE, true)
-                }
-                try {
-                    startActivity(intent)
-                } catch (e: Exception) {
-                    Log.w(TAG, "Direct startActivity blocked: ${e.message}")
-                }
-                showScreenMirrorRequestNotification(intent)
+            val intent = Intent(this, MainActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP
+                putExtra(MainActivity.EXTRA_REQUEST_SCREEN_CAPTURE, true)
             }
+            startActivity(intent)
         } else {
             stopScreenMirroring()
         }
