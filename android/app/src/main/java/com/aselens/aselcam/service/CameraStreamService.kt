@@ -118,24 +118,36 @@ class CameraStreamService : Service(), CommandListener {
             orientationListener?.enable()
         }
 
-        commandServer.start()
-        streamServer.start()
+        try {
+            commandServer.start()
+            streamServer.start()
+        } catch (e: Throwable) {
+            Log.e(TAG, "Failed to start local servers: ${e.message}", e)
+        }
         instance = this
         acquireLocks()
         createNotificationChannel()
     }
 
     private fun acquireLocks() {
-        val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
-        wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "AselCam:StreamingWakeLock").apply {
-            setReferenceCounted(false)
-            acquire(12 * 60 * 60 * 1000L) // 12 hours max
+        try {
+            val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
+            wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "AselCam:StreamingWakeLock").apply {
+                setReferenceCounted(false)
+                acquire(12 * 60 * 60 * 1000L) // 12 hours max
+            }
+        } catch (e: Throwable) {
+            Log.w(TAG, "Could not acquire wake lock: ${e.message}")
         }
 
-        val wifiManager = applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
-        wifiLock = wifiManager.createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF, "AselCam:StreamingWifiLock").apply {
-            setReferenceCounted(false)
-            acquire()
+        try {
+            val wifiManager = applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
+            wifiLock = wifiManager.createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF, "AselCam:StreamingWifiLock").apply {
+                setReferenceCounted(false)
+                acquire()
+            }
+        } catch (e: Throwable) {
+            Log.w(TAG, "Could not acquire wifi lock: ${e.message}")
         }
     }
 

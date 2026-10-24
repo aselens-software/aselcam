@@ -88,24 +88,29 @@ object AdMobManager {
         val adRequest = AdRequest.Builder().build()
         val adUnitId = getInterstitialAdUnitId()
 
-        InterstitialAd.load(
-            context,
-            adUnitId,
-            adRequest,
-            object : InterstitialAdLoadCallback() {
-                override fun onAdLoaded(ad: InterstitialAd) {
-                    interstitialAd = ad
-                    isAdLoading = false
-                    Log.d(TAG, "Interstitial ad loaded and cached successfully.")
-                }
+        try {
+            InterstitialAd.load(
+                context,
+                adUnitId,
+                adRequest,
+                object : InterstitialAdLoadCallback() {
+                    override fun onAdLoaded(ad: InterstitialAd) {
+                        interstitialAd = ad
+                        isAdLoading = false
+                        Log.d(TAG, "Interstitial ad loaded and cached successfully.")
+                    }
 
-                override fun onAdFailedToLoad(loadAdError: LoadAdError) {
-                    interstitialAd = null
-                    isAdLoading = false
-                    Log.w(TAG, "Interstitial ad failed to load: ${loadAdError.message}")
+                    override fun onAdFailedToLoad(loadAdError: LoadAdError) {
+                        interstitialAd = null
+                        isAdLoading = false
+                        Log.w(TAG, "Interstitial ad failed to load: ${loadAdError.message}")
+                    }
                 }
-            }
-        )
+            )
+        } catch (e: Throwable) {
+            isAdLoading = false
+            Log.e(TAG, "InterstitialAd.load failed: ${e.message}", e)
+        }
     }
 
     /**
@@ -125,30 +130,36 @@ object AdMobManager {
             return
         }
 
-        ad.fullScreenContentCallback = object : FullScreenContentCallback() {
-            override fun onAdDismissedFullScreenContent() {
-                Log.d(TAG, "Interstitial dismissed by user. Starting stream...")
-                interstitialAd = null
-                lastAdShowTimeMs = System.currentTimeMillis()
-                // Reklam kapatıldı -> Asıl işlemi (yayını başlatmayı) çalıştır
-                onActionToRun()
-                // Bir sonraki başlatma için arka planda yeni reklam yükle
-                loadInterstitial(activity.applicationContext)
+        try {
+            ad.fullScreenContentCallback = object : FullScreenContentCallback() {
+                override fun onAdDismissedFullScreenContent() {
+                    Log.d(TAG, "Interstitial dismissed by user. Starting stream...")
+                    interstitialAd = null
+                    lastAdShowTimeMs = System.currentTimeMillis()
+                    // Reklam kapatıldı -> Asıl işlemi (yayını başlatmayı) çalıştır
+                    onActionToRun()
+                    // Bir sonraki başlatma için arka planda yeni reklam yükle
+                    loadInterstitial(activity.applicationContext)
+                }
+
+                override fun onAdFailedToShowFullScreenContent(adError: AdError) {
+                    Log.w(TAG, "Interstitial failed to show: ${adError.message}. Starting stream...")
+                    interstitialAd = null
+                    onActionToRun()
+                    loadInterstitial(activity.applicationContext)
+                }
+
+                override fun onAdShowedFullScreenContent() {
+                    Log.d(TAG, "Interstitial ad is currently displaying.")
+                }
             }
 
-            override fun onAdFailedToShowFullScreenContent(adError: AdError) {
-                Log.w(TAG, "Interstitial failed to show: ${adError.message}. Starting stream...")
-                interstitialAd = null
-                onActionToRun()
-                loadInterstitial(activity.applicationContext)
-            }
-
-            override fun onAdShowedFullScreenContent() {
-                Log.d(TAG, "Interstitial ad is currently displaying.")
-            }
+            ad.show(activity)
+        } catch (e: Throwable) {
+            Log.e(TAG, "Failed to show interstitial ad: ${e.message}", e)
+            interstitialAd = null
+            onActionToRun()
         }
-
-        ad.show(activity)
     }
 
     /**
@@ -163,10 +174,15 @@ object AdMobManager {
                 .fillMaxWidth()
                 .height(50.dp),
             factory = { ctx ->
-                AdView(ctx).apply {
-                    setAdSize(AdSize.BANNER)
-                    adUnitId = getBannerAdUnitId()
-                    loadAd(AdRequest.Builder().build())
+                try {
+                    AdView(ctx).apply {
+                        setAdSize(AdSize.BANNER)
+                        adUnitId = getBannerAdUnitId()
+                        loadAd(AdRequest.Builder().build())
+                    }
+                } catch (e: Throwable) {
+                    Log.e(TAG, "BannerAdView creation error: ${e.message}", e)
+                    android.view.View(ctx)
                 }
             }
         )
