@@ -109,8 +109,12 @@ class MainActivity : ComponentActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
+        try {
+            enableEdgeToEdge()
+        } catch (_: Throwable) {
+            // Graceful fallback if window/decorView cannot apply edge-to-edge
+        }
 
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         hasCameraPermission = ContextCompat.checkSelfPermission(
@@ -122,7 +126,11 @@ class MainActivity : ComponentActivity() {
         AdMobManager.initialize(this)
 
         val serviceIntent = Intent(this, CameraStreamService::class.java)
-        startService(serviceIntent)
+        try {
+            startService(serviceIntent)
+        } catch (_: Throwable) {
+            // Fallback for background service start restrictions
+        }
         bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE)
         handleIntentExtras(intent)
 

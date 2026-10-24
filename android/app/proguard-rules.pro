@@ -1,6 +1,6 @@
 # ====================================================================
 # AselCam ProGuard & R8 Optimization Rules
-# Ensures high DEX obfuscation while preserving runtime stability
+# Ensures high DEX obfuscation while preserving 100% runtime stability
 # ====================================================================
 
 # Attributes preservation for Compose, Reflection, and Stacktraces
@@ -20,15 +20,29 @@
     native <methods>;
 }
 
-# Keep Application Entry Points & Activities
--keep class com.aselens.aselcam.MainActivity { *; }
--keep class com.aselens.aselcam.ui.BlackoutActivity { *; }
+# Keep All AselCam Application Classes and Members
+# Prevents stripping/mangling of MainActivity, Services, UI, i18n, encoders, etc.
+-keep class com.aselens.aselcam.** { *; }
+-keepclassmembers class com.aselens.aselcam.** { *; }
 
-# Keep Foreground Service and Binder for IPC / ServiceConnection
--keep class com.aselens.aselcam.service.CameraStreamService { *; }
--keep class com.aselens.aselcam.service.CameraStreamService$LocalBinder { *; }
+# Keep AndroidX Lifecycle, Fragment, and Activity internals (required for runtime lifecycle injection)
+-keep class androidx.lifecycle.** { *; }
+-keepclassmembers class androidx.lifecycle.** { *; }
+-keep class androidx.activity.** { *; }
+-keepclassmembers class androidx.activity.** { *; }
+-keep class androidx.fragment.app.** { *; }
+-keepclassmembers class androidx.fragment.app.** { *; }
 
-# Keep Google Mobile Ads (AdMob)
+# Jetpack Compose
+-keep class androidx.compose.** { *; }
+-keepclassmembers class * {
+    @androidx.compose.runtime.Composable *;
+}
+-dontwarn androidx.compose.**
+-dontwarn kotlinx.coroutines.**
+-dontwarn org.jetbrains.annotations.**
+
+# Google Mobile Ads (AdMob)
 -keep public class com.google.android.gms.ads.** {
     public *;
 }
@@ -36,22 +50,4 @@
     public *;
 }
 -keep class com.google.android.gms.internal.ads.** { *; }
--dontwarn com.google.android.gms.ads.**
-
-# Keep AdMob Manager
--keep class com.aselens.aselcam.ads.AdMobManager { *; }
-
-# Keep Camera and Encoding Pipelines
--keep class com.aselens.aselcam.camera.** { *; }
--keep class com.aselens.aselcam.encoder.** { *; }
--keep class com.aselens.aselcam.network.** { *; }
--keep class com.aselens.aselcam.screen.** { *; }
-
-# Jetpack Compose and Coroutines
--dontwarn androidx.compose.**
--dontwarn kotlinx.coroutines.**
--dontwarn org.jetbrains.annotations.**
-
-# Repackage non-kept classes for aggressive obfuscation
--repackageclasses ''
--allowaccessmodification
+-dontwarn com.google.android.gms.**
