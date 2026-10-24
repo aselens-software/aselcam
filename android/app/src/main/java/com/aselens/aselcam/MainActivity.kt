@@ -109,22 +109,57 @@ class MainActivity : ComponentActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
+        try {
+            enableEdgeToEdge()
+        } catch (t: Throwable) {
+            android.util.Log.w("MainActivity", "enableEdgeToEdge error", t)
+        }
 
-        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        hasCameraPermission = ContextCompat.checkSelfPermission(
-            this,
-            Manifest.permission.CAMERA
-        ) == PackageManager.PERMISSION_GRANTED
+        try {
+            window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        } catch (t: Throwable) {
+            android.util.Log.w("MainActivity", "FLAG_KEEP_SCREEN_ON error", t)
+        }
 
-        requestPermissions()
-        AdMobManager.initialize(this)
+        try {
+            hasCameraPermission = ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.CAMERA
+            ) == PackageManager.PERMISSION_GRANTED
+        } catch (t: Throwable) {
+            android.util.Log.w("MainActivity", "checkSelfPermission error", t)
+        }
 
-        val serviceIntent = Intent(this, CameraStreamService::class.java)
-        startService(serviceIntent)
-        bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE)
-        handleIntentExtras(intent)
+        try {
+            requestPermissions()
+        } catch (t: Throwable) {
+            android.util.Log.w("MainActivity", "requestPermissions error", t)
+        }
+
+        try {
+            AdMobManager.initialize(this)
+        } catch (t: Throwable) {
+            android.util.Log.e("MainActivity", "AdMobManager.initialize error", t)
+        }
+
+        try {
+            val serviceIntent = Intent(this, CameraStreamService::class.java)
+            try {
+                startService(serviceIntent)
+            } catch (t: Throwable) {
+                android.util.Log.w("MainActivity", "startService failed, relying on bindService", t)
+            }
+            bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE)
+        } catch (t: Throwable) {
+            android.util.Log.e("MainActivity", "Service connection error", t)
+        }
+
+        try {
+            handleIntentExtras(intent)
+        } catch (t: Throwable) {
+            android.util.Log.w("MainActivity", "handleIntentExtras error", t)
+        }
 
         setContent {
             AselCamApp(

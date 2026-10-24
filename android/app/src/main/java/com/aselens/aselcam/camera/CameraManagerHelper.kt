@@ -24,74 +24,108 @@ data class CameraInfo(
 object CameraManagerHelper {
 
     fun getAvailableCameras(context: Context): List<CameraInfo> {
-        val cameraManager = context.getSystemService(Context.CAMERA_SERVICE) as CameraManager
         val result = mutableListOf<CameraInfo>()
+        try {
+            val cameraManager = context.getSystemService(Context.CAMERA_SERVICE) as? CameraManager
+                ?: return fallbackCameras()
 
-        for (cameraId in cameraManager.cameraIdList) {
-            try {
-                val characteristics = cameraManager.getCameraCharacteristics(cameraId)
-                val facing = characteristics.get(CameraCharacteristics.LENS_FACING) ?: continue
+            val cameraIds = try {
+                cameraManager.cameraIdList
+            } catch (t: Throwable) {
+                emptyArray<String>()
+            }
 
-                val isBack = facing == CameraCharacteristics.LENS_FACING_BACK
-                val name = if (isBack) "Arka Kamera ($cameraId)" else "Ön Kamera ($cameraId)"
-                val orientation = characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION) ?: 90
+            for (cameraId in cameraIds) {
+                try {
+                    val characteristics = cameraManager.getCameraCharacteristics(cameraId)
+                    val facing = characteristics.get(CameraCharacteristics.LENS_FACING) ?: continue
 
-                val map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP)
-                val resolutions = mutableListOf<Size>()
+                    val isBack = facing == CameraCharacteristics.LENS_FACING_BACK
+                    val name = if (isBack) "Arka Kamera ($cameraId)" else "Ön Kamera ($cameraId)"
+                    val orientation = characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION) ?: 90
 
-                if (map != null) {
-                    val mediaCodecSizes = map.getOutputSizes(MediaCodec::class.java) ?: emptyArray()
-                    val surfaceSizes = map.getOutputSizes(ImageFormat.PRIVATE) ?: emptyArray()
-                    val allSizes = (mediaCodecSizes.toList() + surfaceSizes.toList())
-                        .distinctBy { "${it.width}x${it.height}" }
-                        .filter { it.width >= 640 && it.height >= 360 }
-                        .sortedByDescending { it.width * it.height }
+                    val map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP)
+                    val resolutions = mutableListOf<Size>()
 
-                    resolutions.addAll(allSizes)
-                }
+                    if (map != null) {
+                        val mediaCodecSizes = map.getOutputSizes(MediaCodec::class.java) ?: emptyArray()
+                        val surfaceSizes = map.getOutputSizes(ImageFormat.PRIVATE) ?: emptyArray()
+                        val allSizes = (mediaCodecSizes.toList() + surfaceSizes.toList())
+                            .distinctBy { "${it.width}x${it.height}" }
+                            .filter { it.width >= 640 && it.height >= 360 }
+                            .sortedByDescending { it.width * it.height }
 
-                // If no sizes were parsed, provide standard video fallbacks
-                if (resolutions.isEmpty()) {
-                    resolutions.addAll(
-                        listOf(
-                            Size(3840, 2160),
-                            Size(1920, 1080),
-                            Size(1280, 720),
-                            Size(854, 480)
+                        resolutions.addAll(allSizes)
+                    }
+
+                    // If no sizes were parsed, provide standard video fallbacks
+                    if (resolutions.isEmpty()) {
+                        resolutions.addAll(
+                            listOf(
+                                Size(3840, 2160),
+                                Size(1920, 1080),
+                                Size(1280, 720),
+                                Size(854, 480)
+                            )
+                        )
+                    }
+
+                    val fpsRanges = characteristics.get(CameraCharacteristics.CONTROL_AE_AVAILABLE_TARGET_FPS_RANGES)
+                        ?.toList()
+                        ?.sortedByDescending { it.upper }
+                        ?: listOf(Range(30, 30), Range(15, 30))
+
+                    val maxZoom = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                        val zoomRange = characteristics.get(CameraCharacteristics.CONTROL_ZOOM_RATIO_RANGE)
+                        zoomRange?.upper ?: (characteristics.get(CameraCharacteristics.SCALER_AVAILABLE_MAX_DIGITAL_ZOOM) ?: 10.0f)
+                    } else {
+                        characteristics.get(CameraCharacteristics.SCALER_AVAILABLE_MAX_DIGITAL_ZOOM) ?: 10.0f
+                    }
+                    val hasFlash = characteristics.get(CameraCharacteristics.FLASH_INFO_AVAILABLE) ?: false
+
+                    result.add(
+                        CameraInfo(
+                            id = cameraId,
+                            name = name,
+                            isFacingBack = isBack,
+                            sensorOrientation = orientation,
+                            supportedResolutions = resolutions,
+                            supportedFpsRanges = fpsRanges,
+                            maxZoom = maxZoom,
+                            hasFlash = hasFlash
                         )
                     )
+                } catch (e: Exception) {
+                    e.printStackTrace()
                 }
-
-                val fpsRanges = characteristics.get(CameraCharacteristics.CONTROL_AE_AVAILABLE_TARGET_FPS_RANGES)
-                    ?.toList()
-                    ?.sortedByDescending { it.upper }
-                    ?: listOf(Range(30, 30), Range(15, 30))
-
-                val maxZoom = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                    val zoomRange = characteristics.get(CameraCharacteristics.CONTROL_ZOOM_RATIO_RANGE)
-                    zoomRange?.upper ?: (characteristics.get(CameraCharacteristics.SCALER_AVAILABLE_MAX_DIGITAL_ZOOM) ?: 10.0f)
-                } else {
-                    characteristics.get(CameraCharacteristics.SCALER_AVAILABLE_MAX_DIGITAL_ZOOM) ?: 10.0f
-                }
-                val hasFlash = characteristics.get(CameraCharacteristics.FLASH_INFO_AVAILABLE) ?: false
-
-                result.add(
-                    CameraInfo(
-                        id = cameraId,
-                        name = name,
-                        isFacingBack = isBack,
-                        sensorOrientation = orientation,
-                        supportedResolutions = resolutions,
-                        supportedFpsRanges = fpsRanges,
-                        maxZoom = maxZoom,
-                        hasFlash = hasFlash
-                    )
-                )
-            } catch (e: Exception) {
-                e.printStackTrace()
             }
+        } catch (t: Throwable) {
+            t.printStackTrace()
+        }
+
+        if (result.isEmpty()) {
+            result.addAll(fallbackCameras())
         }
         return result
+    }
+
+    private fun fallbackCameras(): List<CameraInfo> {
+        return listOf(
+            CameraInfo(
+                id = "0",
+                name = "Varsayılan Kamera",
+                isFacingBack = true,
+                sensorOrientation = 90,
+                supportedResolutions = listOf(
+                    Size(1920, 1080),
+                    Size(1280, 720),
+                    Size(640, 480)
+                ),
+                supportedFpsRanges = listOf(Range(30, 30), Range(15, 30)),
+                maxZoom = 4.0f,
+                hasFlash = false
+            )
+        )
     }
 
     fun findBestMatchingResolution(camera: CameraInfo, targetWidth: Int, targetHeight: Int): Size {

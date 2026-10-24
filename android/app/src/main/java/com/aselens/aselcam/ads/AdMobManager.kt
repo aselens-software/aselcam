@@ -45,18 +45,18 @@ object AdMobManager {
     private const val MIN_COOLDOWN_MS = 45_000L
 
     /**
-     * AdMob SDK'sını arka planda asenkron olarak ilklendirir.
+     * AdMob SDK'sını güvenle Main thread üzerinde ilklendirir.
      */
     fun initialize(context: Context) {
-        CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(Dispatchers.Main).launch {
             try {
                 MobileAds.initialize(context) { status ->
                     Log.d(TAG, "AdMob SDK Initialized successfully")
                 }
-                // Uygulama açılışında ilk geçiş reklamını arka planda önceden yükle (Preload)
+                // Uygulama açılışında ilk geçiş reklamını önceden yükle (Preload)
                 loadInterstitial(context.applicationContext)
-            } catch (e: Exception) {
-                Log.e(TAG, "AdMob init error", e)
+            } catch (t: Throwable) {
+                Log.e(TAG, "AdMob init error", t)
             }
         }
     }
@@ -78,34 +78,42 @@ object AdMobManager {
     }
 
     /**
-     * Arka planda geçiş reklamını önbelleğe alır (Preload).
-     * Böylece kullanıcı 'Yayını Başlat' butonuna bastığında reklam sıfır gecikmeyle açılır.
+     * Geçiş reklamını önbelleğe alır (Preload).
+     * Main thread üzerinde güvenli şekilde çağrılır.
      */
     fun loadInterstitial(context: Context) {
         if (interstitialAd != null || isAdLoading) return
 
-        isAdLoading = true
-        val adRequest = AdRequest.Builder().build()
-        val adUnitId = getInterstitialAdUnitId()
+        CoroutineScope(Dispatchers.Main).launch {
+            try {
+                if (interstitialAd != null || isAdLoading) return@launch
+                isAdLoading = true
+                val adRequest = AdRequest.Builder().build()
+                val adUnitId = getInterstitialAdUnitId()
 
-        InterstitialAd.load(
-            context,
-            adUnitId,
-            adRequest,
-            object : InterstitialAdLoadCallback() {
-                override fun onAdLoaded(ad: InterstitialAd) {
-                    interstitialAd = ad
-                    isAdLoading = false
-                    Log.d(TAG, "Interstitial ad loaded and cached successfully.")
-                }
+                InterstitialAd.load(
+                    context,
+                    adUnitId,
+                    adRequest,
+                    object : InterstitialAdLoadCallback() {
+                        override fun onAdLoaded(ad: InterstitialAd) {
+                            interstitialAd = ad
+                            isAdLoading = false
+                            Log.d(TAG, "Interstitial ad loaded and cached successfully.")
+                        }
 
-                override fun onAdFailedToLoad(loadAdError: LoadAdError) {
-                    interstitialAd = null
-                    isAdLoading = false
-                    Log.w(TAG, "Interstitial ad failed to load: ${loadAdError.message}")
-                }
+                        override fun onAdFailedToLoad(loadAdError: LoadAdError) {
+                            interstitialAd = null
+                            isAdLoading = false
+                            Log.w(TAG, "Interstitial ad failed to load: ${loadAdError.message}")
+                        }
+                    }
+                )
+            } catch (t: Throwable) {
+                isAdLoading = false
+                Log.e(TAG, "Error initiating InterstitialAd.load", t)
             }
-        )
+        }
     }
 
     /**
@@ -114,45 +122,50 @@ object AdMobManager {
      * Kullanıcı asla engellenmez veya kilitlenmez!
      */
     fun showInterstitialThen(activity: Activity, onActionToRun: () -> Unit) {
-        val now = System.currentTimeMillis()
-        val ad = interstitialAd
+        try {
+            val now = System.currentTimeMillis()
+            val ad = interstitialAd
 
-        // Cooldown süresi dolmamışsa veya reklam henüz yüklenmediyse doğrudan yayını başlat
-        if (ad == null || (now - lastAdShowTimeMs < MIN_COOLDOWN_MS)) {
-            Log.d(TAG, "No cached ad or cooldown active. Running stream immediately.")
+            // Cooldown süresi dolmamışsa veya reklam henüz yüklenmediyse doğrudan yayını başlat
+            if (ad == null || (now - lastAdShowTimeMs < MIN_COOLDOWN_MS)) {
+                Log.d(TAG, "No cached ad or cooldown active. Running stream immediately.")
+                onActionToRun()
+                loadInterstitial(activity.applicationContext)
+                return
+            }
+
+            ad.fullScreenContentCallback = object : FullScreenContentCallback() {
+                override fun onAdDismissedFullScreenContent() {
+                    Log.d(TAG, "Interstitial dismissed by user. Starting stream...")
+                    interstitialAd = null
+                    lastAdShowTimeMs = System.currentTimeMillis()
+                    onActionToRun()
+                    loadInterstitial(activity.applicationContext)
+                }
+
+                override fun onAdFailedToShowFullScreenContent(adError: AdError) {
+                    Log.w(TAG, "Interstitial failed to show: ${adError.message}. Starting stream...")
+                    interstitialAd = null
+                    onActionToRun()
+                    loadInterstitial(activity.applicationContext)
+                }
+
+                override fun onAdShowedFullScreenContent() {
+                    Log.d(TAG, "Interstitial ad is currently displaying.")
+                }
+            }
+
+            ad.show(activity)
+        } catch (t: Throwable) {
+            Log.e(TAG, "Failed to show interstitial ad", t)
+            interstitialAd = null
             onActionToRun()
-            loadInterstitial(activity.applicationContext)
-            return
         }
-
-        ad.fullScreenContentCallback = object : FullScreenContentCallback() {
-            override fun onAdDismissedFullScreenContent() {
-                Log.d(TAG, "Interstitial dismissed by user. Starting stream...")
-                interstitialAd = null
-                lastAdShowTimeMs = System.currentTimeMillis()
-                // Reklam kapatıldı -> Asıl işlemi (yayını başlatmayı) çalıştır
-                onActionToRun()
-                // Bir sonraki başlatma için arka planda yeni reklam yükle
-                loadInterstitial(activity.applicationContext)
-            }
-
-            override fun onAdFailedToShowFullScreenContent(adError: AdError) {
-                Log.w(TAG, "Interstitial failed to show: ${adError.message}. Starting stream...")
-                interstitialAd = null
-                onActionToRun()
-                loadInterstitial(activity.applicationContext)
-            }
-
-            override fun onAdShowedFullScreenContent() {
-                Log.d(TAG, "Interstitial ad is currently displaying.")
-            }
-        }
-
-        ad.show(activity)
     }
 
     /**
-     * Jetpack Compose Banner Bileşeni
+     * Jetpack Compose Banner Bileşeni.
+     * Güvenli hata koruması içerir; WebView veya AdView arızasında çökmez.
      */
     @Composable
     fun BannerAdView(
@@ -163,10 +176,15 @@ object AdMobManager {
                 .fillMaxWidth()
                 .height(50.dp),
             factory = { ctx ->
-                AdView(ctx).apply {
-                    setAdSize(AdSize.BANNER)
-                    adUnitId = getBannerAdUnitId()
-                    loadAd(AdRequest.Builder().build())
+                try {
+                    AdView(ctx).apply {
+                        setAdSize(AdSize.BANNER)
+                        adUnitId = getBannerAdUnitId()
+                        loadAd(AdRequest.Builder().build())
+                    }
+                } catch (t: Throwable) {
+                    Log.e(TAG, "BannerAdView creation error", t)
+                    android.view.View(ctx)
                 }
             }
         )

@@ -19,6 +19,7 @@
     <uses-feature android:name="android.hardware.camera.autofocus" android:required="false" />
 
     <application
+        android:name=".AselCamApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -26,10 +27,16 @@
         android:supportsRtl="true"
         android:theme="@android:style/Theme.Material.NoActionBar">
 
-        <!-- Google AdMob Application ID -->
+        <!-- Google AdMob Application ID & Performance Optimizations -->
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="ca-app-pub-3011996181892691~1501320244" />
+        <meta-data
+            android:name="com.google.android.gms.ads.flag.OPTIMIZE_INITIALIZATION"
+            android:value="true" />
+        <meta-data
+            android:name="com.google.android.gms.ads.flag.OPTIMIZE_AD_LOADING"
+            android:value="true" />
 
         <activity
             android:name=".MainActivity"
@@ -49,6 +56,12 @@
             android:screenOrientation="portrait"
             android:turnScreenOn="false"
             android:showWhenLocked="true" />
+
+        <activity
+            android:name=".ui.CrashReportActivity"
+            android:process=":crash"
+            android:exported="false"
+            android:theme="@android:style/Theme.Material.NoActionBar" />
 
         <service
             android:name=".service.CameraStreamService"
