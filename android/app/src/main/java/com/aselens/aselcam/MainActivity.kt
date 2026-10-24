@@ -161,26 +161,71 @@ class MainActivity : ComponentActivity() {
             android.util.Log.w("MainActivity", "handleIntentExtras error", t)
         }
 
-        setContent {
-            AselCamApp(
-                activity = this,
-                service = streamService,
-                hasCameraPermission = hasCameraPermission,
-                onStartStream = { camId, w, h, fps, br, codec, surface ->
-                    streamService?.startStreaming(camId, w, h, fps, br, codec, surface)
-                },
-                onStopStream = {
-                    streamService?.userStoppedManually = true
-                    streamService?.stopStreaming()
-                },
-                onBlackout = {
-                    CameraStreamService.isBlackoutGlobal.value = true
-                },
-                onRequestScreenCapture = {
-                    requestScreenCapture()
-                }
+        try {
+            setContent {
+                AselCamApp(
+                    activity = this,
+                    service = streamService,
+                    hasCameraPermission = hasCameraPermission,
+                    onStartStream = { camId, w, h, fps, br, codec, surface ->
+                        streamService?.startStreaming(camId, w, h, fps, br, codec, surface)
+                    },
+                    onStopStream = {
+                        streamService?.userStoppedManually = true
+                        streamService?.stopStreaming()
+                    },
+                    onBlackout = {
+                        CameraStreamService.isBlackoutGlobal.value = true
+                    },
+                    onRequestScreenCapture = {
+                        requestScreenCapture()
+                    }
+                )
+            }
+        } catch (t: Throwable) {
+            android.util.Log.e("MainActivity", "FATAL in setContent", t)
+            displayFatalErrorView(t)
+        }
+    }
+
+    private fun displayFatalErrorView(t: Throwable) {
+        val stack = android.util.Log.getStackTraceString(t)
+        try {
+            val dir = android.os.Environment.getExternalStoragePublicDirectory(android.os.Environment.DIRECTORY_DOWNLOADS)
+            java.io.File(dir, "aselcam_crash_report.txt").writeText(
+                "AselCam v${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})\nHata: ${t.localizedMessage}\n\n$stack"
+            )
+        } catch (_: Throwable) {}
+
+        val root = android.widget.LinearLayout(this).apply {
+            orientation = android.widget.LinearLayout.VERTICAL
+            setBackgroundColor(android.graphics.Color.parseColor("#0F131D"))
+            setPadding(40, 60, 40, 40)
+        }
+        val title = android.widget.TextView(this).apply {
+            text = "AselCam Başlatma Hatası"
+            setTextColor(android.graphics.Color.parseColor("#EF4444"))
+            textSize = 20f
+            typeface = android.graphics.Typeface.DEFAULT_BOLD
+            setPadding(0, 0, 0, 20)
+        }
+        root.addView(title)
+        val text = android.widget.TextView(this).apply {
+            this.text = "${t.localizedMessage}\n\n$stack"
+            setTextColor(android.graphics.Color.parseColor("#DFE2F1"))
+            textSize = 12f
+            setTextIsSelectable(true)
+        }
+        val scroll = android.widget.ScrollView(this).apply {
+            layoutParams = android.widget.LinearLayout.LayoutParams(
+                android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+                0,
+                1.0f
             )
         }
+        scroll.addView(text)
+        root.addView(scroll)
+        setContentView(root)
     }
 
     private fun requestPermissions() {
