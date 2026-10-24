@@ -196,8 +196,12 @@ class MainActivity : ComponentActivity() {
     fun requestScreenCapture() {
         try {
             val captureIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-                val config = MediaProjectionConfig.createConfigForDefaultDisplay()
-                projectionManager.createScreenCaptureIntent(config)
+                try {
+                    val config = MediaProjectionConfig.createConfigForDefaultDisplay()
+                    projectionManager.createScreenCaptureIntent(config)
+                } catch (_: Throwable) {
+                    projectionManager.createScreenCaptureIntent()
+                }
             } else {
                 projectionManager.createScreenCaptureIntent()
             }

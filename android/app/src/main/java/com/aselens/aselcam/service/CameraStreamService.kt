@@ -132,20 +132,28 @@ class CameraStreamService : Service(), CommandListener {
 
     private fun acquireLocks() {
         try {
-            val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
-            wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "AselCam:StreamingWakeLock").apply {
-                setReferenceCounted(false)
-                acquire(12 * 60 * 60 * 1000L) // 12 hours max
+            if (wakeLock == null) {
+                val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
+                wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "AselCam:StreamingWakeLock").apply {
+                    setReferenceCounted(false)
+                }
+            }
+            if (wakeLock?.isHeld != true) {
+                wakeLock?.acquire(24 * 60 * 60 * 1000L) // 24 hours max
             }
         } catch (e: Throwable) {
             Log.w(TAG, "Could not acquire wake lock: ${e.message}")
         }
 
         try {
-            val wifiManager = applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
-            wifiLock = wifiManager.createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF, "AselCam:StreamingWifiLock").apply {
-                setReferenceCounted(false)
-                acquire()
+            if (wifiLock == null) {
+                val wifiManager = applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
+                wifiLock = wifiManager.createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF, "AselCam:StreamingWifiLock").apply {
+                    setReferenceCounted(false)
+                }
+            }
+            if (wifiLock?.isHeld != true) {
+                wifiLock?.acquire()
             }
         } catch (e: Throwable) {
             Log.w(TAG, "Could not acquire wifi lock: ${e.message}")
@@ -258,28 +266,7 @@ class CameraStreamService : Service(), CommandListener {
         super.onTaskRemoved(rootIntent)
         if (_isStreaming.value || isScreenMirroringGlobal.value) {
             Log.i(TAG, "AselCam task removed from recents, keeping foreground streaming service alive")
-            try {
-                val notification = buildNotification()
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    val type = if (isScreenMirroringGlobal.value) {
-                        var t = 0
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-                            t = t or ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PROJECTION
-                        }
-                        if (!isMutedGlobal.value) {
-                            t = t or ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE
-                        }
-                        if (t != 0) t else ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PROJECTION
-                    } else {
-                        ServiceInfo.FOREGROUND_SERVICE_TYPE_CAMERA or ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE
-                    }
-                    startForeground(NOTIFICATION_ID, notification, type)
-                } else {
-                    startForeground(NOTIFICATION_ID, notification)
-                }
-            } catch (e: Exception) {
-                Log.w(TAG, "Error refreshing foreground notification onTaskRemoved: ${e.message}")
-            }
+            acquireLocks()
         } else {
             stopSelf()
         }
@@ -296,7 +283,8 @@ class CameraStreamService : Service(), CommandListener {
     ) {
         synchronized(pipelineLock) {
             if (_isStreaming.value) return
-        userStoppedManually = false
+            userStoppedManually = false
+            acquireLocks()
 
         Log.i(TAG, "Starting streaming: cam=$cameraId, ${width}x${height} @ ${fps}fps, bitrate=$bitrate, cameraEnabled=${isCameraEnabledGlobal.value}")
 
@@ -741,25 +729,17 @@ class CameraStreamService : Service(), CommandListener {
         if (isScreenMirroringGlobal.value) return true
         Log.i(TAG, "Starting screen mirroring...")
 
-        // Promote foreground service to mediaProjection on Android 14+ (API 34+)
-        // IMPORTANT: We do NOT include FOREGROUND_SERVICE_TYPE_CAMERA here!
-        // Camera is stopped during screen mirror, and keeping camera foreground type
-        // in background triggers Android 14+ while-in-use camera background violations.
+        acquireLocks()
+
+        // Promote foreground service to include mediaProjection on Android 14+ (API 34+)
         try {
             val notification = buildNotification()
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                var type = 0
+                var type = ServiceInfo.FOREGROUND_SERVICE_TYPE_CAMERA or ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
                     type = type or ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PROJECTION
                 }
-                if (!isMutedGlobal.value) {
-                    type = type or ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE
-                }
-                if (type != 0) {
-                    startForeground(NOTIFICATION_ID, notification, type)
-                } else {
-                    startForeground(NOTIFICATION_ID, notification)
-                }
+                startForeground(NOTIFICATION_ID, notification, type)
             } else {
                 startForeground(NOTIFICATION_ID, notification)
             }
