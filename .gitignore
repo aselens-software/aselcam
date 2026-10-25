@@ -38,6 +38,10 @@ Thumbs.db
 # Build releases extracted dirs
 releases/windows/AselCam/
 
+# Release packages exceeding GitHub 100MB limit (Upload directly to GitHub Releases)
+releases/windows/*.exe
+releases/windows/*.zip
+
 # Keystores & Private Credentials (NEVER commit to git)
 *.keystore
 *.jks
