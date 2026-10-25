@@ -17,7 +17,48 @@ All release packages are pre-built, tested, and ready to share or deploy across 
 
 ---
 
-## 📝 Changelog & Release Notes (17.10.2026 23:45 — 18.10.2026)
+## 📝 Changelog & Release Notes
+
+### 🚀 AselCam v1.5.2 (25.10.2026)
+
+#### 🤖 Android & Google Play Store Modernization
+- **Safe R8 DEX Code Optimization (50.76% Reduction):** Enabled R8 minification and DEX optimization safely using compatibility mode (`-dontoptimize`, `android.enableR8.fullMode=false`), keeping all Jetpack Compose runtime classes, Kotlin reflection metadata, ViewModels, and Coroutines intact. Reduces APK package size to **8.7 MB** (AAB 13 MB) and passes Google Play's 25% minimum DEX optimization benchmark with 100% crash-free stability.
+- **Large Screen & Multi-Window Compliance:** Removed restrictive portrait orientation locks (`screenOrientation="portrait"` removed from `MainActivity` and `BlackoutActivity`) and enabled `android:resizeableActivity="true"`, fully complying with Google Play's tablet, foldable, and desktop form factor guidelines.
+- **Target SDK 36 (Android 16):** Upgraded Android target SDK to Android 16 (API 36) with Android 8.0 (API 26) backward compatibility and Fragment 1.8.6.
+- **Diagnostic Crash Reporting (`CrashReportActivity`):** Integrated an in-app uncaught exception handler displaying full stack traces with a clean copy-button UI, preventing silent force closes.
+- **Screen Mirroring & Background Lifecycle Fixes:** Resolved background freeze when switching between apps or locking the device during screen mirroring; guarded remote trigger and lifecycle handlers against concurrent swipe death.
+- **Manual Broadcast Guard:** Cold-launch auto-start removed; broadcasting requires explicit user tap.
+- **Upgrade Versioning Compatibility:** Version name set to `1.5.2`, version code set to `1520` (ensuring monotonic increase from previous `1491`/`1492`/`1493` builds for Google Play Console compatibility).
+
+#### 🪟 Windows Desktop & Driver Installation
+- **Automated Inno Setup 6 Installer (`AselCam-v1.5.2-Windows-Setup.exe`):** Compiles an automated Windows installer that automatically registers DirectShow Virtual Camera filters (`UnityCaptureFilter64.dll`) and Virtual Audio Drivers without needing command-line scripts or manual admin permissions.
+- **Portable Windows Package (`AselCam-v1.5.2-Windows-x64.zip`):** Standalone zero-install portable zip archive for quick deployment.
+- **Header Version Badge Sync:** Synchronized title bar badge and localized `"version_tag"` across all 8 supported languages to `v1.5.2`.
+
+#### 🛡️ Security & Vibe-Check Hardening
+- **Secret & Keystore Protection:** Untracked keystores (`*.keystore`, `KEYSTORE_INFO.txt`) from Git history, added `.gitignore` rules, and removed hardcoded passwords from Gradle build scripts in favor of environment variables (`KEYSTORE_PASSWORD`) and git-ignored `local.properties`.
+- **Sliding-Window Socket Rate Limiter:** Added thread-safe sliding window rate limiting in `CommandServer.kt` (default safe limit: 30 commands/sec) with `set_rate_limit` and `get_rate_limit` RPC controls to protect against socket flooding and denial-of-service.
+- **Android Unit Testing & Automated CI/CD:** Added JUnit tests in `CommandServerTest.kt` verifying command server functionality and rate limiting. Created `.github/workflows/ci.yml` running automated tests and Gitleaks credential scanning on every push.
+- **Web Security Headers:** Added hardened HTTP security headers (`X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy`) in `site/.htaccess`.
+
+#### 💰 Google AdMob Monetization (Android & iOS)
+- Integrated Google AdMob SDK on Android with adaptive banner ads and session-end full-screen interstitial ads.
+- Added AdMob framework on iOS with real app unit IDs (`ca-app-pub-3011996181892691~1501320244`).
+
+#### 🌐 Web Site, Privacy & AI Agent Compatibility
+- **Standalone Apple-Style Privacy Policy:** Created standalone `/privacy` page (`site/privacy.html`, `site/privacy/index.html`) with complete 8-language localization.
+- **Support Contact:** Added developer support contact (`support@aselens.com`) across all privacy and landing footers.
+- **AI Bot Directives:** Created `site/llms.txt`, `site/robots.txt` (explicit permissions for GPTBot, ClaudeBot, PerplexityBot, Google-Extended, Bingbot), and `site/sitemap.xml`.
+- **Structured Metadata:** Added Open Graph, Twitter Cards, and Schema.org JSON-LD tags in English.
+- **Buy Me a Coffee:** Added community sponsorship banner across landing page, privacy policy, and README.
+
+#### 🍎 macOS & iOS Updates
+- Updated macOS `Info.plist` (v1.5.2 / build 152) and packaged universal zip with driver installer.
+- Updated iOS `ContentView.swift` (badge `v1.5.2`), `Info.plist`, and `project.pbxproj` (1.5.2 / 152), and packaged `AselCam-v1.5.2-iOS-Xcode.zip` and `AselCam-v1.5.2-iOS.ipa`.
+
+---
+
+### 📦 AselCam v1.4.7 (18.10.2026)
 
 ### 🎨 Official Branding & High-Resolution Logo Rendering
 - **Authentic Vector-to-PNG Conversion**: Converted `aselcam_logo-horz-white.svg` directly using Linux's native `rsvg-convert` engine to produce ultra-crisp, multi-resolution PNGs (`128px`, `256px`, `440px`, `512px`, `1024px`) with 100% gradient fidelity and zero lens distortion across all desktop platforms.
