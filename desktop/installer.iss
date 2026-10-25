@@ -2,7 +2,7 @@
 ; Automatic installation of application, DirectShow Virtual Camera & Virtual Audio Drivers
 
 #define MyAppName "AselCam Studio"
-#define MyAppVersion "1.4.9"
+#define MyAppVersion "1.5.2"
 #define MyAppPublisher "Aselens Technologies"
 #define MyAppURL "https://aselcam.aselens.com"
 #define MyAppExeName "AselCam.exe"
@@ -19,7 +19,7 @@ DefaultDirName={autopf}\AselCam
 DefaultGroupName=AselCam Studio
 DisableProgramGroupPage=yes
 OutputDir=..\releases\windows
-OutputBaseFilename=AselCam-v1.4.9-Windows-Setup
+OutputBaseFilename=AselCam-v1.5.2-Windows-Setup
 SetupIconFile=aselcam\assets\aselcam_icon.ico
 Compression=lzma2/ultra64
 SolidCompression=yes

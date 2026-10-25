@@ -11,7 +11,7 @@
 - **Data:** None; zero-persistence RAM circular buffers for raw video/audio streaming, no database or file storage.
 - **Auth:** None; unauthenticated local TCP socket communication.
 - **Payments / AI / Uploads & user content:** No subscriptions/payments (Google AdMob ads integrated); AI selfie segmentation (MediaPipe); no user uploads or UGC.
-- **Hosting & deploys / Mobile / CI:** Android app published via Google Play Console (.aab v1.4.9/1493); desktop standalone builds via PyInstaller & Inno Setup; GitHub Actions CI workflow in `.github/workflows/ci.yml`.
+- **Hosting & deploys / Mobile / CI:** Android app published via Google Play Console (.aab v1.5.2/152); desktop standalone builds via PyInstaller & Inno Setup; GitHub Actions CI workflow in `.github/workflows/ci.yml`.
 
 ## Changes since last check
 - #13, #30, #67 GAP (CRITICAL) → OK: Keystores removed from git tracking, added to `.gitignore`, hardcoded passwords removed from `build.gradle.kts`.

@@ -9,7 +9,7 @@ TRANSLATIONS: Dict[str, Dict[str, str]] = {
     "tr": {
         "app_title": "AselCam - Ultra Düşük Gecikmeli Sanal Kamera Stüdyosu",
         "tab_studio": "Stüdyo",
-        "version_tag": "v1.4.7",
+        "version_tag": "v1.5.2",
         "tab_mobile": "Mobil Kontrol",
         "tab_raw": "RAW && Renk",
         "tab_settings": "Ayarlar",
@@ -215,7 +215,7 @@ TRANSLATIONS: Dict[str, Dict[str, str]] = {
     "en": {
         "app_title": "AselCam - Ultra Low-Latency Virtual Camera Studio",
         "tab_studio": "Studio",
-        "version_tag": "v1.4.7",
+        "version_tag": "v1.5.2",
         "tab_mobile": "Mobile Control",
         "tab_raw": "RAW & Color",
         "tab_settings": "Settings",
@@ -421,7 +421,7 @@ TRANSLATIONS: Dict[str, Dict[str, str]] = {
     "de": {
         "app_title": "AselCam - Ultra Low-Latency Virtual Camera Studio",
         "tab_studio": "Studio",
-        "version_tag": "v1.4.7",
+        "version_tag": "v1.5.2",
         "tab_mobile": "Mobilsteuerung",
         "tab_raw": "RAW & Farbe",
         "tab_settings": "Einstellungen",
@@ -627,7 +627,7 @@ TRANSLATIONS: Dict[str, Dict[str, str]] = {
     "fr": {
         "app_title": "AselCam - Ultra Low-Latency Virtual Camera Studio",
         "tab_studio": "Studio",
-        "version_tag": "v1.4.7",
+        "version_tag": "v1.5.2",
         "tab_mobile": "Contrôle Mobile",
         "tab_raw": "RAW & Couleur",
         "tab_settings": "Paramètres",
@@ -833,7 +833,7 @@ TRANSLATIONS: Dict[str, Dict[str, str]] = {
     "es": {
         "app_title": "AselCam - Ultra Low-Latency Virtual Camera Studio",
         "tab_studio": "Estudio",
-        "version_tag": "v1.4.7",
+        "version_tag": "v1.5.2",
         "tab_mobile": "Control Móvil",
         "tab_raw": "RAW y Color",
         "tab_settings": "Ajustes",
@@ -1039,7 +1039,7 @@ TRANSLATIONS: Dict[str, Dict[str, str]] = {
     "ru": {
         "app_title": "AselCam - Ultra Low-Latency Virtual Camera Studio",
         "tab_studio": "Студия",
-        "version_tag": "v1.4.7",
+        "version_tag": "v1.5.2",
         "tab_mobile": "Управление",
         "tab_raw": "RAW и Цвет",
         "tab_settings": "Настройки",
@@ -1245,7 +1245,7 @@ TRANSLATIONS: Dict[str, Dict[str, str]] = {
     "ja": {
         "app_title": "AselCam - Ultra Low-Latency Virtual Camera Studio",
         "tab_studio": "スタジオ",
-        "version_tag": "v1.4.7",
+        "version_tag": "v1.5.2",
         "tab_mobile": "モバイル操作",
         "tab_raw": "RAW・色彩",
         "tab_settings": "設定",
@@ -1451,7 +1451,7 @@ TRANSLATIONS: Dict[str, Dict[str, str]] = {
     "ar": {
         "app_title": "AselCam - Ultra Low-Latency Virtual Camera Studio",
         "tab_studio": "الاستوديو",
-        "version_tag": "v1.4.7",
+        "version_tag": "v1.5.2",
         "tab_mobile": "التحكم بالجوال",
         "tab_raw": "الألوان و RAW",
         "tab_settings": "الإعدادات",

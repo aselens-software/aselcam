@@ -183,7 +183,7 @@ public struct ContentView: View {
                 Text(tr("app_name"))
                     .font(.system(size: 20, weight: .bold, design: .rounded))
                     .foregroundColor(.white)
-                Text("v1.2")
+                Text("v1.5.2")
                     .font(.system(size: 11, weight: .semibold))
                     .foregroundColor(Color.cyan)
                     .padding(.horizontal, 6)

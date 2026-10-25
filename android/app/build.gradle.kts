@@ -13,8 +13,8 @@ android {
         applicationId = "com.aselens.aselcam"
         minSdk = 26
         targetSdk = 36
-        versionCode = 1493
-        versionName = "1.4.9"
+        versionCode = 152
+        versionName = "1.5.2"
     }
 
     val releaseKeystore = file("../aselcam-release.keystore")

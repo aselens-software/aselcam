@@ -113,7 +113,7 @@ class CustomTitleBar(QWidget):
         self.title_label.setStyleSheet("color: #dfe2f1; font-weight: 700; letter-spacing: -0.02em; background: transparent;")
         layout.addWidget(self.title_label)
 
-        self.badge_version = QLabel("v1.4.7")
+        self.badge_version = QLabel("v1.5.2")
         self.badge_version.setStyleSheet(
             "background: transparent; color: #94a3b8; border: none; "
             "padding: 0px 4px; font-size: 10px; font-weight: 600; font-family: 'JetBrains Mono', monospace;"

@@ -33,7 +33,7 @@ AselCam is an open-source, peer-to-peer (P2P) desktop and mobile studio utility 
 
 ## Official Download Packages
 - **Android App:** Google Play Store (`com.aselens.aselcam`) and signed release APK / AAB.
-- **Windows Desktop:** Inno Setup installer (`AselCam-v1.4.9-Windows-Setup.exe`) and portable standalone package.
+- **Windows Desktop:** Inno Setup installer (`AselCam-v1.5.2-Windows-Setup.exe`) and portable standalone package.
 - **macOS Desktop:** Standalone `.app` bundle with automatic driver installer script.
 - **Linux Desktop:** Python 3 package (`setup.py`) and pre-configured runner script (`run_desktop.sh`).
 

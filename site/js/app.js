@@ -111,7 +111,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return {
         name: "macOS",
         type: "desktop",
-        file: "/releases/macos/AselCam-v1.4.7-macOS.zip?v=1.4.7.1",
+        file: "/releases/macos/AselCam-v1.5.2-macOS.zip?v=1.5.2",
         sub: "Apple Silicon & Intel • 1.6 MB",
         icon: "🍎"
       };
@@ -119,7 +119,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return {
         name: "Windows",
         type: "desktop",
-        file: "/releases/windows/AselCam-v1.4.7-Windows-x64.zip?v=1.4.7.1",
+        file: "/releases/windows/AselCam-v1.5.2-Windows-x64.zip?v=1.5.2",
         sub: "Windows 10 / 11 (64-bit) • 95 MB",
         icon: "🪟"
       };
@@ -127,7 +127,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return {
         name: "Android",
         type: "mobile",
-        file: "/releases/android/AselCam-v1.4.7-Android.apk?v=1.4.7.1",
+        file: "/releases/android/AselCam-v1.5.2-Android.apk?v=1.5.2",
         sub: "Android 8.0 — 15+ • 13 MB",
         icon: "🤖"
       };
@@ -135,7 +135,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return {
         name: "iOS",
         type: "mobile",
-        file: "/releases/ios/AselCam-v1.4.7-iOS.ipa?v=1.4.7.1",
+        file: "/releases/ios/AselCam-v1.5.2-iOS.ipa?v=1.5.2",
         sub: "iOS 15.0+ Sideload • 263 KB",
         icon: "📱"
       };

@@ -12,7 +12,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="aselcam",
-    version="1.2.0",
+    version="1.5.2",
     author="AselCam Team",
     author_description="AselCam Ultra Low-Latency Virtual Webcam and Audio Studio",
     long_description=long_description,

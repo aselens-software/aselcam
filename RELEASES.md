@@ -1,4 +1,4 @@
-# AselCam v1.4.7 - Official Downloads & Release Packages 🚀
+# AselCam v1.5.2 - Official Downloads & Release Packages 🚀
 
 All release packages are pre-built, tested, and ready to share or deploy across all operating systems with official AselCam branding, 8-language localization, dynamic auto-sizing, and native app icons.
 
@@ -8,11 +8,12 @@ All release packages are pre-built, tested, and ready to share or deploy across 
 
 | Platform | Target OS | File Name | Size | SHA256 Checksum |
 | :--- | :--- | :--- | :--- | :--- |
-| **🪟 Windows** | Windows 10 / 11 (64-bit) | [`AselCam-v1.4.7-Windows-x64.zip`](releases/windows/AselCam-v1.4.7-Windows-x64.zip) | **95 MB** | `c891e1b79bc6644eb79dc63b6f8369ad7c272a1b1853fc2888c2bf2223752931` |
-| **🍎 macOS** | macOS 11+ (Intel & Apple Silicon) | [`AselCam-v1.4.7-macOS.zip`](releases/macos/AselCam-v1.4.7-macOS.zip) | **1.6 MB** | `db960b4b5c5d438ab79815c06de5728a681a5f88c6edda42666cbbb32883d223` |
-| **📱 iOS** | iOS 15.0+ (Sideload / AltStore) | [`AselCam-v1.4.7-iOS.ipa`](releases/ios/AselCam-v1.4.7-iOS.ipa) | **263 KB** | `ce681243acc9770b9c6b547df63dd1d058ba4e95144f7b9904b4a3fa741dc0ea` |
-| **🛠️ iOS** | iOS 15.0+ (Xcode Source Project) | [`AselCam-v1.4.7-iOS-Xcode.zip`](releases/ios/AselCam-v1.4.7-iOS-Xcode.zip) | **283 KB** | `5170f940e88db289d7873fd9ca73c6f52cb50e6cea4ca3631450cb9894103eb2` |
-| **🤖 Android** | Android 8.0 to 15+ | [`AselCam-v1.4.7-Android.apk`](releases/android/AselCam-v1.4.7-Android.apk) | **13 MB** | `eb566cf0c9b231ea8ca67ceee27f9e54309eacd1482a18f4081dfe50da1bbc6b` |
+| **🪟 Windows (Installer)** | Windows 10 / 11 (64-bit) | [`AselCam-v1.5.2-Windows-Setup.exe`](releases/windows/AselCam-v1.5.2-Windows-Setup.exe) | **149 MB** | `91bfd3d4818917b30f7782d0b2327480f0be5b0126c8866d4fa413a2871973a8` |
+| **🪟 Windows (Portable)** | Windows 10 / 11 (64-bit) | [`AselCam-v1.5.2-Windows-x64.zip`](releases/windows/AselCam-v1.5.2-Windows-x64.zip) | **222 MB** | `0afb67e7aebdda8e99b4ea344fb67e09e1295c5fcc7c568edb4759b500fd47cb` |
+| **🍎 macOS** | macOS 11+ (Intel & Apple Silicon) | [`AselCam-v1.5.2-macOS.zip`](releases/macos/AselCam-v1.5.2-macOS.zip) | **1.7 MB** | `8f68c29dc239fc4315c840de8de328e7bf63ac9de9772748d4e470ba7756bd95` |
+| **📱 iOS** | iOS 15.0+ (Sideload / AltStore) | [`AselCam-v1.5.2-iOS.ipa`](releases/ios/AselCam-v1.5.2-iOS.ipa) | **263 KB** | `ce681243acc9770b9c6b547df63dd1d058ba4e95144f7b9904b4a3fa741dc0ea` |
+| **🛠️ iOS** | iOS 15.0+ (Xcode Source Project) | [`AselCam-v1.5.2-iOS-Xcode.zip`](releases/ios/AselCam-v1.5.2-iOS-Xcode.zip) | **292 KB** | `b1e4ecd8505351d03196d719acb1069a528049b817e1370261baa15f5a016dd3` |
+| **🤖 Android** | Android 8.0 to 16+ | [`AselCam-v1.5.2-Android.apk`](releases/android/AselCam-v1.5.2-Android.apk) | **8.7 MB** | `c3d3af366dac913169e68dbceeb425bd62fdee54ee055fca89b797b897ac55fd` |
 
 ---
 
@@ -63,14 +64,14 @@ All release packages are pre-built, tested, and ready to share or deploy across 
 
 ## 🚀 Quick Installation Guide by Platform
 
-### 🪟 Windows (Standalone x64)
-1. Download and extract [`AselCam-v1.4.7-Windows-x64.zip`](releases/windows/AselCam-v1.4.7-Windows-x64.zip).
-2. Double-click `AselCam.exe` to run immediately.
+### 🪟 Windows (Installer & Portable)
+1. Recommended: Download and run [`AselCam-v1.5.2-Windows-Setup.exe`](releases/windows/AselCam-v1.5.2-Windows-Setup.exe) for automated driver setup.
+2. Standalone: Download and extract [`AselCam-v1.5.2-Windows-x64.zip`](releases/windows/AselCam-v1.5.2-Windows-x64.zip) and launch `AselCam.exe`.
 3. *(Optional)* Run `CREATE_DESKTOP_SHORTCUT.bat` to create an AselCam icon shortcut directly on your Windows desktop.
 - *Zero setup required: Python and all graphical/video libraries are pre-packaged.*
 
 ### 🍎 macOS (Apple Silicon M1/M2/M3/M4 & Intel)
-1. Download and extract [`AselCam-v1.4.7-macOS.zip`](releases/macos/AselCam-v1.4.7-macOS.zip).
+1. Download and extract [`AselCam-v1.5.2-macOS.zip`](releases/macos/AselCam-v1.5.2-macOS.zip).
 2. Double-click `Install_macOS.command` or move `AselCam.app` to your `/Applications` directory.
 3. If macOS Gatekeeper shows a security prompt:
    - Right-click `AselCam.app` and choose **Open**, or run:
@@ -80,13 +81,13 @@ All release packages are pre-built, tested, and ready to share or deploy across 
 
 ### 📱 iOS (iPhone & iPad)
 - **Option 1 (Direct Sideload via AltStore / Sideloadly / TrollStore)**:
-  - Connect your iPhone and drag [`AselCam-v1.4.7-iOS.ipa`](releases/ios/AselCam-v1.4.7-iOS.ipa) into Sideloadly or AltStore to install directly without a Mac.
+  - Connect your iPhone and drag [`AselCam-v1.5.2-iOS.ipa`](releases/ios/AselCam-v1.5.2-iOS.ipa) into Sideloadly or AltStore to install directly without a Mac.
 - **Option 2 (Xcode)**:
-  - Extract [`AselCam-v1.4.7-iOS-Xcode.zip`](releases/ios/AselCam-v1.4.7-iOS-Xcode.zip).
+  - Extract [`AselCam-v1.5.2-iOS-Xcode.zip`](releases/ios/AselCam-v1.5.2-iOS-Xcode.zip).
   - Open `AselCam.xcodeproj` in Xcode, select your Apple ID team under Signing, and press **Run (`⌘R`)**.
 
 ### 🤖 Android
-- Download [`AselCam-v1.4.7-Android.apk`](releases/android/AselCam-v1.4.7-Android.apk) to your device and tap to install.
+- Download [`AselCam-v1.5.2-Android.apk`](releases/android/AselCam-v1.5.2-Android.apk) to your device and tap to install.
 - Make sure "Install unknown apps" permission is granted if prompted.
 
 ---
