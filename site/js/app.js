@@ -119,8 +119,8 @@ document.addEventListener("DOMContentLoaded", () => {
       return {
         name: "Windows",
         type: "desktop",
-        file: "/releases/windows/AselCam-v1.5.2-Windows-x64.zip?v=1.5.2",
-        sub: "Windows 10 / 11 (64-bit) • 95 MB",
+        file: "/releases/windows/AselCam-v1.5.2-Windows-Setup.exe?v=1.5.2",
+        sub: "Windows 10 / 11 (64-bit) • 149 MB",
         icon: "🪟"
       };
     } else if (/Android/i.test(ua)) {
@@ -128,7 +128,7 @@ document.addEventListener("DOMContentLoaded", () => {
         name: "Android",
         type: "mobile",
         file: "/releases/android/AselCam-v1.5.2-Android.apk?v=1.5.2",
-        sub: "Android 8.0 — 15+ • 13 MB",
+        sub: "Android 8.0 — 16 • 8.7 MB",
         icon: "🤖"
       };
     } else if (/iPhone|iPad|iPod/i.test(ua)) {
@@ -143,8 +143,8 @@ document.addEventListener("DOMContentLoaded", () => {
       return {
         name: "Linux",
         type: "desktop",
-        file: "https://github.com/aselens-software/aselcam#linux-installation",
-        sub: "Arch, Ubuntu, Fedora, Debian",
+        file: "/releases/linux/AselCam-v1.5.2-Linux.zip?v=1.5.2",
+        sub: "Universal • 33 MB",
         icon: "🐧"
       };
     }
