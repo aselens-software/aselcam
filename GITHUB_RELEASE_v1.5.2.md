@@ -15,6 +15,7 @@ AselCam **v1.5.2** delivers safe R8 DEX code optimization for Google Play, an al
 | **🤖 Android (Play Store)**| Android 8.0 to 16+ | [`AselCam-v1.5.2.aab`](releases/android/AselCam-v1.5.2.aab) | **13 MB** | `3f80813fe22a3e20f857c545fb4d79fc10b1de5650a0a9e435cbcfde8be37d05` |
 | **🤖 Android (APK)** | Android 8.0 to 16+ | [`AselCam-v1.5.2-Android.apk`](releases/android/AselCam-v1.5.2-Android.apk) | **8.7 MB** | `1f5312f505da9ca2d02b2dc1d00b323f1f1550d6799a6ce6ca3b34f1df6c5bfa` |
 | **🍎 macOS (Universal)** | macOS 11+ (Intel & Apple Silicon) | [`AselCam-v1.5.2-macOS.zip`](releases/macos/AselCam-v1.5.2-macOS.zip) | **1.7 MB** | `8f68c29dc239fc4315c840de8de328e7bf63ac9de9772748d4e470ba7756bd95` |
+| **🐧 Linux (Universal)** | Ubuntu / Debian / Arch / Fedora (x86_64) | [`AselCam-v1.5.2-Linux.zip`](releases/linux/AselCam-v1.5.2-Linux.zip) | **33 MB** | `06baadfd1706344095cd5657f571a3cfb300990c444e0f787d36a99457e0df14` |
 | **📱 iOS (Sideload)** | iOS 15.0+ (AltStore / Sideloadly) | [`AselCam-v1.5.2-iOS.ipa`](releases/ios/AselCam-v1.5.2-iOS.ipa) | **263 KB** | `ce681243acc9770b9c6b547df63dd1d058ba4e95144f7b9904b4a3fa741dc0ea` |
 | **🛠️ iOS (Xcode)** | iOS 15.0+ (Source Project) | [`AselCam-v1.5.2-iOS-Xcode.zip`](releases/ios/AselCam-v1.5.2-iOS-Xcode.zip) | **292 KB** | `b1e4ecd8505351d03196d719acb1069a528049b817e1370261baa15f5a016dd3` |
 
