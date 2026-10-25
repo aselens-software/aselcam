@@ -1,2 +1,2 @@
-c389557925830ad2b48e0e7e11dfe3a1158d2539fd5ba38087b396c3817cda7e  AselCam-v1.4.9.aab
-bdf1b0073b065fec4529fd06d3b36cd4159cd4d0bafb132cbb917f1699542686  AselCam-v1.4.9.apk
+b05e2abcfaf93d0aebb91df0db33b31fae07a9e90f8c7aa5747a6fe78cdef20a  AselCam-v1.4.9.aab
+2cd8a7f4682b58b217c855ded043aa1ce6fb292f1bd5ce0ccb55a59fb149788b  AselCam-v1.4.9.apk
