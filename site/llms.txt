@@ -1,0 +1,43 @@
+# AselCam • Ultra Low-Latency Virtual Camera & Wireless Microphone Studio
+
+> Transform your smartphone (Android / iOS) into a studio-grade 4K 60 FPS webcam and wireless studio microphone for Windows, macOS, and Linux.
+
+## Overview
+AselCam is an open-source, peer-to-peer (P2P) desktop and mobile studio utility developed by Aselens Software. It replaces standalone webcams and USB microphones with modern smartphone camera arrays and internal MEMS microphones.
+
+- **Developer:** Aselens Software (https://aselens.com)
+- **Official Website:** https://aselcam.aselens.com
+- **License:** Open Source under the MIT License
+- **Privacy Model:** Zero Cloud, 100% Local Peer-to-Peer, Zero Persistence
+
+## Key Capabilities & Architecture
+1. **Ultra Low-Latency Video Pipeline (<10ms):**
+   - Zero-copy hardware video encoding on-device (`MediaCodec` H.264/HEVC on Android, `VideoToolbox` on iOS).
+   - High-performance multi-threaded receiver on desktop using FFmpeg hardware-accelerated decoding.
+2. **True Virtual Camera & Microphone System Drivers:**
+   - **Linux:** Native kernel V4L2 loopback device (`/dev/video10`) and PipeWire/PulseAudio virtual mic sink (`module-null-sink`).
+   - **Windows:** Native DirectShow Virtual Camera and Virtual Audio driver self-installation.
+   - **macOS:** Native CoreMediaIO DAL plugin and CoreAudio virtual microphone.
+3. **Connectivity Options:**
+   - **USB Cable Mode (Ultra-Stable):** High-speed streaming via Android ADB port forwarding (`adb forward tcp:4747 tcp:4747`) and Apple Lightning/USB-C.
+   - **Local Wi-Fi Mode:** Zero-setup local subnet streaming via direct TCP sockets (Port 4747 for video/audio, Port 4748 for JSON control).
+4. **Studio Color Science & Controls:**
+   - 1D RGB Tone LUTs with 0 ms identity fast-path.
+   - Exposure EV compensation, Highlight/Shadow recovery, Kelvin white balance and tint.
+   - AI Portrait bokeh and background segmentation via MediaPipe neural models.
+   - Real-time mobile screen mirroring and AMOLED True Blackout mode.
+
+## Supported Operating Systems
+- **Desktop:** Windows 10 & 11 (64-bit), macOS Monterey / Ventura / Sonoma / Sequoia, Linux (Ubuntu, Debian, Fedora, Arch, Pop!_OS).
+- **Mobile:** Android 8.0 Oreo to Android 16 (API 26-36), iOS 15.0 to iOS 18+.
+
+## Official Download Packages
+- **Android App:** Google Play Store (`com.aselens.aselcam`) and signed release APK / AAB.
+- **Windows Desktop:** Inno Setup installer (`AselCam-v1.4.9-Windows-Setup.exe`) and portable standalone package.
+- **macOS Desktop:** Standalone `.app` bundle with automatic driver installer script.
+- **Linux Desktop:** Python 3 package (`setup.py`) and pre-configured runner script (`run_desktop.sh`).
+
+## Support & Inquiries
+- **Support Email:** support@aselens.com
+- **Bug Tracker:** https://github.com/aselens-software/aselcam/issues
+- **Privacy Policy:** https://aselcam.aselens.com/privacy

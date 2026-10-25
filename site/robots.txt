@@ -1,0 +1,29 @@
+# Robots.txt for AselCam (https://aselcam.aselens.com)
+User-agent: *
+Allow: /
+
+# Explicit permission for AI crawlers and LLM search agents
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+# Sitemap & LLM summary
+Sitemap: https://aselcam.aselens.com/sitemap.xml
+# AI Model Documentation: https://aselcam.aselens.com/llms.txt

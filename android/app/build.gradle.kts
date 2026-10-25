@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.compose.compiler)
@@ -16,13 +18,22 @@ android {
     }
 
     val releaseKeystore = file("../aselcam-release.keystore")
+    val localProperties = Properties().apply {
+        val localPropertiesFile = rootProject.file("local.properties")
+        if (localPropertiesFile.exists()) {
+            load(localPropertiesFile.inputStream())
+        }
+    }
+    val keystorePassword = System.getenv("KEYSTORE_PASSWORD")
+        ?: localProperties.getProperty("aselcam.keystore.password")
+
     signingConfigs {
         create("release") {
-            if (releaseKeystore.exists()) {
+            if (releaseKeystore.exists() && !keystorePassword.isNullOrEmpty()) {
                 storeFile = releaseKeystore
-                storePassword = "aselcam2026"
+                storePassword = keystorePassword
                 keyAlias = "aselcam"
-                keyPassword = "aselcam2026"
+                keyPassword = keystorePassword
             }
         }
     }
@@ -82,6 +93,9 @@ dependencies {
     implementation(libs.play.services.ads)
 
     debugImplementation(libs.androidx.compose.ui.tooling)
+
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("org.json:json:20240303")
 }
 
 configurations.all {

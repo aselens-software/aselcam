@@ -37,3 +37,10 @@ Thumbs.db
 
 # Build releases extracted dirs
 releases/windows/AselCam/
+
+# Keystores & Private Credentials (NEVER commit to git)
+*.keystore
+*.jks
+*KEYSTORE_INFO*
+play_console_release/*.keystore
+play_console_release/*KEYSTORE*

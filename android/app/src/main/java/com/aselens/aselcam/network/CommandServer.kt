@@ -34,10 +34,17 @@ class CommandServer(
     private val port: Int = 4748,
     private val listener: CommandListener
 ) {
+    companion object {
+        const val DEFAULT_MAX_COMMANDS_PER_SEC = 30
+    }
+
     private val TAG = "AselCam_CommandServer"
     private var serverSocket: ServerSocket? = null
     private val isRunning = AtomicBoolean(false)
     private val clients = CopyOnWriteArrayList<Socket>()
+
+    @Volatile
+    var maxCommandsPerSecond: Int = DEFAULT_MAX_COMMANDS_PER_SEC
 
     fun start() {
         if (isRunning.getAndSet(true)) return
@@ -85,10 +92,30 @@ class CommandServer(
             val reader = BufferedReader(InputStreamReader(socket.getInputStream()))
             val writer = PrintWriter(socket.getOutputStream(), true)
 
+            var windowStartMs = System.currentTimeMillis()
+            var commandsInWindow = 0
             var line: String? = null
+
             while (isRunning.get() && reader.readLine().also { line = it } != null) {
                 val input = line?.trim() ?: continue
                 if (input.isEmpty()) continue
+
+                val now = System.currentTimeMillis()
+                if (now - windowStartMs >= 1000L) {
+                    windowStartMs = now
+                    commandsInWindow = 0
+                }
+
+                val limit = maxCommandsPerSecond
+                if (limit in 1..commandsInWindow) {
+                    val rateLimitErr = JSONObject().apply {
+                        put("status", "error")
+                        put("message", "Rate limit exceeded (max $limit commands/sec)")
+                    }
+                    writer.println(rateLimitErr.toString())
+                    continue
+                }
+                commandsInWindow++
 
                 val response = processCommand(input)
                 writer.println(response)
@@ -103,7 +130,7 @@ class CommandServer(
         }
     }
 
-    private fun processCommand(jsonStr: String): String {
+    internal fun processCommand(jsonStr: String): String {
         return try {
             val req = JSONObject(jsonStr)
             val cmd = req.optString("cmd")
@@ -178,6 +205,21 @@ class CommandServer(
                 "stop_stream" -> {
                     listener.onStopStream()
                     res.put("status", "ok")
+                }
+                "set_rate_limit" -> {
+                    val limit = req.getInt("limit")
+                    if (limit in 1..500) {
+                        maxCommandsPerSecond = limit
+                        res.put("status", "ok")
+                        res.put("limit", limit)
+                    } else {
+                        res.put("status", "error")
+                        res.put("message", "Limit must be between 1 and 500")
+                    }
+                }
+                "get_rate_limit" -> {
+                    res.put("status", "ok")
+                    res.put("limit", maxCommandsPerSecond)
                 }
                 "ping" -> {
                     res.put("status", "pong")
